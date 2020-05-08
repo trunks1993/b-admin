@@ -1,0 +1,75 @@
+.container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: url(../../assets/images/login/bg.png) no-repeat;
+  background-size: 100% 50%;
+}
+
+.box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  height: 600px;
+  width: 480px;
+  padding-top: 40px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  text-align: center;
+}
+
+.footer span {
+  display: block;
+  font-size: 14px;
+  color: #CCCCCC;
+}
+
+.form {
+  width: 360px;
+  margin: auto;
+  margin-top: 60px;
+}
+
+.formTitle {
+  text-align: center;
+}
+
+.formTitle span {
+  display: block;
+  color: #1A61DC;
+}
+
+/* 登录框输入框样式 */
+:global(.login-form-input), :global(.login-form-input) input {
+  height: 50px;
+  border-radius: 0;
+}
+
+:global(.login-form-input .ant-input-group-addon) {
+  border-radius: 0;
+  background: #F7F7F7;
+  width: 60px;
+}
+
+/* 登录框按钮样式 */
+:global(.login-form-btn) {
+  background: #1A61DC;
+  /* width: 360px; */
+  height: 50px;
+  color: #fff;
+  margin: auto;
+}
+
+:global(.login-form-btn):hover, :global(.login-form-btn):focus, :global(.login-form-btn):active {
+  background: #1A61DC;
+}

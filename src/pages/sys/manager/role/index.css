@@ -1,0 +1,11 @@
+.toolbar {
+  height: 50px;
+  display: flex;
+  padding-left: 40px;
+  align-items: center;
+}
+
+.toolbar button {
+  font-size: 14px;
+  color: #1a61dc;
+}

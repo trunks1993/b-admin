@@ -1,0 +1,97 @@
+.container {
+  background: #2f3033;
+}
+
+.warrper {
+  width: 1200px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: auto;
+  height: 60px;
+}
+
+.logoBox {
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+}
+
+.logoTitle {
+  font-size: 20px;
+  color: #ffffff;
+  margin-left: 10px;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:global(.head-input) {
+  margin-right: 35px;
+}
+
+:global(.head-input) input {
+  background: #2f3033;
+  height: 30px;
+  color: #fff;
+  border-right: none;
+}
+
+:global(.head-input) input::-webkit-input-placeholder {
+  font-size: 12px;
+}
+
+:global(.head-input .ant-input-group-addon) {
+  background: #2f3033;
+  border-left: none;
+  color: #fff;
+}
+
+.nameBox,
+.toolBox {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+}
+
+.errow {
+  margin-left: 5px;
+}
+
+.toolIcon {
+  width: 17px;
+  height: 17px;
+}
+
+.headIcon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.headIconTitle,
+.toolName {
+  font-size: 12px;
+  color: #ffffff;
+  margin-left: 5px;
+  white-space: nowrap;
+}
+
+.dropBox {
+  width: 100px;
+}
+.dropBox ul > li {
+  cursor: pointer;
+  text-align: center;
+}
+
+.dropBox ul > li:hover {
+  background: #e1ecff;
+}

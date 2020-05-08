@@ -1,0 +1,69 @@
+import React, { Component } from 'react';
+import { Dispatch, AnyAction } from 'redux';
+import Header from './Header/index';
+import Menu from './Menu/index';
+import BreadcrumbPanel from './BreadcrumbPanel/index';
+
+import Styles from './index.css';
+import { connect } from 'dva';
+// import { ConnectState } from '@/models/connect';
+import { RouteComponentProps } from 'react-router-dom';
+import { ConnectState, MenuType } from '@/models/connect';
+
+interface LayoutProps extends RouteComponentProps {
+  dispatch: Dispatch<AnyAction>;
+  level3MenuMap: { [key: string]: MenuType };
+  level2MenuMap: { [key: number]: MenuType };
+}
+
+interface LayoutState {}
+
+@connect(({ user, routing }: ConnectState) => ({
+  location: routing.location,
+  level3MenuMap: user.level3MenuMap,
+  level2MenuMap: user.level2MenuMap,
+}))
+class BasicLayout extends Component<LayoutProps, LayoutState> {
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'user/getMenu',
+      callback: () => {
+        const { level2MenuMap, level3MenuMap, location } = this.props;
+        const { pathname } = location;
+        const leafCode = level3MenuMap[pathname].code;
+        let parentCode = level3MenuMap[pathname].parentCode;
+        parentCode = level2MenuMap[parentCode].parentCode;
+        dispatch({
+          type: 'user/getActiveMenuItem',
+          code: parentCode,
+        });
+        dispatch({
+          type: 'user/getActiveLeafMenuItem',
+          code: leafCode,
+        });
+      },
+    });
+    dispatch({
+      type: 'user/getUser',
+    });
+  }
+
+  render() {
+    // const { match } = this.props;
+    return (
+      <div className={Styles.container}>
+        <Header />
+        <section className={Styles.main}>
+          <Menu />
+          <div className={Styles.left}>
+            <BreadcrumbPanel />
+            <section className={Styles.wrapper}>{this.props.children}</section>
+          </div>
+        </section>
+      </div>
+    );
+  }
+}
+
+export default BasicLayout;

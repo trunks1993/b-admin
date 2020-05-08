@@ -1,0 +1,23 @@
+.container {
+  height: 100vh;
+  overflow: hidden;
+}
+.main {
+  width: 1200px;
+  margin: auto;
+  height: calc(100% - 60px);
+  padding-top: 10px;
+  display: flex;
+  background: #f1f2f7;
+}
+
+.left {
+  margin-left: 10px;
+  width: 980px;
+}
+
+.wrapper {
+  background: #ffffff;
+  margin-top: 10px;
+  height: calc(100% - 50px);
+}
