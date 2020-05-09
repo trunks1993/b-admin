@@ -6,16 +6,18 @@ interface GlobalModalProps {
   onCancel?: () => void;
   onOk?: () => void;
   title: string;
+  confirmLoading: boolean;
 }
 
 const GlobalModal: React.FC<GlobalModalProps> = props => {
-  const { modalVisible, onCancel, onOk, title } = props;
+  const { modalVisible, onCancel, onOk, title, confirmLoading } = props;
 
   return (
     <Modal
       className="global-modal"
       maskClosable={false}
       destroyOnClose
+      confirmLoading={confirmLoading}
       title={title}
       visible={modalVisible}
       width={600}

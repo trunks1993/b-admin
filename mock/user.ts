@@ -1,5 +1,5 @@
 export default {
-  // 获取用户信息
+  // 获取菜单
   'POST /sys/loadUserMenu': (req: any, res: any) => {
     setTimeout(() => {
       res.send({
@@ -191,6 +191,7 @@ export default {
     }, 0);
   },
 
+  // 获取用户信息
   'POST /sys/getLoginInfo': (req: any, res: any) => {
     setTimeout(() => {
       res.send({

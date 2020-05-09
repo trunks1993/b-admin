@@ -99,6 +99,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       )(<Input.Password autoComplete="off" {...customProps} {...otherProps} />),
       CstOther: getFieldDecorator(name, options)(<>{children}</>),
       CstTreeCheck: getFieldDecorator(name, options)(<TreeCheck {...customProps} {...otherProps} />),
+      CstSelect: getFieldDecorator(name, options)(<Select {...customProps} {...otherProps}>{children}</Select>),
     };
 
     return <FormItem colon={false} label={label}>{Map[type || 'CstInput']}</FormItem>;

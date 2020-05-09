@@ -35,11 +35,11 @@ input[type='number'] {
   border: 0px solid transparent;
 }
 *::-webkit-scrollbar-track {
-  background-color: #052f60;
+  /* background-color: #052f60; */
 }
 *::-webkit-scrollbar-thumb {
   background-clip: content-box;
-  background-color: #135290;
+  background-color: #cccccc;
 }
 *::-webkit-scrollbar-corner {
   background: transparent;
@@ -70,7 +70,7 @@ input[type='number'] {
 :global(.global-modal-btn-ok) {
   width: 80px;
   height: 30px !important;
-  background: #1a61dc !important;
+  /* background: #1a61dc !important; */
   margin-left: 20px !important;
 }
 :global(.global-modal-btn-cancel) {
@@ -92,6 +92,14 @@ input[type='number'] {
   height: 40px;
   line-height: unset;
 }
+:global(.global-form .ant-select-selection) {
+  height: 40px;
+  background: #f7f7f7;
+}
+
+:global(.global-form .ant-select-selection__rendered) {
+  line-height: 40px;
+}
 
 /* 全局table样式 */
 :global(.global-table th),
@@ -111,6 +119,7 @@ input[type='number'] {
   align-items: center;
   margin-top: 30px;
   justify-content: flex-end;
+  padding-right: 20px;
 }
 
 :global(.global-pagination-data) {

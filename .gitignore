@@ -7,9 +7,6 @@
 /yarn.lock
 /package-lock.json
 
-# proxy
-/config/proxy.ts
-
 # production
 /dist
 

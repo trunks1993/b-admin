@@ -1,6 +1,7 @@
 .container {
   height: 100vh;
   overflow: hidden;
+  background: #f1f2f7;
 }
 .main {
   width: 1200px;

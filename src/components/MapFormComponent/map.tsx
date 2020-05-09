@@ -8,4 +8,5 @@ export default {
   CstOther: {},
   CstTextArea: {},
   CstTreeCheck: {},
+  CstSelect: {},
 };

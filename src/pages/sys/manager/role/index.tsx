@@ -7,13 +7,19 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
-import { remove, getAuthorityList, getSysRoleInfo } from '../services/role';
+import {
+  remove,
+  getAuthorityList,
+  getSysRoleInfo,
+  EditeRoleItemType,
+  add,
+  modify,
+} from '../services/role';
 import Styles from './index.css';
 import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
-import CheckboxGroup from 'antd/lib/checkbox/Group';
-import TreeCheck, { TreeDataItem } from './components/TreeCheck/index';
+import { TreeDataItem } from './components/TreeCheck/index';
 import { listToTree } from '@/utils';
 
 const { confirm } = Modal;
@@ -24,6 +30,23 @@ interface CompProps extends TableListData<RoleItemType> {
   loading: boolean;
 }
 
+interface FormDataType {
+  sysAuthorityList?: number[];
+  sysRole?: RoleItemType;
+}
+
+const handleEdite = async (fields: EditeRoleItemType) => {
+  const api = fields.code ? modify : add;
+  const [err, data, msg] = await api(fields);
+  if (!err) {
+    message.success('操作成功');
+    return true;
+  } else {
+    message.error('操作失败');
+    return false;
+  }
+};
+
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -31,6 +54,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [treeData, setTreeData] = React.useState<TreeDataItem[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [formData, setFormData] = useState<FormDataType>({});
+  // confirmLoading
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
     initList();
@@ -43,13 +69,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   }, [modalVisible]);
 
   useEffect(() => {
-    if (modalVisible) {
+    const { sysAuthorityList, sysRole } = formData;
+    if (modalVisible && sysRole?.code) {
       form?.setFieldsValue({
-        name: '123',
-        authorityCodes: [2, 3, 4],
+        code: 123,
+        name: sysRole?.name,
+        authorityCodes: sysAuthorityList,
       });
     }
-  });
+  }, [formData]);
 
   /**
    * @name: 列表加载
@@ -99,6 +127,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const handleModalVisible = async (record: RoleItemType) => {
     const [err, data, msg] = await getSysRoleInfo(record.code);
     setModalVisible(true);
+    setFormData(data);
   };
 
   const columns: ColumnProps<RoleItemType>[] = [
@@ -134,21 +163,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   ];
 
   /**
-   * @name: 改变页码触发方法
-   * @param {number} currPage
-   */
-  const handlePageChange = (currPage: number) => {
-    setCurrPage(currPage);
-    // initList();
-  };
-
-  /**
    * @name:
    * @param {type}
    */
   const handleSubmit = () => {
-    form?.validateFields((err, value) => {
-      console.log('handleSubmit -> err, value', err, value);
+    form?.validateFields(async (error, value: EditeRoleItemType) => {
+      if(error) return;
+      setConfirmLoading(true);
+      const isSuccess = await handleEdite(value);
+      setConfirmLoading(false);
+      if(isSuccess) {
+        setCurrPage(1);
+        setModalVisible(false);
+      }
     });
   };
 
@@ -165,8 +192,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="link" onClick={() => setModalVisible(true)}>
-          + 添加角色
+        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+          添加角色
         </Button>
       </div>
       <Table
@@ -180,7 +207,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       <div className="global-pagination">
         <Pagination
           current={currPage}
-          onChange={handlePageChange}
+          onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
           showQuickJumper
@@ -195,8 +222,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         title="编辑角色"
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
+        confirmLoading={confirmLoading}
       >
-        <MapForm className="global-form" layout={formItemLayout} onCreate={setForm}>
+        <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
+          <CstInput name="code" style={{ display: 'none' }} />
           <CstInput
             name="name"
             label="角色名称"

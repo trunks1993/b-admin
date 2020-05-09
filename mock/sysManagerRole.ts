@@ -1,10 +1,10 @@
-import { Response, Request } from "express";
+import { Response, Request } from 'express';
 
 /*
  * @Date: 2020-05-07 16:32:46
- * @LastEditTime: 2020-05-08 21:12:52
+ * @LastEditTime: 2020-05-09 22:23:23
  */
-const data = Array(20)
+const data = Array(10)
   .fill('')
   .map((item, index) => ({
     id: index,
@@ -14,11 +14,17 @@ const data = Array(20)
     userNumber: 10088,
     remark: '具备“财务管理”，“查看订单”的相关权限',
   }));
+const noDataRes = {
+  result: {},
+  code: '0',
+  success: true,
+  resultMsg: null,
+};
 export default {
-  // 获取角色列表
+  // 获取列表
   'POST /sys/searchSysRoleList': (req: Request, res: Response) => {
     const { currPage, pageSize } = req.body;
-    const list = data.slice((currPage - 1) * pageSize, currPage * pageSize);
+    const list = !pageSize ? data : data.slice((currPage - 1) * pageSize, currPage * pageSize);
     setTimeout(() => {
       res.send({
         result: {
@@ -34,48 +40,28 @@ export default {
     }, 0);
   },
 
-  // 删除角色
+  // 删除
   'POST /sys/deleteSysRole': (req: Request, res: Response) => {
-    const { code } = req.body;
-    const list = data.filter(item => item.code !== code);
     setTimeout(() => {
-      res.send({
-        result: {},
-        code: '0',
-        success: true,
-        resultMsg: null,
-      });
+      res.send(noDataRes);
     }, 2000);
   },
 
-  // 查询角色对应权限
-  // 查询所有权限
-  // 新增角色
-  // 编辑角色
+  // 修改
   'POST /sys/modifySysRole': (req: Request, res: Response) => {
-    const { code } = req.body;
-    const list = data.filter(item => item.code !== code);
     setTimeout(() => {
-      res.send({
-        result: {},
-        code: '0',
-        success: true,
-        resultMsg: null,
-      });
+      res.send(noDataRes);
     }, 2000);
   },
+
+  // 新增
   'POST /sys/addSysRole': (req: Request, res: Response) => {
-    const { code } = req.body;
-    const list = data.filter(item => item.code !== code);
     setTimeout(() => {
-      res.send({
-        result: {},
-        code: '0',
-        success: true,
-        resultMsg: null,
-      });
+      res.send(noDataRes);
     }, 2000);
   },
+
+  // 获取角色权限列表
   'POST /sys/searchSysAuthorityList': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send({
@@ -245,6 +231,8 @@ export default {
       });
     });
   },
+
+  // 获取详情
   'POST /sys/getSysRoleInfo': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send({

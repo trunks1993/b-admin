@@ -7,14 +7,14 @@ import { LoginParamsType } from '@/services/login';
 
 export interface MapFormProps {
   defaultActiveKey?: string;
-  onTabChange?: (key: string) => void;
   style?: React.CSSProperties;
   onSubmit?: (error: unknown, values: LoginParamsType) => void;
-  layout?: any;
+  layout?: 'inline' | 'vertical' | 'horizontal';
   className?: string;
   form: FormComponentProps['form'];
   onCreate: (form: FormComponentProps['form']) => void;
   children: React.ReactElement[] | React.ReactElement;
+  layColWrapper?: any;
 }
 
 interface MapFormState {
@@ -29,11 +29,11 @@ class MapForm extends Component<MapFormProps, MapFormState> {
   public static CstOther: React.FunctionComponent<FormItemProps>;
   public static CstTextArea: React.FunctionComponent<FormItemProps>;
   public static CstTreeCheck: React.FunctionComponent<FormItemProps>;
+  public static CstSelect: React.FunctionComponent<FormItemProps>;
 
   static defaultProps = {
     className: '',
     defaultActiveKey: '',
-    onTabChange: () => {},
     onSubmit: () => {},
   };
 
@@ -51,20 +51,6 @@ class MapForm extends Component<MapFormProps, MapFormState> {
     }
   }
 
-  onSwitch = (type: string) => {
-    this.setState(
-      {
-        type,
-      },
-      () => {
-        const { onTabChange } = this.props;
-        if (onTabChange) {
-          onTabChange(type);
-        }
-      },
-    );
-  };
-
   getContext: () => FormContextProps = () => {
     const { form } = this.props;
     return {
@@ -73,11 +59,11 @@ class MapForm extends Component<MapFormProps, MapFormState> {
   };
 
   render() {
-    const { children, className, layout } = this.props;
+    const { children, className, layout, layColWrapper } = this.props;
     return (
       <FormContext.Provider value={this.getContext()}>
         <div>
-          <Form {...layout} className={className}>{children}</Form>
+          <Form layout={layout} {...layColWrapper} className={className}>{children}</Form>
         </div>
       </FormContext.Provider>
     );

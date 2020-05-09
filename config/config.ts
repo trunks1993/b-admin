@@ -13,6 +13,9 @@ const config: IConfig = {
   alias: {
     '@': path.resolve(path.resolve(__dirname, 'src')),
   },
+  theme: {
+    'primary-color': '#1A61DC',
+  },
   define: {
     'process.env.MAIN_TITLE': '星营销',
     'process.env.BASE_API': '/baseApi',
