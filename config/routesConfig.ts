@@ -1,6 +1,11 @@
+/*
+ * @Date: 2020-05-04 23:02:07
+ * @LastEditTime: 2020-05-11 19:19:29
+ */
 // 设备模块
 export const product = [
   { path: '/product/manager/list', component: './product/manager/list', Routes: ['src/AuthRouter'] },
+  { path: '/product/manager/list/:id', component: './product/manager/list/edit', Routes: ['src/AuthRouter'] },
   { path: '/product/manager/group', component: './product/manager/group', Routes: ['src/AuthRouter'] },
   { path: '/product/manager/management', component: './product/manager/management', Routes: ['src/AuthRouter'] },
   { path: '/product/manager/price', component: './product/manager/price', Routes: ['src/AuthRouter'] },

@@ -7,6 +7,7 @@ import FormContext from './FormContext';
 import { Moment } from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import TreeCheck from '@/pages/sys/manager/role/components/TreeCheck';
+import GlobalUpLoad from '../GlobalUpload';
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -100,6 +101,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       CstOther: getFieldDecorator(name, options)(<>{children}</>),
       CstTreeCheck: getFieldDecorator(name, options)(<TreeCheck {...customProps} {...otherProps} />),
       CstSelect: getFieldDecorator(name, options)(<Select {...customProps} {...otherProps}>{children}</Select>),
+      CstUpload: getFieldDecorator(name, options)(<GlobalUpLoad {...customProps} {...otherProps}>{children}</GlobalUpLoad>),
     };
 
     return <FormItem colon={false} label={label}>{Map[type || 'CstInput']}</FormItem>;

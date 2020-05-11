@@ -4,6 +4,7 @@ import { connect } from 'dva';
 import { ConnectState, MenuType } from '@/models/connect';
 import { RouteComponentProps } from 'dva/router';
 import refresh from '@/assets/images/global/refresh.png';
+import _ from 'lodash';
 
 interface BreadcrumbPanelType extends RouteComponentProps {
   level2MenuMap: { [key: number]: MenuType };
@@ -15,12 +16,14 @@ const BreadcrumbPanel: React.FC<BreadcrumbPanelType> = ({
   level3MenuMap,
   level2MenuMap,
 }) => {
-  const activeLeafMenu = level3MenuMap[location.pathname];
+  const path = location.pathname;
+  const activeLeafMenu = _.find(level3MenuMap, (item, key) => path === item.uri || path.includes(item.uri));
+  const parentCode = activeLeafMenu?.parentCode || '';
   return (
     <div className={Styles.container}>
       <span className={Styles.breadcrumb}>
         <span>首页</span>
-        <span>>{level2MenuMap[activeLeafMenu?.parentCode]?.name}</span>
+        <span>>{level2MenuMap[parentCode]?.name}</span>
         <span style={{ color: '#333333' }}>>{activeLeafMenu?.name}</span>
       </span>
       <img className={Styles.refresh} width="16px" height="16px" src={refresh} />

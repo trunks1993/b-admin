@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-11 09:27:53
- * @LastEditTime: 2020-05-11 14:25:58
+ * @LastEditTime: 2020-05-11 22:09:19
  */
 /**
  * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
@@ -16,12 +16,26 @@ export default {
       changeOrigin: true,
       pathRewrite: { '^/baseApi': '' },
     },
+    '/file': {
+      target: 'http://192.168.31.64:9080/',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/file': '',
+      },
+    },
   },
   test: {
     '/baseApi': {
       target: 'http://192.168.31.64:9002',
       changeOrigin: true,
       pathRewrite: { '^/baseApi': '' },
+    },
+    '/file/': {
+      target: 'http://192.168.31.64:9080/',
+      changeOrigin: true,
+      pathRewrite: {
+        '^/file/': '',
+      },
     },
   },
 };

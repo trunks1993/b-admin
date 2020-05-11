@@ -1,13 +1,13 @@
 /*
  * @Date: 2020-05-07 16:28:45
- * @LastEditTime: 2020-05-11 11:56:56
+ * @LastEditTime: 2020-05-11 16:56:30
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
 
 export interface QueryParamsType extends BaseQueryType {}
 
-export interface EditeRoleItemType {
+export interface EditeItemType {
   code?: number;
   name: string;
   authorityCodes: number[];
@@ -42,7 +42,7 @@ export async function remove(code: number): Promise<any> {
  * @name: 新增
  * @param {number} data
  */
-export async function add(data: EditeRoleItemType): Promise<any> {
+export async function add(data: EditeItemType): Promise<any> {
   return request('/sys/addSysRole', {
     method: 'POST',
     data,
@@ -53,7 +53,7 @@ export async function add(data: EditeRoleItemType): Promise<any> {
  * @name: 修改
  * @param {number} data
  */
-export async function modify(data: EditeRoleItemType): Promise<any> {
+export async function modify(data: EditeItemType): Promise<any> {
   return request('/sys/modifySysRole', {
     method: 'POST',
     data,

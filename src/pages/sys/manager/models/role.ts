@@ -1,3 +1,7 @@
+/*
+ * @Date: 2020-05-07 15:23:35
+ * @LastEditTime: 2020-05-11 17:14:42
+ */
 import { Effect } from 'dva';
 
 import { queryList } from '../services/role';
@@ -5,7 +9,7 @@ import { Reducer } from 'redux';
 import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
 
-export interface RoleItemType {
+export interface ListItemType {
   code: number;
   name: string;
   isAdmin: 'Y' | 'N';
@@ -13,10 +17,10 @@ export interface RoleItemType {
   remark: string;
 }
 
-export interface RoleModelState extends TableListData<RoleItemType>{
+export interface RoleModelState extends TableListData<ListItemType>{
 }
 
-export interface RoleModelType {
+export interface ModelType {
   namespace: string;
   state: RoleModelState;
   effects: {
@@ -27,7 +31,7 @@ export interface RoleModelType {
   };
 }
 
-const Model: RoleModelType = {
+const Model: ModelType = {
   namespace: 'sysManagerRole',
   state: {
     list: [],

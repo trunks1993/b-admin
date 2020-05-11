@@ -30,7 +30,7 @@ export interface UserType {
   headIcon?: string;
 }
 
-export interface UserModelType {
+interface ModelType {
   namespace?: string;
   state: UserModelState;
   effects: {
@@ -47,7 +47,7 @@ export interface UserModelType {
   };
 }
 
-const Model: UserModelType = {
+const Model: ModelType = {
   namespace: 'user',
 
   state: {

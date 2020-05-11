@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 11:43:12
- * @LastEditTime: 2020-05-11 16:04:51
+ * @LastEditTime: 2020-05-11 20:49:20
  */
 import { Effect } from 'dva';
 
@@ -14,21 +14,21 @@ export interface ListItemType {
   code: number;
   productSubCode: number;
   productSubName: string;
-  productCode: number;
-  productName: string;
+  productCode: number; // 商品编码
+  productName: string; // 商品名
   brandCode: number;
   brandName: string;
-  productTypeCode: number;
+  productTypeCode: number; // 商品类型
   price: number;
   iconUrl: string;
-  soldNum: number;
+  soldNum: number; // 销量
   status: number;
   stock: number;
 }
 
 export interface ListModelState extends TableListData<ListItemType> {}
 
-export interface ListModelType {
+interface ModelType {
   namespace: string;
   state: ListModelState;
   effects: {
@@ -39,7 +39,7 @@ export interface ListModelType {
   };
 }
 
-const Model: ListModelType = {
+const Model: ModelType = {
   namespace: 'productManagerList',
   state: {
     list: [],

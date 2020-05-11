@@ -1,24 +1,24 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-11 11:47:10
+ * @LastEditTime: 2020-05-11 21:01:02
  */
 
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
+import { ListItemType } from '../models/list';
 
 export interface QueryParamsType extends BaseQueryType {
   code?: number;
   productSubCode?: number;
   productTypeCode?: number;
+  status?: number;
 }
 
-export interface EditeItemType {
-  goodsId?: number;
-  productSubCode?: number;
-  productTypeCode?: number;
-  price?: number;
-  purchaseNotes?: string;
-  usageIllustration?: string;
+export interface EditeItemType extends ListItemType{
+  resume: string; // 描述
+  purchaseNotes: string; // 购买须知
+  usageIllustration: string; // 使用说明
+  facePrice: number; // 官方价格
 }
 
 export interface ModifyStatusParamType {
@@ -61,24 +61,37 @@ export async function modify(data: EditeItemType): Promise<any> {
 
 /**
  * @name: 删除
- * @param {number} goodsId
+ * @param {number[] | string[]} goodsIds
  */
-export async function remove(goodsId: number): Promise<any> {
+export async function remove(goodsIds: number[] | string[]): Promise<any> {
   return request('/sys/deleteGoods', {
     method: 'POST',
     data: {
-      goodsId,
+      goodsIds,
     },
   });
 }
 
 /**
- * @name: 修改
+ * @name: 修改状态
  * @param {ModifyStatusParamType} data
  */
 export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
   return request('/goods/modifyGoodsStatus', {
     method: 'POST',
     data,
+  });
+}
+
+/**
+ * @name: 获取详情
+ * @param {string} goodsId
+ */
+export async function getInfo(goodsId: string): Promise<any> {
+  return request('/goods/getGoodsById', {
+    method: 'POST',
+    data: {
+      goodsId,
+    },
   });
 }

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-11 15:55:16
+ * @LastEditTime: 2020-05-11 17:56:23
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -26,8 +26,8 @@ export const UserStatuMap = {
 };
 
 // 商品列表常量
-export const PRODUCT_STATUS_1 = 1; // 销售中
-export const PRODUCT_STATUS_2 = 2; // 已售罄
+export const PRODUCT_STATUS_1 = 1; // 销售中|上架
+export const PRODUCT_STATUS_2 = 2; // 已售罄|下架
 export const PRODUCT_STATUS_3 = 3; // 仓库中
 
 export const ProductStatus = {
@@ -47,4 +47,12 @@ export const ProductTypes = {
   [PRODUCT_TYPE_2]: '兑换码',
   [PRODUCT_TYPE_3]: '短链接',
   [PRODUCT_TYPE_4]: '直充',
+};
+
+// 上下架
+// export const PRODUCT_STATUS_GROUNDING = 1; // 上架
+// export const PRODUCT_STATUS_UNDERCARRIAGE = 2; // 下架
+export const ProductStatusGU = {
+  [PRODUCT_STATUS_1]: '上架',
+  [PRODUCT_STATUS_2]: '下架',
 };

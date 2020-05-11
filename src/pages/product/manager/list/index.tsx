@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/list';
+import { ListItemType as CategoryItemType } from '../models/group';
+
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
@@ -10,8 +12,10 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
   UserStatuMap,
-  ProductStatus,
   ProductTypes,
+  PRODUCT_STATUS_1,
+  PRODUCT_STATUS_2,
+  ProductStatusGU,
 } from '@/const';
 import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
@@ -20,14 +24,15 @@ import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TabsPanel from './components/TabsPanel';
+import router from 'umi/router';
 
-console.log(ProductStatus);
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
+  categoryList: CategoryItemType[];
 }
 
 const formItemLayout = {
@@ -61,7 +66,7 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
@@ -74,14 +79,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
-    console.log('ccc');
     setSelectedRowKeys([]);
     initList();
   }, [currPage]);
 
-  // useEffect(() => {
-  //   getRols();
-  // }, []);
+  useEffect(() => {
+    getCategoryList();
+  }, []);
 
   useEffect(() => {
     const {
@@ -120,30 +124,38 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   /**
+   * @name: 触发列表加载effect
+   * @param {type}
+   */
+  const dispatchInit = (callback?: () => void) => {
+    callback && callback();
+    currPage === 1 ? initList() : setCurrPage(1);
+  };
+  /**
    * @name: 获取所有角色
    */
-  const getRols = () => {
+  const getCategoryList = () => {
     dispatch({
-      type: 'productManagerList/fetchList',
+      type: 'productManagerGroup/fetchList',
       queryParams: {},
     });
   };
 
   /**
    * @name: 删除
-   * @param {number} userId
+   * @param {number} id
    */
-  const showConfirm = (userId: number) => {
+  const showConfirm = (id: number) => {
     confirm({
       title: '提示',
       content: '是否删除',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        const [err, data, msg] = await remove(userId);
+        const [err, data, msg] = await remove([id]);
         if (!err) message.success('删除成功，即将刷新');
         else message.error('删除失败，请重试');
-        initList();
+        dispatchInit();
       },
       onCancel() {},
     });
@@ -154,7 +166,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @param {ListItemType} record
    */
   //   const handleModalVisible = async (record: ListItemType) => {
-  //     const [err, data, msg] = await getSysUserInfo(record.userId);
+  //     const [err, data, msg] = await getSysUserInfo(record.id);
   //     setModalVisible(true);
   //     setFormData(data);
   //   };
@@ -191,10 +203,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => handleModalVisible(record)}>
+          <Button type="link" onClick={() => router.push(`/product/manager/list/${record.id}`)}>
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm(record.userId)}>
+          <Button type="link" onClick={() => showConfirm(record.id)}>
             删除
           </Button>
         </>
@@ -213,7 +225,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setCurrPage(1);
+        dispatchInit();
         setModalVisible(false);
       }
     });
@@ -224,16 +236,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @param {type}
    */
   const handleChangeDataStatus = async (status: number) => {
-    setConfirmLoading(true);
-    const [err, data, msg] = await modifyStatus({ goodsIds: selectedRowKeys, status });
-    setConfirmLoading(false);
-    if (!err) {
-      initList();
-      setSelectedRowKeys([]);
-      message.success('操作成功');
-    } else {
-      message.error('操作失败');
-    }
+    confirm({
+      title: '提示',
+      content: `是否${ProductStatusGU[status]}`,
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        const [err, data, msg] = await modifyStatus({ goodsIds: selectedRowKeys, status });
+        if (!err) {
+          dispatchInit(() => setSelectedRowKeys([]));
+          message.success('操作成功');
+        } else {
+          message.error('操作失败');
+        }
+      },
+      onCancel() {},
+    });
   };
 
   /**
@@ -242,10 +260,42 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const handleSelectAll = (e: CheckboxChangeEvent) => {
     const checked = e.target.checked;
-    const keys = _.map(list, item => item.userId.toString());
+    const keys = _.map(list, item => item.id.toString());
     const selections =
       (selectedRowKeys.length > 0 || checked) && selectedRowKeys.length !== keys.length ? keys : [];
     setSelectedRowKeys(selections);
+  };
+
+  /**
+   * @name: 批量删除
+   * @param {type}
+   */
+  const handleRemoveList = () => {
+    confirm({
+      title: '提示',
+      content: '是否删除',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        const [err, data, msg] = await remove(selectedRowKeys);
+        if (!err) {
+          dispatchInit(() => setSelectedRowKeys([]));
+          message.success('操作成功');
+        } else {
+          message.error('操作失败');
+        }
+      },
+      onCancel() {},
+    });
+  };
+
+  /**
+   * @name: 商品状态筛选
+   * @param {string} activeKey
+   */
+  const handleTabsPanelChange = (activeKey: string) => {
+    filterForm?.setFieldsValue({ status: activeKey });
+    dispatchInit(() => setSelectedRowKeys([]));
   };
 
   const rowSelection = {
@@ -265,21 +315,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       </div>
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="inline" onCreate={setFilterForm}>
+          <CstInput name="status" style={{ display: 'none' }} />
           <CstInput
-            name="roleCode"
+            name="code"
             label="商品筛选"
             style={{ width: '160px' }}
-            placeholder="请选择角色"
+            placeholder="输入商品名称/编码"
           />
           <CstSelect
             name="categoryCode"
             label="商品分组"
             style={{ width: '160px' }}
-            placeholder="请选择角色"
+            placeholder="请选择分组"
           >
-            {_.map(UserStatuMap, (item, key) => (
-              <Select.Option key={key} value={key}>
-                {item}
+            {_.map(categoryList, (item, key) => (
+              <Select.Option key={key} value={item.code}>
+                {item.name}
               </Select.Option>
             ))}
           </CstSelect>
@@ -287,7 +338,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             name="productTypeCode"
             label="商品类型"
             style={{ width: '160px' }}
-            placeholder="请选择角色"
+            placeholder="请选择商品类型"
           >
             {_.map(ProductTypes, (item, key) => (
               <Select.Option key={key} value={key}>
@@ -296,11 +347,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             ))}
           </CstSelect>
           <Form.Item>
-            <Button
-              type="primary"
-              icon="search"
-              onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
-            >
+            <Button type="primary" icon="search" onClick={() => dispatchInit()}>
               筛选
             </Button>
           </Form.Item>
@@ -311,11 +358,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           </Form.Item>
         </MapForm>
       </div>
-      <TabsPanel onChange={(activeKey: string) => console.log(activeKey)}>
+      <TabsPanel onChange={handleTabsPanelChange}>
         <div style={{ padding: '20px' }}>
           <span>
             <Checkbox
-              // indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
+              indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
               onChange={handleSelectAll}
               checked={selectedRowKeys.length > 0}
             >
@@ -326,14 +373,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             <Button
               loading={confirmLoading}
               disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(0)}
+              onClick={() => handleChangeDataStatus(PRODUCT_STATUS_1)}
             >
               上架
             </Button>
             <Button
               loading={confirmLoading}
               disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(1)}
+              onClick={() => handleChangeDataStatus(PRODUCT_STATUS_2)}
               style={{ marginLeft: '10px' }}
             >
               下架
@@ -341,7 +388,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             <Button
               loading={confirmLoading}
               disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(0)}
+              onClick={handleRemoveList}
               style={{ marginLeft: '10px' }}
             >
               删除
@@ -349,7 +396,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             <Button
               loading={confirmLoading}
               disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(1)}
+              onClick={() => {}}
               style={{ marginLeft: '10px' }}
             >
               批量设置
@@ -382,8 +429,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   );
 };
 
-export default connect(({ productManagerList, loading }: ConnectState) => ({
+export default connect(({ productManagerList, productManagerGroup, loading }: ConnectState) => ({
   list: productManagerList.list,
+  categoryList: productManagerGroup.list,
   total: productManagerList.total,
   loading: loading.effects['productManagerList/fetchList'],
 }))(Comp);

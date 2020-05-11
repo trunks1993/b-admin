@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tabs } from 'antd';
+import { PRODUCT_STATUS_1, ProductStatus, PRODUCT_STATUS_2, PRODUCT_STATUS_3 } from '@/const';
 const { TabPane } = Tabs;
 
 interface TabsPanelProps {
@@ -10,16 +11,16 @@ const TabsPanel: React.FC<TabsPanelProps> = props => {
   const { onChange, children } = props;
   return (
     <Tabs onChange={onChange} type="card">
-      <TabPane tab="全部" key="1">
+      <TabPane tab="全部" key="">
         {children}
       </TabPane>
-      <TabPane tab="销售中" key="2">
+      <TabPane tab={ProductStatus[PRODUCT_STATUS_1]} key={PRODUCT_STATUS_1.toString()}>
         {children}
       </TabPane>
-      <TabPane tab="已售罄" key="3">
+      <TabPane tab={ProductStatus[PRODUCT_STATUS_2]} key={PRODUCT_STATUS_2.toString()}>
         {children}
       </TabPane>
-      <TabPane tab="仓库中" key="4">
+      <TabPane tab={ProductStatus[PRODUCT_STATUS_3]} key={PRODUCT_STATUS_3.toString()}>
         {children}
       </TabPane>
     </Tabs>

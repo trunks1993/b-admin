@@ -1,3 +1,7 @@
+/*
+ * @Date: 2020-05-04 23:02:07
+ * @LastEditTime: 2020-05-11 17:15:16
+ */
 import { Reducer } from 'redux';
 import { routerRedux } from 'dva/router';
 import { Effect } from 'dva';
@@ -11,7 +15,7 @@ import { setToken, getToken, removeToken } from '@/utils/cookie';
 
 export interface LoginModelState {}
 
-export interface LoginModelType {
+export interface ModelType {
   namespace: string;
   state: LoginModelState;
   effects: {
@@ -21,7 +25,7 @@ export interface LoginModelType {
   reducers: {};
 }
 
-const Model: LoginModelType = {
+const Model: ModelType = {
   namespace: 'login',
 
   state: {},

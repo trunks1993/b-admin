@@ -9,4 +9,5 @@ export default {
   CstTextArea: {},
   CstTreeCheck: {},
   CstSelect: {},
+  CstUpload: {},
 };

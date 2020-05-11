@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 11:43:12
- * @LastEditTime: 2020-05-09 14:32:43
+ * @LastEditTime: 2020-05-11 17:14:53
  */
 import { Effect } from 'dva';
 
@@ -9,7 +9,7 @@ import { Reducer } from 'redux';
 import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
 
-export interface UserItemType {
+export interface ListItemType {
   roleName: string;
   createTime: string;
   userId: number;
@@ -20,9 +20,9 @@ export interface UserItemType {
   status: number;
 }
 
-export interface UserModelState extends TableListData<UserItemType> {}
+export interface UserModelState extends TableListData<ListItemType> {}
 
-export interface UserModelType {
+export interface ModelType {
   namespace: string;
   state: UserModelState;
   effects: {
@@ -33,7 +33,7 @@ export interface UserModelType {
   };
 }
 
-const Model: UserModelType = {
+const Model: ModelType = {
   namespace: 'sysManagerUser',
   state: {
     list: [],

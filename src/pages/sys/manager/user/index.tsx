@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
-import { UserItemType } from '../models/user';
+import { ListItemType } from '../models/user';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
@@ -20,14 +20,14 @@ import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import { listToTree } from '@/utils';
-import { RoleItemType } from '../models/role';
+import { ListItemType as RoleItemType } from '../models/role';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
 
-interface CompProps extends TableListData<UserItemType> {
+interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
   roles: RoleItemType[];
@@ -146,15 +146,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
 
   /**
    * @name: 打开弹窗设置回显字段
-   * @param {UserItemType} record
+   * @param {ListItemType} record
    */
-  const handleModalVisible = async (record: UserItemType) => {
+  const handleModalVisible = async (record: ListItemType) => {
     const [err, data, msg] = await getInfo(record.userId);
     setModalVisible(true);
     setFormData(data);
   };
 
-  const columns: ColumnProps<UserItemType>[] = [
+  const columns: ColumnProps<ListItemType>[] = [
     {
       title: '账号',
       dataIndex: 'userName',
@@ -245,7 +245,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
   const rowSelection = {
     selectedRowKeys,
     hideDefaultSelections: true,
-    onChange: (selectedRowKeys: string[] | number[], selectedRows: UserItemType[]) => {
+    onChange: (selectedRowKeys: string[] | number[], selectedRows: ListItemType[]) => {
       setSelectedRowKeys(selectedRowKeys);
     },
   };

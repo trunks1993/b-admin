@@ -19,8 +19,7 @@ const config: IConfig = {
   define: {
     'process.env.MAIN_TITLE': '星营销',
     'process.env.BASE_API': '/baseApi',
-    'process.env.BASE_UPLOAD_URL': 'http://192.168.0.110:9999/iotApi',
-    'process.env.BASE_FILE_SERVER': 'http://192.168.31.64:9080',
+    'process.env.BASE_FILE_SERVER': '/file',
   },
   routes: [
     {

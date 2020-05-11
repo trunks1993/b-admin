@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
-import { RoleItemType } from '../models/role';
+import { ListItemType } from '../models/role';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
@@ -10,7 +10,7 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
 import {
   remove,
   getAuthorityList,
-  EditeRoleItemType,
+  EditeItemType,
   add,
   modify,
   getInfo,
@@ -25,17 +25,17 @@ import { listToTree } from '@/utils';
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstTreeCheck } = MapForm;
 
-interface CompProps extends TableListData<RoleItemType> {
+interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
 }
 
 interface FormDataType {
   sysAuthorityList?: number[];
-  sysRole?: RoleItemType;
+  sysRole?: ListItemType;
 }
 
-const handleEdite = async (fields: EditeRoleItemType) => {
+const handleEdite = async (fields: EditeItemType) => {
   const api = fields.code ? modify : add;
   const [err, data, msg] = await api(fields);
   if (!err) {
@@ -93,6 +93,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   /**
+   * @name: 触发列表加载effect
+   * @param {type}
+   */
+  const dispatchInit = (callback?: () => void) => {
+    callback && callback();
+    currPage === 1 ? initList() : setCurrPage(1);
+  };
+
+  /**
    * @name: 查询权限列表
    */
   const initAuth = async () => {
@@ -118,19 +127,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         const [err, data, msg] = await remove(code);
         if (!err) message.success('删除成功，即将刷新');
         else message.error('删除失败，请重试');
-        initList();
+        dispatchInit();
       },
       onCancel() {},
     });
   };
 
-  const handleModalVisible = async (record: RoleItemType) => {
+  const handleModalVisible = async (record: ListItemType) => {
     const [err, data, msg] = await getInfo(record.code);
     setModalVisible(true);
     setFormData(data);
   };
 
-  const columns: ColumnProps<RoleItemType>[] = [
+  const columns: ColumnProps<ListItemType>[] = [
     {
       title: '角色名称',
       dataIndex: 'name',
@@ -167,7 +176,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @param {type}
    */
   const handleSubmit = () => {
-    form?.validateFields(async (error, value: EditeRoleItemType) => {
+    form?.validateFields(async (error, value: EditeItemType) => {
       if(error) return;
       setConfirmLoading(true);
       const isSuccess = await handleEdite(value);

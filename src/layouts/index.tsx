@@ -9,6 +9,7 @@ import { connect } from 'dva';
 // import { ConnectState } from '@/models/connect';
 import { RouteComponentProps } from 'react-router-dom';
 import { ConnectState, MenuType } from '@/models/connect';
+import _ from 'lodash';
 
 interface LayoutProps extends RouteComponentProps {
   dispatch: Dispatch<AnyAction>;
@@ -31,9 +32,13 @@ class BasicLayout extends Component<LayoutProps, LayoutState> {
       callback: () => {
         const { level2MenuMap, level3MenuMap, location } = this.props;
         const { pathname } = location;
-        const leafCode = level3MenuMap[pathname].code;
-        let parentCode = level3MenuMap[pathname].parentCode;
-        parentCode = level2MenuMap[parentCode].parentCode;
+        const activeLeafMenu = _.find(
+          level3MenuMap,
+          (item, key) => pathname === item.uri || pathname.includes(item.uri),
+        );
+        const leafCode = activeLeafMenu?.code;
+        let parentCode = activeLeafMenu?.parentCode;
+        parentCode = level2MenuMap[parentCode || '']?.parentCode;
         dispatch({
           type: 'user/getActiveMenuItem',
           code: parentCode,
