@@ -8,7 +8,7 @@
 export default {
   dev: {
     '/baseApi': {
-      target: 'http://192.168.31.175:8000',
+      target: 'http://172.20.10.9:8000',
       changeOrigin: true,
       pathRewrite: { '^/baseApi': '' },
     },
