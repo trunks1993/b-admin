@@ -6,14 +6,14 @@ import { UserItemType } from '../models/user';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, userStatuMap } from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, UserStatuMap } from '@/const';
 import {
   remove,
-  getSysUserInfo,
+  getInfo,
   EditeUserItemType,
   add,
   modify,
-  modifySysUserStatus,
+  modifyStatus,
 } from '../services/user';
 import Styles from './index.css';
 import GlobalModal from '@/components/GlobalModal';
@@ -149,7 +149,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
    * @param {UserItemType} record
    */
   const handleModalVisible = async (record: UserItemType) => {
-    const [err, data, msg] = await getSysUserInfo(record.userId);
+    const [err, data, msg] = await getInfo(record.userId);
     setModalVisible(true);
     setFormData(data);
   };
@@ -173,7 +173,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
     {
       title: '状态',
       align: 'center',
-      render: record => userStatuMap[record.status],
+      render: record => UserStatuMap[record.status],
     },
     {
       title: '添加时间',
@@ -219,7 +219,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
    */
   const handleChangeDataStatus = async (status: number) => {
     setConfirmLoading(true);
-    const [err, data, msg] = await modifySysUserStatus({ userIds: selectedRowKeys, status });
+    const [err, data, msg] = await modifyStatus({ userIds: selectedRowKeys, status });
     setConfirmLoading(false);
     if (!err) {
       initList();
@@ -278,7 +278,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
               style={{ width: '160px' }}
               placeholder="请选择角色"
             >
-              {_.map(userStatuMap, (item, key) => (
+              {_.map(UserStatuMap, (item, key) => (
                 <Select.Option key={key} value={key}>
                   {item}
                 </Select.Option>

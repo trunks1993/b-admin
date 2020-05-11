@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-09 22:29:50
+ * @LastEditTime: 2020-05-11 11:47:10
  */
 
 import request from '@/utils/request';
@@ -19,6 +19,11 @@ export interface EditeItemType {
   price?: number;
   purchaseNotes?: string;
   usageIllustration?: string;
+}
+
+export interface ModifyStatusParamType {
+  goodsIds: string[] | number[];
+  status: number;
 }
 
 /**
@@ -64,5 +69,16 @@ export async function remove(goodsId: number): Promise<any> {
     data: {
       goodsId,
     },
+  });
+}
+
+/**
+ * @name: 修改
+ * @param {ModifyStatusParamType} data
+ */
+export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
+  return request('/goods/modifyGoodsStatus', {
+    method: 'POST',
+    data,
   });
 }

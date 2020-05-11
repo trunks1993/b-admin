@@ -1,3 +1,7 @@
+/*
+ * @Date: 2020-05-07 16:28:45
+ * @LastEditTime: 2020-05-11 11:56:56
+ */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
 
@@ -66,11 +70,11 @@ export async function getAuthorityList(): Promise<any> {
   });
 }
 
-/**
+/** 获取详情
  * @name:
  * @param {number} code
  */
-export async function getSysRoleInfo(code: number): Promise<any> {
+export async function getInfo(code: number): Promise<any> {
   return request('/sys/getSysRoleInfo', {
     method: 'POST',
     data: {

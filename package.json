@@ -3,7 +3,7 @@
   "scripts": {
     "start": "umi dev",
     "start:dev": "cross-env REACT_APP_ENV=dev umi dev",
-    "start:prod": "cross-env REACT_APP_ENV=prod MOCK=none umi dev",
+    "start:test": "cross-env REACT_APP_ENV=test MOCK=none umi dev",
     "build:prod": "cross-env UMI_ENV=prod umi build",
     "build:test": "cross-env UMI_ENV=test umi build",
     "test": "umi test",

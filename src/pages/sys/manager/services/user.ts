@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 11:28:27
- * @LastEditTime: 2020-05-09 20:14:12
+ * @LastEditTime: 2020-05-11 11:56:46
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -20,7 +20,7 @@ export interface EditeUserItemType {
   remark?: string;
 }
 
-export interface ModifyUserStatusParamItem {
+export interface ModifyStatusParamType {
   userIds: string[] | number[];
   status: number;
 }
@@ -72,10 +72,10 @@ export async function modify(data: EditeUserItemType): Promise<any> {
 }
 
 /**
- * @name: 获取用户信息
+ * @name: 获取详情
  * @param {number} userId
  */
-export async function getSysUserInfo(userId: number): Promise<any> {
+export async function getInfo(userId: number): Promise<any> {
   return request('/sys/getSysUserInfo', {
     method: 'POST',
     data: {
@@ -88,7 +88,7 @@ export async function getSysUserInfo(userId: number): Promise<any> {
  * @name: 批量修改用户状态
  * @param {void}
  */
-export async function modifySysUserStatus(data: ModifyUserStatusParamItem): Promise<any> {
+export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
   return request('/sys/batchModifySysUserStatus', {
     method: 'POST',
     data,

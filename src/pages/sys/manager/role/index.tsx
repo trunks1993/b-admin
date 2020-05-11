@@ -10,10 +10,10 @@ import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
 import {
   remove,
   getAuthorityList,
-  getSysRoleInfo,
   EditeRoleItemType,
   add,
   modify,
+  getInfo,
 } from '../services/role';
 import Styles from './index.css';
 import GlobalModal from '@/components/GlobalModal';
@@ -125,7 +125,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   const handleModalVisible = async (record: RoleItemType) => {
-    const [err, data, msg] = await getSysRoleInfo(record.code);
+    const [err, data, msg] = await getInfo(record.code);
     setModalVisible(true);
     setFormData(data);
   };

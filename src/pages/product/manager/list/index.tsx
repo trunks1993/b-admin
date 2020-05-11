@@ -6,8 +6,14 @@ import { ListItemType } from '../models/list';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, userStatuMap } from '@/const';
-import { remove, add, modify, EditeItemType } from '../services/list';
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGE_NUM,
+  UserStatuMap,
+  ProductStatus,
+  ProductTypes,
+} from '@/const';
+import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
@@ -15,6 +21,7 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TabsPanel from './components/TabsPanel';
 
+console.log(ProductStatus);
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
 
@@ -67,13 +74,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {
+    console.log('ccc');
     setSelectedRowKeys([]);
     initList();
   }, [currPage]);
 
-  useEffect(() => {
-    getRols();
-  }, []);
+  // useEffect(() => {
+  //   getRols();
+  // }, []);
 
   useEffect(() => {
     const {
@@ -102,7 +110,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const initList = () => {
     const data = filterForm?.getFieldsValue();
     dispatch({
-      type: 'sysManagerUser/fetchList',
+      type: 'productManagerList/fetchList',
       queryParams: {
         currPage,
         pageSize,
@@ -153,28 +161,29 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   const columns: ColumnProps<ListItemType>[] = [
     {
-      title: '账号',
-      dataIndex: 'userName',
+      title: '商品名称',
+      dataIndex: 'productName',
       align: 'center',
     },
     {
-      title: '用户名称',
-      dataIndex: 'realname',
+      title: '价格（元）',
+      dataIndex: 'price',
       align: 'center',
     },
     {
-      title: '角色',
-      dataIndex: 'roleName',
+      title: '商品类型',
+      // dataIndex: 'productTypeCode',
       align: 'center',
+      render: record => ProductTypes[record.productTypeCode],
     },
     {
-      title: '状态',
+      title: '库存',
       align: 'center',
-      render: record => userStatuMap[record.status],
+      dataIndex: 'stock',
     },
     {
-      title: '添加时间',
-      dataIndex: 'createTime',
+      title: '销量',
+      dataIndex: 'soldNum',
       align: 'center',
     },
     {
@@ -182,9 +191,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          {/* <Button type="link" onClick={() => handleModalVisible(record)}>
+          <Button type="link" onClick={() => handleModalVisible(record)}>
             编辑
-          </Button> */}
+          </Button>
           <Button type="link" onClick={() => showConfirm(record.userId)}>
             删除
           </Button>
@@ -216,7 +225,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const handleChangeDataStatus = async (status: number) => {
     setConfirmLoading(true);
-    const [err, data, msg] = await modifySysUserStatus({ userIds: selectedRowKeys, status });
+    const [err, data, msg] = await modifyStatus({ goodsIds: selectedRowKeys, status });
     setConfirmLoading(false);
     if (!err) {
       initList();
@@ -249,110 +258,126 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   return (
     <div>
-      <TabsPanel />
-      {/* <div className={Styles.toolbar}>
+      <div className={Styles.toolbar}>
         <Button type="primary" onClick={() => setModalVisible(true)}>
           发布商品
         </Button>
       </div>
       <div className={Styles.filter}>
-          <MapForm className="filter-form" layout="inline" onCreate={setFilterForm}>
-            <CstSelect
-              name="roleCode"
-              label="商品筛选"
-              style={{ width: '160px' }}
-              placeholder="请选择角色"
+        <MapForm className="filter-form" layout="inline" onCreate={setFilterForm}>
+          <CstInput
+            name="roleCode"
+            label="商品筛选"
+            style={{ width: '160px' }}
+            placeholder="请选择角色"
+          />
+          <CstSelect
+            name="categoryCode"
+            label="商品分组"
+            style={{ width: '160px' }}
+            placeholder="请选择角色"
+          >
+            {_.map(UserStatuMap, (item, key) => (
+              <Select.Option key={key} value={key}>
+                {item}
+              </Select.Option>
+            ))}
+          </CstSelect>
+          <CstSelect
+            name="productTypeCode"
+            label="商品类型"
+            style={{ width: '160px' }}
+            placeholder="请选择角色"
+          >
+            {_.map(ProductTypes, (item, key) => (
+              <Select.Option key={key} value={key}>
+                {item}
+              </Select.Option>
+            ))}
+          </CstSelect>
+          <Form.Item>
+            <Button
+              type="primary"
+              icon="search"
+              onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
             >
-            </CstSelect>
-            <CstSelect
-              name="status"
-              label="商户分组"
-              style={{ width: '160px' }}
-              placeholder="请选择角色"
-            >
-              {_.map(userStatuMap, (item, key) => (
-                <Select.Option key={key} value={key}>
-                  {item}
-                </Select.Option>
-              ))}
-            </CstSelect>
-            <CstSelect
-              name="status"
-              label="商品类型"
-              style={{ width: '160px' }}
-              placeholder="请选择角色"
-            >
-              {_.map(userStatuMap, (item, key) => (
-                <Select.Option key={key} value={key}>
-                  {item}
-                </Select.Option>
-              ))}
-            </CstSelect>
-            <Form.Item>
-              <Button
-                type="primary"
-                icon="search"
-                onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
-              >
-                筛选
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button icon="undo" onClick={() => filterForm?.resetFields()}>
-                重置
-              </Button>
-            </Form.Item>
-          </MapForm>
+              筛选
+            </Button>
+          </Form.Item>
+          <Form.Item>
+            <Button icon="undo" onClick={() => filterForm?.resetFields()}>
+              重置
+            </Button>
+          </Form.Item>
+        </MapForm>
       </div>
-      <div style={{ padding: '20px' }}>
-        <span>
-          <Checkbox
-            indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
-            onChange={handleSelectAll}
-            checked={selectedRowKeys.length > 0}
-          >
-            当页全选
-          </Checkbox>
-        </span>
-        <span>
-          <Button
-            loading={confirmLoading}
-            disabled={selectedRowKeys.length === 0}
-            onClick={() => handleChangeDataStatus(0)}
-          >
-            启用
-          </Button>
-          <Button
-            loading={confirmLoading}
-            disabled={selectedRowKeys.length === 0}
-            onClick={() => handleChangeDataStatus(1)}
-            style={{ marginLeft: '10px' }}
-          >
-            关闭
-          </Button>
-        </span>
-      </div>
-      <Table
-        className="global-table"
-        rowSelection={rowSelection}
-        loading={loading}
-        columns={columns}
-        pagination={false}
-        dataSource={list}
-        rowKey={record => record.userId.toString()}
-      />
-      <div className="global-pagination">
-        <Pagination
-          current={currPage}
-          onChange={(currPage: number) => setCurrPage(currPage)}
-          defaultPageSize={DEFAULT_PAGE_SIZE}
-          total={total}
-          showQuickJumper
+      <TabsPanel onChange={(activeKey: string) => console.log(activeKey)}>
+        <div style={{ padding: '20px' }}>
+          <span>
+            <Checkbox
+              // indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
+              onChange={handleSelectAll}
+              checked={selectedRowKeys.length > 0}
+            >
+              当页全选
+            </Checkbox>
+          </span>
+          <span>
+            <Button
+              loading={confirmLoading}
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => handleChangeDataStatus(0)}
+            >
+              上架
+            </Button>
+            <Button
+              loading={confirmLoading}
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => handleChangeDataStatus(1)}
+              style={{ marginLeft: '10px' }}
+            >
+              下架
+            </Button>
+            <Button
+              loading={confirmLoading}
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => handleChangeDataStatus(0)}
+              style={{ marginLeft: '10px' }}
+            >
+              删除
+            </Button>
+            <Button
+              loading={confirmLoading}
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => handleChangeDataStatus(1)}
+              style={{ marginLeft: '10px' }}
+            >
+              批量设置
+            </Button>
+          </span>
+        </div>
+        <Table
+          className="global-table"
+          rowSelection={rowSelection}
+          loading={loading}
+          columns={columns}
+          pagination={false}
+          dataSource={list}
+          rowKey={record => record.id.toString()}
         />
-        <span className="global-pagination-data">
-          共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
-        </span>
-      </div> */}
+        <div className="global-pagination">
+          <Pagination
+            current={currPage}
+            onChange={(currPage: number) => setCurrPage(currPage)}
+            defaultPageSize={DEFAULT_PAGE_SIZE}
+            total={total}
+            showQuickJumper
+          />
+          <span className="global-pagination-data">
+            共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
+          </span>
+        </div>
+      </TabsPanel>
     </div>
   );
 };
@@ -360,5 +385,5 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 export default connect(({ productManagerList, loading }: ConnectState) => ({
   list: productManagerList.list,
   total: productManagerList.total,
-  loading: loading.effects['sysManagerUser/fetchList'],
+  loading: loading.effects['productManagerList/fetchList'],
 }))(Comp);

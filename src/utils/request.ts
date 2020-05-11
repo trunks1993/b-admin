@@ -1,3 +1,7 @@
+/*
+ * @Date: 2020-05-04 23:02:07
+ * @LastEditTime: 2020-05-11 16:01:01
+ */
 /**
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
@@ -5,7 +9,7 @@
 import { extend } from 'umi-request';
 import { notification } from 'antd';
 import { METHOD_POST, whiteUrls } from '@/const';
-import { getToken } from './cookie';
+import { getToken, removeToken } from './cookie';
 
 const codeMessage = {
   200: '服务器成功返回请求的数据。',
@@ -74,7 +78,7 @@ request.use(async (ctx, next) => {
 
   await next();
   const { res } = ctx;
-  const { success, result, resultMsg } = res;
+  const { success, result, resultMsg, code } = res;
   if (!success) ctx.res = [!res.success, null, resultMsg];
   else ctx.res = [!res.success, result, null];
 });

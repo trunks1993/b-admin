@@ -7,17 +7,20 @@ interface TabsPanelProps {
 }
 
 const TabsPanel: React.FC<TabsPanelProps> = props => {
-  const { onChange } = props;
+  const { onChange, children } = props;
   return (
     <Tabs onChange={onChange} type="card">
-      <TabPane tab="Tab 1" key="1">
-        Content of Tab Pane 1
+      <TabPane tab="全部" key="1">
+        {children}
       </TabPane>
-      <TabPane tab="Tab 2" key="2">
-        Content of Tab Pane 2
+      <TabPane tab="销售中" key="2">
+        {children}
       </TabPane>
-      <TabPane tab="Tab 3" key="3">
-        Content of Tab Pane 3
+      <TabPane tab="已售罄" key="3">
+        {children}
+      </TabPane>
+      <TabPane tab="仓库中" key="4">
+        {children}
       </TabPane>
     </Tabs>
   );
