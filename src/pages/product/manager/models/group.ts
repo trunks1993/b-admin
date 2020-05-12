@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:53:29
- * @LastEditTime: 2020-05-11 21:33:15
+ * @LastEditTime: 2020-05-12 22:33:29
  */
 import { Effect } from 'dva';
 
@@ -10,12 +10,14 @@ import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
 
 export interface ListItemType {
+  id: number;
   code: number;
-  name?: string;
+  name: string;
   status?: number;
   iconUrl?: string;
   createTime?: string;
   goodsCount?: number;
+  brandName?: string;
 }
 
 export interface GroupModelState extends TableListData<ListItemType> {}
