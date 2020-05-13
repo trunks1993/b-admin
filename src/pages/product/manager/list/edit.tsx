@@ -8,6 +8,10 @@ import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { RouteComponentProps } from 'dva/router';
+import MapForm from '@/components/MapFormComponent';
+import Styles from './edit.css';
+
+const { CstInput, CstBlockCheckbox, CstTextArea } = MapForm;
 
 const { confirm } = Modal;
 
@@ -31,6 +35,7 @@ const handleEdite = async (fields: EditeItemType) => {
 const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [errMsg, setErrMsg] = useState('');
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -40,18 +45,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
 
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(match.params.id);
-    console.log(data);
   };
-
-  /**
-   * @name: 打开弹窗设置回显字段
-   * @param {ListItemType} record
-   */
-  //   const handleModalVisible = async (record: ListItemType) => {
-  //     const [err, data, msg] = await getSysUserInfo(record.id);
-  //     setModalVisible(true);
-  //     setFormData(data);
-  //   };
 
   /**
    * @name: 表单提交
@@ -69,12 +63,104 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     });
   };
 
+  // const formItemLayout = {
+  //   labelCol: {
+  //     span: 4,
+  //   },
+  //   wrapperCol: {
+  //     span: 10,
+  //     push: 1,
+  //   },
+  // };
+
   return (
-    <div style={{background: '#f1f2f7', height: '100%'}}>
-      <Card size="small" type="inner" title="商品类型" style={{ width: '100%', marginBottom: '10px' }}></Card>
-      <Card size="small" type="inner" title="基本信息" style={{ width: '100%', marginBottom: '10px' }}></Card>
-      <Card size="small" type="inner" title="价格/库存" style={{ width: '100%', marginBottom: '10px' }}></Card>
-      <Card size="small" type="inner" title="其他信息" style={{ width: '100%', marginBottom: '10px' }}></Card>
+    <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
+      <MapForm className="global-form" onCreate={setForm}>
+        <Card
+          size="small"
+          type="inner"
+          title="商品类型"
+          style={{ width: '100%', marginBottom: '10px' }}
+        >
+          <CstBlockCheckbox
+            name="productTypeCode"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 10 }}
+          />
+        </Card>
+        <Card
+          size="small"
+          type="inner"
+          title="基本信息"
+          style={{ width: '100%', marginBottom: '10px' }}
+        >
+          <CstInput
+            label="商品名称"
+            help="填写商品名称，方便快速检索相关产品"
+            placeholder="请输入商品名称"
+            name="productName"
+          />
+          <CstTextArea
+            label="描述"
+            placeholder="请输入商品描述"
+            name="resume"
+            autoSize={{ minRows: 4, maxRows: 6 }}
+          />
+        </Card>
+        <Card
+          size="small"
+          type="inner"
+          title="价格/库存"
+          style={{ width: '100%', marginBottom: '10px' }}
+        >
+          <CstInput
+            label="价格"
+            placeholder="请输入商品价格"
+            name="price"
+            rules={[
+              {
+                required: true,
+                message: '商品价格不能为空',
+              },
+            ]}
+          />
+          <CstInput label="官方价" placeholder="请输入商品价格" name="facePrice" />
+          <CstInput
+            label="库存"
+            placeholder="请输入库存数量"
+            name="stock"
+            help={
+              errMsg
+                ? errMsg
+                : '库存为 0 时，会放到『已售罄』的商品列表里，保存后买家看到的商品可售库存同步更新'
+            }
+            rules={[
+              {
+                required: true,
+                validator: (rule, value, callback) => {
+                  if (!value) {
+                    setErrMsg('商品价格不能为空');
+                    callback(new Error('商品价格不能为空'));
+                  } else {
+                    setErrMsg('');
+                    callback();
+                  }
+                },
+              },
+            ]}
+          />
+        </Card>
+        <Card
+          size="small"
+          type="inner"
+          title="其他信息"
+          style={{ width: '100%', marginBottom: '10px' }}
+        ></Card>
+      </MapForm>
+      <div className={Styles.btn}>
+        <Button type="primary">保存</Button>
+        <Button style={{ marginLeft: '20px' }}>返回</Button>
+      </div>
     </div>
   );
 };

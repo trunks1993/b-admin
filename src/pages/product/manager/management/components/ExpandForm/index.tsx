@@ -1,18 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ListItemSubType } from '../..';
-import { Table, Button, Input } from 'antd';
+import { Table, Button, Input, Icon } from 'antd';
 import _ from 'lodash';
 import Styles from './index.css';
-import { EditeItemSubType } from '../../../services/management';
+import { EditeItemSubType, modifySub, addSub } from '../../../services/management';
 
 interface ExpandFormProps {
   dataSource?: ListItemSubType[];
   brandName?: string;
+  saveRow: (data: EditeItemSubType) => void;
+  addFormList?: EditeItemSubType[];
+  handleAddInputChange: (value: string, index: number, key: string) => void;
+  removeFormItem: (index: number, reload?: boolean) => void;
 }
 
 const ExpandForm: React.FC<ExpandFormProps> = props => {
-  const { dataSource, brandName } = props;
+  const {
+    dataSource,
+    brandName,
+    saveRow,
+    addFormList,
+    handleAddInputChange,
+    removeFormItem,
+  } = props;
   const [editList, setEditList] = useState<EditeItemSubType[]>([]);
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
 
   /**
    * @name:
@@ -25,6 +38,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
     });
     setEditList(obj);
   };
+
   return (
     <div>
       <ul>
@@ -48,8 +62,17 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                   item.facePrice + '/' + item.shortName
                 ) : (
                   <>
-                    <input style={{ width: '40px' }} defaultValue={item.facePrice} onChange={e => handleInputChange(e.target.value, item.id, 'facePrice')} />/
-                    <input style={{ width: '40px' }} defaultValue={item.shortName} onChange={e => handleInputChange(e.target.value, item.id, 'shortName')} />
+                    <input
+                      style={{ width: '40px' }}
+                      defaultValue={item.facePrice}
+                      onChange={e => handleInputChange(e.target.value, item.id, 'facePrice')}
+                    />
+                    /
+                    <input
+                      style={{ width: '40px' }}
+                      defaultValue={item.shortName}
+                      onChange={e => handleInputChange(e.target.value, item.id, 'shortName')}
+                    />
                   </>
                 )}
               </span>
@@ -77,19 +100,25 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                   <>
                     <Button
                       type="link"
+                      onClick={async () => {
+                        if (confirmLoading) return;
+                        setConfirmLoading(true);
+                        const [err, data, msg] = await modifySub(editList[index]);
+                        setConfirmLoading(false);
+                        const { productSubId, facePrice, name, shortName } = editList[index];
+                        saveRow({ productSubId, facePrice, name, shortName });
+                        setEditList(editList.filter(item => item.productSubId !== productSubId));
+                      }}
+                    >
+                      {confirmLoading ? <Icon type="loading" /> : '保存'}
+                    </Button>
+                    <Button
+                      type="link"
                       onClick={() => {
                         setEditList(editList.filter(v => v.productSubId !== item.id));
                       }}
                     >
                       取消
-                    </Button>
-                    <Button
-                      type="link"
-                      onClick={() => {
-                        console.log('handleInputChange -> editList', editList);
-                      }}
-                    >
-                      保存
                     </Button>
                   </>
                 )}
@@ -98,6 +127,59 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
           );
         })}
       </ul>
+      {addFormList && addFormList.length ? (
+        <ul className={Styles.addbox}>
+          {_.map(addFormList, (item, index) => {
+            return (
+              <li key={item.uuid} className={Styles.item}>
+                <span className={Styles.name}>
+                  <input
+                    defaultValue={item.name}
+                    onChange={e => handleAddInputChange(e.target.value, index, 'name')}
+                  />
+                </span>
+                <span className={Styles.brandName}>{brandName}</span>
+                <span className={Styles.value}>
+                  <input
+                    style={{ width: '40px' }}
+                    defaultValue={item.facePrice}
+                    onChange={e => handleAddInputChange(e.target.value, index, 'facePrice')}
+                  />
+                  /
+                  <input
+                    style={{ width: '40px' }}
+                    defaultValue={item.shortName}
+                    onChange={e => handleAddInputChange(e.target.value, index, 'shortName')}
+                  />
+                </span>
+                <span className={Styles.createTime}></span>
+                <span className={Styles.btn}>
+                  <Button
+                    type="link"
+                    onClick={async () => {
+                      if (confirmLoading) return;
+                      setConfirmLoading(true);
+                      const [err, data, msg] = await addSub(item);
+                      setConfirmLoading(false);
+                      removeFormItem(index, true);
+                    }}
+                  >
+                    {confirmLoading ? <Icon type="loading" /> : '保存'}
+                  </Button>
+                  <Button
+                    type="link"
+                    onClick={() => {
+                      removeFormItem(index);
+                    }}
+                  >
+                    取消
+                  </Button>
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </div>
   );
 };

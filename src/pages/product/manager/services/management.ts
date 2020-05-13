@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:48
- * @LastEditTime: 2020-05-12 22:30:23
+ * @LastEditTime: 2020-05-13 16:18:08
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -21,10 +21,12 @@ export interface EditeItemType extends ListItemType {
 }
 
 export interface EditeItemSubType {
-  productSubId?: number;
+  productSubId?: number | string;
+  productCode?: number;
+  uuid?: string;
   name: string;
   shortName: string;
-  facePrice: number;
+  facePrice: number | string;
 }
 
 /**

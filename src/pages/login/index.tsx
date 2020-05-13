@@ -58,7 +58,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
     });
   };
 
-  const customProps = (isPwd: boolean) => ({
+  const otherProps = (isPwd: boolean) => ({
     onFocus: () => resetErrorMsg(),
     addonBefore: (
       <span>
@@ -66,14 +66,19 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
       </span>
     ),
     className: 'login-form-input',
+    onPressEnter: isPwd && handleSubmit,
   });
 
   return (
     <div className={Styles.box}>
       <div className={Styles.formTitle}>
         <img src={icon} width="100" height="100" />
-        <span style={{fontSize: '24px', lineHeight: '24px', marginTop: '28px'}}>星营销业务运营系统</span>
-        <span style={{fontSize: '14px', lineHeight: '14px', marginTop: '8px'}}>X-Marketing Business Operation</span>
+        <span style={{ fontSize: '24px', lineHeight: '24px', marginTop: '28px' }}>
+          星营销业务运营系统
+        </span>
+        <span style={{ fontSize: '14px', lineHeight: '14px', marginTop: '8px' }}>
+          X-Marketing Business Operation
+        </span>
       </div>
 
       <MapForm className={Styles.form} onCreate={fromCreate}>
@@ -85,7 +90,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
               message: '请填写用户名称',
             },
           ]}
-          customProps={customProps(false)}
+          {...otherProps(false)}
           placeholder="请输入用户名"
         />
         <CstPassword
@@ -96,7 +101,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
               message: '请填写登录密码',
             },
           ]}
-          customProps={{...customProps(true), onPressEnter: handleSubmit }}
+          {...otherProps(true)}
           placeholder="请输入登录密码"
         />
         <CstOther name="errorMsg">

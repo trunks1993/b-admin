@@ -7,14 +7,7 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, UserStatuMap } from '@/const';
-import {
-  remove,
-  getInfo,
-  EditeUserItemType,
-  add,
-  modify,
-  modifyStatus,
-} from '../services/user';
+import { remove, getInfo, EditeUserItemType, add, modify, modifyStatus } from '../services/user';
 import Styles from './index.css';
 import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
@@ -420,9 +413,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
             name="remark"
             label="备注"
             placeholder="最多输入50个字"
-            customProps={{
-              autoSize: { minRows: 3, maxRows: 5 },
-            }}
+            autoSize={{ minRows: 3, maxRows: 5 }}
           />
         </MapForm>
       </GlobalModal>

@@ -13,8 +13,10 @@ import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
-import { queryListSub } from '../services/management';
+import { queryListSub, EditeItemSubType } from '../services/management';
 import ExpandForm from './components/ExpandForm';
+import _ from 'lodash';
+import { guid } from '@/utils';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload } = MapForm;
@@ -25,9 +27,16 @@ interface CompProps extends TableListData<ListItemType> {
 }
 
 export interface ListItemSubType extends ListItemType {
-    facePrice: number;
-    shortName: string;
-    productCode: number;
+  facePrice: number | string;
+  shortName: string;
+  productCode: number;
+}
+
+interface ExpandedRowType {
+  code: string;
+  loading: boolean;
+  list: ListItemSubType[];
+  addFormList?: EditeItemSubType[];
 }
 
 const handleEdite = async (fields: EditeItemType) => {
@@ -53,9 +62,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   // 表格展开
-  const [expandedRows, setExpandedRows] = useState<
-    { code: string; loading: boolean; list: ListItemSubType[] }[]
-  >([]);
+  const [expandedRows, setExpandedRows] = useState<ExpandedRowType[]>([]);
+
+  //   const [addList, setAddList] = useState<EditeItemSubType[]>([]);
 
   useEffect(() => {
     initList();
@@ -184,10 +193,44 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '操作',
       align: 'center',
-    //   width: 300,
       render: record => (
         <>
-          <Button type="link">+子产品</Button>
+          <Button
+            type="link"
+            onClick={async () => {
+              const code = record.code.toString();
+              const hasKey = expandedRows.find(item => item.code === code);
+
+              const formData = {
+                productCode: record.code,
+                uuid: guid(),
+                name: '',
+                shortName: '',
+                facePrice: '',
+              };
+
+              if (!hasKey) {
+                setExpandedRows([...expandedRows, { code, loading: true, list: [] }]);
+                const [err, data, msg] = await queryListSub(record.code);
+                if (!err)
+                  setExpandedRows([
+                    ...expandedRows,
+                    { code, loading: false, list: data, addFormList: [formData] },
+                  ]);
+              } else {
+                hasKey.addFormList && hasKey.addFormList.push(formData);
+                const newExpandedRows = _.map(expandedRows, item => {
+                  if (item.code === code) {
+                    item.addFormList = hasKey.addFormList || [formData];
+                  }
+                  return item;
+                });
+                setExpandedRows(newExpandedRows);
+              }
+            }}
+          >
+            +子产品
+          </Button>
           <Button type="link" onClick={() => handleModalVisible(record)}>
             编辑
           </Button>
@@ -241,8 +284,65 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         dataSource={list}
         rowKey={record => record.code.toString()}
         expandedRowRender={record => {
-          const { list } = expandedRows.find(item => item.code === record.code.toString()) || {};
-          return <ExpandForm brandName={record.brandName} dataSource={list} />;
+          const { list, addFormList } =
+            expandedRows.find(item => item.code === record.code.toString()) || {};
+          //   const ref = React.createRef();
+          //   setRef([...refList, ref]);
+          return (
+            <ExpandForm
+              saveRow={data => {
+                const newList = list?.map(item => {
+                  if (item.id === data.productSubId) {
+                    item.shortName = data.shortName;
+                    item.facePrice = data.facePrice;
+                    item.name = data.name;
+                  }
+                  return item;
+                });
+
+                const newExpandedRows = expandedRows.map(item => {
+                  if (item.code === record.code.toString()) {
+                    item.list = newList || [];
+                  }
+                  return item;
+                });
+
+                setExpandedRows(newExpandedRows);
+              }}
+              brandName={record.brandName}
+              dataSource={list}
+              addFormList={addFormList}
+              handleAddInputChange={(value: string, index: number, key: string) => {
+                const newExpandedRows = expandedRows.map(item => {
+                  if (item.code === record.code.toString() && item.addFormList) {
+                    item.addFormList[index][key] = value;
+                  }
+                  return item;
+                });
+                setExpandedRows(newExpandedRows);
+              }}
+              removeFormItem={async (index: number, reload?: boolean) => {
+                let newExpandedRows = expandedRows.map(item => {
+                  if (item.code === record.code.toString() && item.addFormList) {
+                    item.addFormList.splice(index, 1);
+                  }
+                  return item;
+                });
+                setExpandedRows(newExpandedRows);
+                if (reload) {
+                  const [err, data, msg] = await queryListSub(record.code);
+                  if (!err)
+                    newExpandedRows = expandedRows.map(item => {
+                      if (item.code === record.code.toString()) {
+                        item.list = data;
+                      }
+                      return item;
+                    });
+                  setExpandedRows(newExpandedRows);
+                }
+              }}
+            />
+          );
         }}
         expandedRowKeys={expandedRows.filter(item => !item.loading).map(item => item.code)}
         expandIcon={() => null}
@@ -291,14 +391,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 },
               },
             ]}
-            customProps={{
-              action: `${process.env.BASE_FILE_SERVER}/upload`,
-              method: 'POST',
-              data: {
-                userName: 'yunjin_file_upload',
-                password: 'yunjin_upload_password',
-                domain: 'category',
-              },
+            action={`${process.env.BASE_FILE_SERVER}/upload`}
+            method="POST"
+            data={{
+              userName: 'yunjin_file_upload',
+              password: 'yunjin_upload_password',
+              domain: 'category',
             }}
             label="分组图标"
           />

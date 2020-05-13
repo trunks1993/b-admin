@@ -8,6 +8,7 @@ import { Moment } from 'moment';
 import TextArea from 'antd/lib/input/TextArea';
 import TreeCheck from '@/pages/sys/manager/role/components/TreeCheck';
 import GlobalUpLoad from '../GlobalUpload';
+import BlockCheckbox from '../BlockCheckbox';
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
@@ -20,7 +21,6 @@ export interface FormItemType {
 
 export interface FormItemProps extends GetFieldDecoratorOptions {
   name?: string;
-  style?: React.CSSProperties;
   placeholder?: string;
   type?: string;
   defaultValue?: string | number | Moment;
@@ -30,6 +30,7 @@ export interface FormItemProps extends GetFieldDecoratorOptions {
   label?: string;
   format?: string;
   children?: React.ReactElement | React.ReactElement[];
+  help?: string | React.ReactElement;
 }
 
 interface FormItemState {}
@@ -71,6 +72,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       type,
       form,
       children,
+      help,
       ...restProps
     } = this.props;
 
@@ -89,23 +91,44 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       CstInput: getFieldDecorator(
         name,
         options,
-      )(<Input autoComplete="off" {...customProps} {...otherProps} />),
-      CstTextArea: getFieldDecorator(
-        name,
-        options,
-      )(<TextArea {...customProps} {...otherProps}/>),
+      )(<Input autoComplete="off" {...otherProps} />),
+      CstTextArea: getFieldDecorator(name, options)(<TextArea />),
       CstPassword: getFieldDecorator(
         name,
         options,
-      )(<Input.Password autoComplete="off" {...customProps} {...otherProps} />),
+      )(<Input.Password autoComplete="off" {...otherProps} />),
       CstOther: getFieldDecorator(name, options)(<>{children}</>),
-      CstTreeCheck: getFieldDecorator(name, options)(<TreeCheck {...customProps} {...otherProps} />),
-      CstSelect: getFieldDecorator(name, options)(<Select {...customProps} {...otherProps}>{children}</Select>),
-      CstUpload: getFieldDecorator(name, options)(<GlobalUpLoad {...customProps} {...otherProps}>{children}</GlobalUpLoad>),
+      CstTreeCheck: getFieldDecorator(
+        name,
+        options,
+      )(<TreeCheck {...otherProps} />),
+      CstSelect: getFieldDecorator(
+        name,
+        options,
+      )(
+        <Select {...otherProps}>
+          {children}
+        </Select>,
+      ),
+      CstUpload: getFieldDecorator(
+        name,
+        options,
+      )(
+        <GlobalUpLoad {...otherProps}>
+          {children}
+        </GlobalUpLoad>,
+      ),
+      CstBlockCheckbox: getFieldDecorator(
+        name,
+        options,
+      )(<BlockCheckbox {...otherProps} />),
     };
 
-    return <FormItem colon={false} label={label}>{Map[type || 'CstInput']}</FormItem>;
-    // return Map[type || 'CstInput'];
+    return (
+      <FormItem colon={false} label={label} help={help}>
+        {Map[type || '']}
+      </FormItem>
+    );
   }
 }
 

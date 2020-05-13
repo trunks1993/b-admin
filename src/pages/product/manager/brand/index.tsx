@@ -116,7 +116,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '品牌LOGO',
       align: 'center',
-      render: record => <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />,
+      render: record => (
+        <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+      ),
     },
     {
       title: '简单描述',
@@ -225,14 +227,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 },
               },
             ]}
-            customProps={{
-              action: `${process.env.BASE_FILE_SERVER}/upload`,
-              method: 'POST',
-              data: {
-                userName: 'yunjin_file_upload',
-                password: 'yunjin_upload_password',
-                domain: 'category',
-              },
+            action={`${process.env.BASE_FILE_SERVER}/upload`}
+            method="POST"
+            data={{
+              userName: 'yunjin_file_upload',
+              password: 'yunjin_upload_password',
+              domain: 'category',
             }}
             label="分组图标"
           />

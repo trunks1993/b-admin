@@ -19,6 +19,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  padding-left: 20px;
 }
 .value {
   width: 150px;
@@ -41,4 +42,8 @@
   display: inline-block;
   text-align: right;
   padding-right: 21px;
+}
+.addbox {
+  padding: 15px 0;
+  border-top: 1px solid #e6e6e6;
 }

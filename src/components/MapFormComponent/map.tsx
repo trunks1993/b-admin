@@ -10,4 +10,5 @@ export default {
   CstTreeCheck: {},
   CstSelect: {},
   CstUpload: {},
+  CstBlockCheckbox: {},
 };

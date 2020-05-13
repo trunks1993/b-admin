@@ -1,0 +1,53 @@
+.blockBox {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 0;
+}
+
+.block {
+  width: 160px;
+  height: 80px;
+  border: 1px solid rgba(230, 230, 230, 1);
+  position: relative;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  justify-content: center;
+}
+
+:global(.active) {
+  border: 1px solid rgba(26, 97, 220, 1);
+}
+:global(.active) .title {
+  color: #1a61dc !important;
+}
+:global(.active) .describe {
+  color: #1a61dc !important;
+}
+
+:global(.active):after {
+  content: ' ';
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  right: -1px;
+  bottom: -1px;
+  /* background: #1a61dc; */
+  background: url(../../assets/images/global/check.png);
+}
+
+.describe {
+  font-size: 12px;
+  color: #999999;
+  line-height: 12px;
+  margin-top: 15px;
+}
+.title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333333;
+  line-height: 16px;
+}

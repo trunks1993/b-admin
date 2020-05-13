@@ -7,14 +7,7 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
-import {
-  remove,
-  getAuthorityList,
-  EditeItemType,
-  add,
-  modify,
-  getInfo,
-} from '../services/role';
+import { remove, getAuthorityList, EditeItemType, add, modify, getInfo } from '../services/role';
 import Styles from './index.css';
 import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
@@ -177,11 +170,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
-      if(error) return;
+      if (error) return;
       setConfirmLoading(true);
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
-      if(isSuccess) {
+      if (isSuccess) {
         setCurrPage(1);
         setModalVisible(false);
       }
@@ -250,15 +243,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             name="remark"
             label="角色描述"
             placeholder="最多输入50个字"
-            customProps={{
-              autoSize: { minRows: 3, maxRows: 5 },
-            }}
+            autoSize={{ minRows: 3, maxRows: 5 }}
           />
           <CstTreeCheck
             label="权限"
             rules={[{ required: true, message: '权限不能为空' }]}
             name="authorityCodes"
-            customProps={{ treeData }}
+            treeData={treeData}
           />
         </MapForm>
       </GlobalModal>

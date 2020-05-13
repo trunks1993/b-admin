@@ -31,6 +31,7 @@ class MapForm extends Component<MapFormProps, MapFormState> {
   public static CstTreeCheck: React.FunctionComponent<FormItemProps>;
   public static CstSelect: React.FunctionComponent<FormItemProps>;
   public static CstUpload: React.FunctionComponent<FormItemProps>;
+  public static CstBlockCheckbox: React.FunctionComponent<FormItemProps>;
 
   static defaultProps = {
     className: '',

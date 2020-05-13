@@ -219,20 +219,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             rules={[
               {
                 validator: (rule, value, callback) => {
-                  if(value === FILE_ERROR_TYPE) callback(new Error('文件格式错误'));
-                  if(value === FILE_ERROR_SIZE) callback(new Error('文件大小不能超过2M'));
+                  if (value === FILE_ERROR_TYPE) callback(new Error('文件格式错误'));
+                  if (value === FILE_ERROR_SIZE) callback(new Error('文件大小不能超过2M'));
                   callback();
-                }
-              }
-            ]}
-            customProps={{
-              action: `${process.env.BASE_FILE_SERVER}/upload`,
-              method: 'POST',
-              data: {
-                userName: 'yunjin_file_upload',
-                password: 'yunjin_upload_password',
-                domain: 'category',
+                },
               },
+            ]}
+            action={`${process.env.BASE_FILE_SERVER}/upload`}
+            method="POST"
+            data={{
+              userName: 'yunjin_file_upload',
+              password: 'yunjin_upload_password',
+              domain: 'category',
             }}
             label="分组图标"
           />
