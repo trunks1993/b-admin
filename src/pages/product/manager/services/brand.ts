@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:38
- * @LastEditTime: 2020-05-11 23:22:13
+ * @LastEditTime: 2020-05-15 11:31:50
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -8,9 +8,11 @@ import { BaseQueryType } from '@/services';
 export interface QueryParamsType extends BaseQueryType {}
 
 export interface EditeItemType {
-  categoryCode?: number;
-  name?: string;
-  iconUrl?: string;
+  brandId?: number;
+  name: string;
+  iconUrl: string;
+  resume?: string;
+  introduction?: string;
 }
 
 export interface SetGroupParamsType {

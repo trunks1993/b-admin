@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { ListItemSubType } from '../..';
-import { Table, Button, Input, Icon } from 'antd';
+import { Table, Button, Input, Icon, Modal, message } from 'antd';
 import _ from 'lodash';
 import Styles from './index.css';
-import { EditeItemSubType, modifySub, addSub } from '../../../services/management';
+import { EditeItemSubType, modifySub, addSub, removeSub } from '../../../services/management';
+const { confirm } = Modal;
 
 interface ExpandFormProps {
   dataSource?: ListItemSubType[];
   brandName?: string;
-  saveRow: (data: EditeItemSubType) => void;
+  reload: () => void;
   addFormList?: EditeItemSubType[];
   handleAddInputChange: (value: string, index: number, key: string) => void;
   removeFormItem: (index: number, reload?: boolean) => void;
@@ -18,7 +19,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
   const {
     dataSource,
     brandName,
-    saveRow,
+    reload,
     addFormList,
     handleAddInputChange,
     removeFormItem,
@@ -37,6 +38,27 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
       return item;
     });
     setEditList(obj);
+  };
+
+  /**
+   * @name: 删除
+   * @param {number} productSubId
+   */
+  const handleDelete = async (id: number) => {
+    confirm({
+      title: '提示',
+      content: '是否删除',
+      okText: '确定',
+      cancelText: '取消',
+      onOk: async () => {
+        const [err, data, msg] = await removeSub(id);
+        if (!err) {
+          message.success('删除成功，即将刷新');
+          reload();
+        } else message.error('删除失败，请重试');
+      },
+      onCancel() {},
+    });
   };
 
   return (
@@ -94,20 +116,24 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                     >
                       编辑
                     </Button>
-                    <Button type="link">删除</Button>
+                    <Button type="link" onClick={() => handleDelete(item.id)}>
+                      删除
+                    </Button>
                   </>
                 ) : (
                   <>
                     <Button
                       type="link"
                       onClick={async () => {
+                        const params = editList[index];
                         if (confirmLoading) return;
                         setConfirmLoading(true);
-                        const [err, data, msg] = await modifySub(editList[index]);
+                        const [err, data, msg] = await modifySub(params);
                         setConfirmLoading(false);
-                        const { productSubId, facePrice, name, shortName } = editList[index];
-                        saveRow({ productSubId, facePrice, name, shortName });
-                        setEditList(editList.filter(item => item.productSubId !== productSubId));
+                        setEditList(
+                          editList.filter(item => item.productSubId !== params.productSubId),
+                        );
+                        reload();
                       }}
                     >
                       {confirmLoading ? <Icon type="loading" /> : '保存'}
@@ -162,6 +188,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                       const [err, data, msg] = await addSub(item);
                       setConfirmLoading(false);
                       removeFormItem(index, true);
+                      reload();
                     }}
                   >
                     {confirmLoading ? <Icon type="loading" /> : '保存'}

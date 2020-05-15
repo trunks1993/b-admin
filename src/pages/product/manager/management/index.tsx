@@ -17,6 +17,7 @@ import { queryListSub, EditeItemSubType } from '../services/management';
 import ExpandForm from './components/ExpandForm';
 import _ from 'lodash';
 import { guid } from '@/utils';
+import router from 'umi/router';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload } = MapForm;
@@ -69,8 +70,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   useEffect(() => {
     initList();
   }, [currPage]);
-
-  useEffect(() => {}, [expandedRows]);
 
   useEffect(() => {
     const { code, iconUrl, name } = formData;
@@ -135,6 +134,58 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     setFormData(data);
   };
 
+  /**
+   * @name: 加载子产品列表
+   * @param {type}
+   */
+  const loadSubList = async (productCode: number, isAdd?: boolean) => {
+    const code = productCode.toString();
+
+    const isExpande = _.findIndex(expandedRows, item => item.code === code.toString()) > -1;
+
+    const formData = {
+      productCode,
+      uuid: guid(),
+      name: '',
+      shortName: '',
+      facePrice: '',
+    };
+
+    let newExpandedRows;
+    // 如果已经展开 说明table该行已经加载过子列表
+    // 将对应的loading设为true
+    // 否则新增一个对应数据
+    if (isExpande) {
+      newExpandedRows = _.map(expandedRows, item => {
+        if (item.code === code) {
+          if (isAdd) item.addFormList?.push(formData);
+          else item.loading = true;
+        }
+        return item;
+      });
+    } else {
+      newExpandedRows = [
+        ...expandedRows,
+        { code, loading: true, list: [], addFormList: isAdd ? [formData] : [] },
+      ];
+    }
+    setExpandedRows(newExpandedRows);
+
+    if (isAdd && isExpande) return;
+
+    const [err, data, msg] = await queryListSub(productCode);
+    if (!err) {
+      newExpandedRows = newExpandedRows.map(item => {
+        if (item.code === code) {
+          item.list = data;
+          item.loading = false;
+        }
+        return item;
+      });
+      setExpandedRows(newExpandedRows);
+    }
+  };
+
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '产品名称',
@@ -154,12 +205,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             ) : (
               <Icon
                 type={hasKey ? 'up' : 'down'}
-                onClick={async () => {
+                onClick={() => {
                   if (!hasKey) {
-                    setExpandedRows([...expandedRows, { code, loading: true, list: [] }]);
-                    const [err, data, msg] = await queryListSub(record.code);
-                    if (!err)
-                      setExpandedRows([...expandedRows, { code, loading: false, list: data }]);
+                    loadSubList(record.code);
                   } else {
                     setExpandedRows(expandedRows.filter(item => item.code !== code));
                   }
@@ -195,43 +243,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button
-            type="link"
-            onClick={async () => {
-              const code = record.code.toString();
-              const hasKey = expandedRows.find(item => item.code === code);
-
-              const formData = {
-                productCode: record.code,
-                uuid: guid(),
-                name: '',
-                shortName: '',
-                facePrice: '',
-              };
-
-              if (!hasKey) {
-                setExpandedRows([...expandedRows, { code, loading: true, list: [] }]);
-                const [err, data, msg] = await queryListSub(record.code);
-                if (!err)
-                  setExpandedRows([
-                    ...expandedRows,
-                    { code, loading: false, list: data, addFormList: [formData] },
-                  ]);
-              } else {
-                hasKey.addFormList && hasKey.addFormList.push(formData);
-                const newExpandedRows = _.map(expandedRows, item => {
-                  if (item.code === code) {
-                    item.addFormList = hasKey.addFormList || [formData];
-                  }
-                  return item;
-                });
-                setExpandedRows(newExpandedRows);
-              }
-            }}
-          >
+          <Button type="link" onClick={() => loadSubList(record.code, true)}>
             +子产品
           </Button>
-          <Button type="link" onClick={() => handleModalVisible(record)}>
+          <Button type="link" onClick={() => router.push(`/product/manager/management/${record.id}`)}>
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.code)}>
@@ -272,7 +287,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/management/-1`)}>
           新增产品
         </Button>
       </div>
@@ -286,29 +301,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         expandedRowRender={record => {
           const { list, addFormList } =
             expandedRows.find(item => item.code === record.code.toString()) || {};
-          //   const ref = React.createRef();
-          //   setRef([...refList, ref]);
           return (
             <ExpandForm
-              saveRow={data => {
-                const newList = list?.map(item => {
-                  if (item.id === data.productSubId) {
-                    item.shortName = data.shortName;
-                    item.facePrice = data.facePrice;
-                    item.name = data.name;
-                  }
-                  return item;
-                });
-
-                const newExpandedRows = expandedRows.map(item => {
-                  if (item.code === record.code.toString()) {
-                    item.list = newList || [];
-                  }
-                  return item;
-                });
-
-                setExpandedRows(newExpandedRows);
-              }}
+              reload={loadSubList.bind(null, record.code)}
               brandName={record.brandName}
               dataSource={list}
               addFormList={addFormList}
@@ -321,7 +316,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 });
                 setExpandedRows(newExpandedRows);
               }}
-              removeFormItem={async (index: number, reload?: boolean) => {
+              removeFormItem={async (index: number) => {
                 let newExpandedRows = expandedRows.map(item => {
                   if (item.code === record.code.toString() && item.addFormList) {
                     item.addFormList.splice(index, 1);
@@ -329,17 +324,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   return item;
                 });
                 setExpandedRows(newExpandedRows);
-                if (reload) {
-                  const [err, data, msg] = await queryListSub(record.code);
-                  if (!err)
-                    newExpandedRows = expandedRows.map(item => {
-                      if (item.code === record.code.toString()) {
-                        item.list = data;
-                      }
-                      return item;
-                    });
-                  setExpandedRows(newExpandedRows);
-                }
               }}
             />
           );

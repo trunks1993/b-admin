@@ -309,7 +309,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="primary" onClick={() => setModalVisible(true)}>
+        <Button type="primary" onClick={() => router.push(`/product/manager/list/-1`)}>
           发布商品
         </Button>
       </div>

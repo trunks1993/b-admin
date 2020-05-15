@@ -21,7 +21,10 @@ interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
 }
-
+interface ErrMsgType {
+  iconUrl?: string;
+}
+const HELP_MSG_ICONURL = '建议上传120*120px大小的JPEG、PNG格式图片, 且文件小于1M';
 const handleEdite = async (fields: EditeItemType) => {
   const api = fields.categoryCode ? modify : add;
   const [err, data, msg] = await api(fields);
@@ -43,7 +46,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [formData, setFormData] = useState<ListItemType>({});
   // confirmLoading
   const [confirmLoading, setConfirmLoading] = useState(false);
-
+  const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
+    iconUrl: HELP_MSG_ICONURL,
+  });
   useEffect(() => {
     initList();
   }, [currPage]);
@@ -207,6 +212,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             name="name"
             label="分组名称"
             placeholder="请输入分组名称"
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 10, push: 1 }}
             rules={[
               {
                 required: true,
@@ -216,15 +223,25 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           />
           <CstUpload
             name="iconUrl"
+            labelCol={{ span: 5 }}
+            wrapperCol={{ span: 10, push: 1 }}
             rules={[
               {
                 validator: (rule, value, callback) => {
-                  if (value === FILE_ERROR_TYPE) callback(new Error('文件格式错误'));
-                  if (value === FILE_ERROR_SIZE) callback(new Error('文件大小不能超过2M'));
-                  callback();
+                  if (value === FILE_ERROR_TYPE) {
+                    setHelpMsg({ ...helpMsg, iconUrl: '文件格式错误' });
+                    callback(new Error('文件格式错误'));
+                  } else if (value === FILE_ERROR_SIZE) {
+                    setHelpMsg({ ...helpMsg, iconUrl: '文件大小不能超过2M' });
+                    callback(new Error('文件大小不能超过2M'));
+                  } else {
+                    setHelpMsg({ ...helpMsg, iconUrl: HELP_MSG_ICONURL });
+                    callback();
+                  }
                 },
               },
             ]}
+            help={helpMsg.iconUrl}
             action={`${process.env.BASE_FILE_SERVER}/upload`}
             method="POST"
             data={{

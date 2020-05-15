@@ -1,21 +1,72 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-11 19:19:29
+ * @LastEditTime: 2020-05-15 17:19:55
  */
 // 设备模块
 export const product = [
-  { path: '/product/manager/list', component: './product/manager/list', Routes: ['src/AuthRouter'] },
-  { path: '/product/manager/list/:id', component: './product/manager/list/edit', Routes: ['src/AuthRouter'] },
-  { path: '/product/manager/group', component: './product/manager/group', Routes: ['src/AuthRouter'] },
-  { path: '/product/manager/management', component: './product/manager/management', Routes: ['src/AuthRouter'] },
-  { path: '/product/manager/price', component: './product/manager/price', Routes: ['src/AuthRouter'] },
-  { path: '/product/manager/brand', component: './product/manager/brand', Routes: ['src/AuthRouter'] },
+  {
+    path: '/product/manager/list',
+    component: './product/manager/list',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/list/:id',
+    component: './product/manager/list/edit',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/group',
+    component: './product/manager/group',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/management',
+    component: './product/manager/management',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/management/:id',
+    component: './product/manager/management/edit',
+    Routes: ['src/AuthRouter'],
+  },
+
+  {
+    path: '/product/manager/price',
+    component: './product/manager/price',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/brand',
+    component: './product/manager/brand',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/brand/:id',
+    component: './product/manager/brand/edit',
+    Routes: ['src/AuthRouter'],
+  },
 ];
 export const business = [
-  { path: '/business/manager/info', component: './business/manager/info', Routes: ['src/AuthRouter'] },
-  { path: '/business/manager/auth', component: './business/manager/auth', Routes: ['src/AuthRouter'] },
-  { path: '/business/manager/application', component: './business/manager/application', Routes: ['src/AuthRouter'] },
-  { path: '/business/manager/setting', component: './business/manager/setting', Routes: ['src/AuthRouter'] },
+  {
+    path: '/business/manager/info',
+    component: './business/manager/info',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/business/manager/auth',
+    component: './business/manager/auth',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/business/manager/application',
+    component: './business/manager/application',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/business/manager/setting',
+    component: './business/manager/setting',
+    Routes: ['src/AuthRouter'],
+  },
 ];
 export const sys = [
   { path: '/sys/manager/base', component: './sys/manager/base', Routes: ['src/AuthRouter'] },

@@ -1,0 +1,66 @@
+.container {
+  padding: 20px;
+  border: 1px solid #e6e6e6;
+}
+.head {
+  height: 30px;
+  background: #f7f7f7;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.inputbox {
+  padding-left: 80px;
+  position: relative;
+  margin-top: 20px;
+}
+.inputbox::before {
+  content: '规格值';
+  position: absolute;
+  left: 20px;
+  font-size: 12px;
+}
+
+.tablebox {
+  padding-left: 80px;
+  position: relative;
+  margin-top: 20px;
+}
+
+.tablebox::before {
+  content: '规格明细';
+  position: absolute;
+  left: 20px;
+  font-size: 12px;
+}
+.table {
+  border: 1px solid #e6e6e6;
+  padding: 0 20px;
+}
+.th:not(:last-child) {
+  border-bottom: 1px solid #e6e6e6;
+}
+.td {
+  font-size: 12px;
+  text-align: center;
+}
+.faceInput {
+  height: 26px;
+  width: 50px;
+  border: 1px solid rgba(230, 230, 230, 1);
+  text-align: center;
+}
+.nameInput {
+  height: 26px;
+  border: 1px solid rgba(230, 230, 230, 1);
+  text-align: center;
+}
+.snameInput {
+  width: 60px;
+  height: 30px;
+  border-radius: 2px;
+  border: 1px solid rgba(230, 230, 230, 1);
+  text-align: center;
+}

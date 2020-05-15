@@ -1,8 +1,9 @@
 /*
  * @Date: 2020-05-05 15:29:43
- * @LastEditTime: 2020-05-13 15:24:06
+ * @LastEditTime: 2020-05-15 11:10:10
  */
 import { parse } from 'querystring';
+import _ from 'lodash';
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
@@ -17,12 +18,21 @@ interface TreeDataItem {
   label: string;
 }
 
+export interface TreeDataItem2 {
+  id: number;
+  key: number;
+  title: string;
+  children: TreeDataItem2[];
+  value: number;
+  label: string;
+}
+
 /**
  * @name:
  * @param {type} arr
  * @param {type} callback
  */
-export const listToTree = (arr: TreeDataItem[], callback: (item: TreeDataItem) => void) => {
+export const listToTree = (arr: TreeDataItem[], callback?: (item: TreeDataItem) => void) => {
   const tree = [];
   const setData = {};
   // 根据id建立索引
@@ -35,7 +45,7 @@ export const listToTree = (arr: TreeDataItem[], callback: (item: TreeDataItem) =
   for (const val in setData) {
     var obj = setData[val];
     // 访问者模式
-    callback(obj);
+    callback && callback(obj);
     const currentPid = obj.parentCode;
     const parent = setData[currentPid];
     if (parent) {
@@ -49,6 +59,14 @@ export const listToTree = (arr: TreeDataItem[], callback: (item: TreeDataItem) =
   }
   return tree;
 };
+
+export const loopTree = (arr: TreeDataItem2[], callback?: (item: TreeDataItem2) => void) => {
+  return _.map(arr, item => {
+    callback && callback(item);
+    if(item.children && item.children.length > 0) loopTree(item.children, callback);
+    return item;
+  })
+}
 
 export function guid() {
 	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {

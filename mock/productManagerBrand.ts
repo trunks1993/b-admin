@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-11 16:36:28
- * @LastEditTime: 2020-05-11 23:16:17
+ * @LastEditTime: 2020-05-15 11:45:08
  */
 import { Response, Request } from 'express';
 
@@ -80,7 +80,8 @@ export default {
           status: 1,
           createTime: '2020-05-09T21:57:44.000+0000',
           modifyTime: '2020-05-09T21:57:44.000+0000',
-          introduction: '杜卡迪一百八飙就完了',
+          introduction: '<p>杜卡迪一百八飙就完了</p>',
+          categoryCodes: [100001, 100002, 100003],
         },
         code: '0',
         success: true,

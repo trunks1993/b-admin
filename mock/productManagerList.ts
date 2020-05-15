@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-11 20:55:54
+ * @LastEditTime: 2020-05-14 20:19:43
  */
 import { Response, Request } from 'express';
 
@@ -25,7 +25,7 @@ const data = Array(20)
     rewardFee: null,
     stock: 0,
     purchaseNotes: '自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
-    usageIllustration: '自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
+    usageIllustration: '<p>自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号</p>',
     introduction: null,
     createTime: '2020-04-28T23:02:06.000+0000',
     modifyTime: '2020-04-28T23:02:06.000+0000',
@@ -107,11 +107,15 @@ export default {
           rewardFee: null,
           stock: 100,
           purchaseNotes: '1、自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
-          usageIllustration: '1、自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
+          usageIllustration: '<p>自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号</p>',
           introduction: null,
           createTime: '2020-04-29T00:28:25.000+0000',
           modifyTime: '2020-04-29T00:28:25.000+0000',
           productSub: null,
+          undisplayStock: 'Y',
+          upType: 2,
+          stockType: 1,
+          upTime: '2020-04-29T00:28:25.000+0000'
         },
         code: '0',
         success: true,

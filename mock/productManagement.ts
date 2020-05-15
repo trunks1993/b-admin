@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-12 19:52:05
+ * @LastEditTime: 2020-05-15 21:58:44
  */
 import { Response, Request } from 'express';
 
@@ -79,6 +79,29 @@ export default {
           modifyTime: '2020-05-09T22:47:43.000+0000',
           introduction: '',
           brand: null,
+          productSubs: [
+            {
+              id: 1,
+              name: '爱奇艺黄金会员月卡',
+              shortName: '月卡',
+              iconUrl: '',
+              facePrice: 12000,
+            },
+            {
+              id: 2,
+              name: '爱奇艺黄金会员季卡',
+              shortName: '季卡',
+              iconUrl: '',
+              facePrice: 16000,
+            },
+            {
+              id: 3,
+              name: '爱奇艺黄金会员年卡',
+              shortName: '年卡',
+              iconUrl: '',
+              facePrice: 18000
+            }
+          ],
         },
         code: '0',
         success: true,
@@ -90,23 +113,13 @@ export default {
   // 新增子产品
   'POST /goods/addProductSub': (req: Request, res: Response) => {
     setTimeout(() => {
-      res.send({
-        result: {},
-        code: '0',
-        success: true,
-        resultMsg: null,
-      });
+      res.send(noDataRes);
     }, 1000);
   },
   // 修改子产品
   'POST /goods/modifyProductSub': (req: Request, res: Response) => {
     setTimeout(() => {
-      res.send({
-        result: {},
-        code: '0',
-        success: true,
-        resultMsg: null,
-      });
+      res.send(noDataRes);
     }, 1000);
   },
   // 子产品详情
@@ -215,5 +228,11 @@ export default {
         resultMsg: null,
       });
     }, 1000);
+  },
+
+  'POST /goods/deleteProductSub': (req: Request, res: Response) => {
+    setTimeout(() => {
+      res.send(noDataRes);
+    });
   },
 };

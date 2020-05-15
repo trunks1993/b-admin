@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-11 21:01:02
+ * @LastEditTime: 2020-05-14 20:05:10
  */
 
 import request from '@/utils/request';
@@ -17,8 +17,13 @@ export interface QueryParamsType extends BaseQueryType {
 export interface EditeItemType extends ListItemType{
   resume: string; // 描述
   purchaseNotes: string; // 购买须知
-  usageIllustration: string; // 使用说明
+  usageIllustration: string; // 使用须知
   facePrice: number; // 官方价格
+  stockType: 1 | 2; // 库存扣减方式
+  goodsId?: number;
+  undisplayStock?: 'Y' | 'N' // 商品详情不显示剩余件数
+  upType: 1 | 2 | 3; //
+  upTime: string;
 }
 
 export interface ModifyStatusParamType {

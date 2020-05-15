@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:53:19
- * @LastEditTime: 2020-05-11 23:24:48
+ * @LastEditTime: 2020-05-14 21:47:33
  */
 import { Effect } from 'dva';
 
@@ -10,6 +10,7 @@ import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
 
 export interface ListItemType {
+  id: number;
   name: string;
   code: number;
   iconUrl: string;

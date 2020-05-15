@@ -13,6 +13,7 @@ import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
+import router from 'umi/router';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload } = MapForm;
@@ -130,10 +131,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => handleModalVisible(record)}>
+          <Button type="link" onClick={() => router.push(`/product/manager/brand/${record.id}`)}>
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm(record.code)}>
+          <Button type="link" onClick={() => showConfirm(record.id)}>
             删除
           </Button>
         </>
@@ -171,7 +172,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/brand/-1`)}>
           新增品牌
         </Button>
       </div>

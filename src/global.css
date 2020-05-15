@@ -83,9 +83,8 @@ input[type='number'] {
   font-size: 16px !important;
 }
 
-:global(.global-form input),
-:global(.global-form textarea) {
-  background: #f7f7f7;
+:global(.global-edit-form label) {
+  font-size: 12px !important;
 }
 
 :global(.global-form input) {
@@ -93,12 +92,20 @@ input[type='number'] {
   line-height: unset;
 }
 :global(.global-form .ant-select-selection) {
-  height: 40px;
-  background: #f7f7f7;
+  /* height: 40px; */
+  /* background: #f7f7f7; */
 }
 
 :global(.global-form .ant-select-selection__rendered) {
-  line-height: 40px;
+  /* line-height: 40px; */
+}
+
+:global(.global-form .ant-form-explain) {
+  white-space: nowrap;
+}
+
+:global(.minHeightFormItem) {
+  margin-bottom: 0!important;
 }
 
 /* 全局table样式 */
@@ -125,4 +132,10 @@ input[type='number'] {
 :global(.global-pagination-data) {
   color: #cccccc;
   margin-left: 10px;
+}
+
+/* upload上传控件 */
+:global(.global-uploader .ant-upload.ant-upload-select-picture-card) {
+  width: 60px;
+  height: 60px;
 }

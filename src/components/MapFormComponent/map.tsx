@@ -11,4 +11,10 @@ export default {
   CstSelect: {},
   CstUpload: {},
   CstBlockCheckbox: {},
+  CstRadio: {},
+  CstCheckbox: {},
+  CstDatePicker: {},
+  CstEditor: {},
+  CstTreeSelect: {},
+  CstProductSubPanel: {},
 };
