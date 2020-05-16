@@ -132,19 +132,26 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       CstProductSubPanel: getFieldDecorator(name, options)(<ProductSubPanel {...otherProps} />),
     };
 
-    return (
-      <FormItem
-        className={className}
-        colon={false}
-        label={label}
-        help={help}
-        wrapperCol={wrapperCol}
-        labelCol={labelCol}
-        style={style}
-      >
-        {Map[type || '']}
-      </FormItem>
-    );
+    if (wrapperCol && labelCol)
+      return (
+        <FormItem
+          className={className}
+          colon={false}
+          label={label}
+          help={help}
+          wrapperCol={wrapperCol}
+          labelCol={labelCol}
+          style={style}
+        >
+          {Map[type || '']}
+        </FormItem>
+      );
+    else
+      return (
+        <FormItem className={className} colon={false} label={label} help={help} style={style}>
+          {Map[type || '']}
+        </FormItem>
+      );
   }
 }
 

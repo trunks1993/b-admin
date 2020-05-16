@@ -4,7 +4,7 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/user';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
+import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, UserStatuMap } from '@/const';
 import { remove, getInfo, EditeUserItemType, add, modify, modifyStatus } from '../services/user';
@@ -252,51 +252,66 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
       </div>
       <div className={Styles.filter}>
         <div className={Styles.filterBox}>
-          <MapForm className="filter-form" layout="inline" onCreate={setFilterForm}>
-            <CstSelect
-              name="roleCode"
-              label="角色"
-              style={{ width: '160px' }}
-              placeholder="请选择角色"
-            >
-              {_.map(roles, (item, index) => (
-                <Select.Option key={index} value={item.code}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </CstSelect>
-            <CstSelect
-              name="status"
-              label="状态"
-              style={{ width: '160px' }}
-              placeholder="请选择角色"
-            >
-              {_.map(UserStatuMap, (item, key) => (
-                <Select.Option key={key} value={key}>
-                  {item}
-                </Select.Option>
-              ))}
-            </CstSelect>
-            <CstInput
-              name="realname"
-              label="账号"
-              style={{ width: '160px' }}
-              placeholder="请输入用户名称"
-            />
-            <Form.Item>
-              <Button
-                type="primary"
-                icon="search"
-                onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
-              >
-                筛选
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button icon="undo" onClick={() => filterForm?.resetFields()}>
-                重置
-              </Button>
-            </Form.Item>
+          <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
+            <Row>
+              <Col span={6}>
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="roleCode"
+                  label="角色"
+                  placeholder="请选择角色"
+                >
+                  {_.map(roles, (item, index) => (
+                    <Select.Option key={index} value={item.code}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
+              <Col span={6}>
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="status"
+                  label="状态"
+                  placeholder="请选择角色"
+                >
+                  {_.map(UserStatuMap, (item, key) => (
+                    <Select.Option key={key} value={key}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
+              <Col span={6}>
+                <CstInput
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="realname"
+                  label="账号"
+                  placeholder="请输入用户名称"
+                />
+              </Col>
+              <Col span={6} push={1}>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    icon="search"
+                    onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
+                  >
+                    筛选
+                  </Button>
+                  <Button
+                    icon="undo"
+                    style={{ marginLeft: '10px' }}
+                    onClick={() => filterForm?.resetFields()}
+                  >
+                    重置
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
           </MapForm>
         </div>
       </div>
