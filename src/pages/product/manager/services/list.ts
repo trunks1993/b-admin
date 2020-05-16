@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-14 20:05:10
+ * @LastEditTime: 2020-05-16 17:40:42
  */
 
 import request from '@/utils/request';
@@ -58,7 +58,7 @@ export async function add(data: EditeItemType): Promise<any> {
  * @param {EditeItemType} data
  */
 export async function modify(data: EditeItemType): Promise<any> {
-  return request('/sys/modifyGoods', {
+  return request('/goods/modifyGoods', {
     method: 'POST',
     data,
   });
@@ -69,7 +69,7 @@ export async function modify(data: EditeItemType): Promise<any> {
  * @param {number[] | string[]} goodsIds
  */
 export async function remove(goodsIds: number[] | string[]): Promise<any> {
-  return request('/sys/deleteGoods', {
+  return request('/goods/deleteGoods', {
     method: 'POST',
     data: {
       goodsIds,

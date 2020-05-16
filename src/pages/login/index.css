@@ -55,6 +55,10 @@
   border-radius: 0;
 }
 
+.form :global(.ant-form-item-with-help) {
+  margin-bottom: 24px;
+}
+
 :global(.login-form-input .ant-input-group-addon) {
   border-radius: 0;
   background: #F7F7F7;
@@ -64,7 +68,6 @@
 /* 登录框按钮样式 */
 :global(.login-form-btn) {
   background: #1A61DC;
-  /* width: 360px; */
   height: 50px;
   color: #fff;
   margin: auto;

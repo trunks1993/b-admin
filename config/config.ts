@@ -3,7 +3,7 @@ import slash from 'slash2';
 import proxy from './proxy';
 const { REACT_APP_ENV } = process.env;
 
-import { product, sys, business } from './routesConfig';
+import { product, sys, business, stock, order, finance } from './routesConfig';
 
 const path = require('path');
 
@@ -43,6 +43,9 @@ const config: IConfig = {
         ...product,
         ...sys,
         ...business,
+        ...stock,
+        ...order,
+        ...finance,
         {
           path: '*',
           component: './404',

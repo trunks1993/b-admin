@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-16 15:32:25
+ * @LastEditTime: 2020-05-16 17:40:17
  */
 import { Response, Request } from 'express';
 
@@ -60,13 +60,13 @@ export default {
   },
 
   // 删除
-  'POST /sys/deleteGoods': (req: Request, res: Response) => {
+  'POST /goods/deleteGoods': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
     }, 1000);
   },
   //修改
-  'POST /sys/modifyGoods': (req: Request, res: Response) => {
+  'POST /goods/modifyGoods': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
     }, 1000);

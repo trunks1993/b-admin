@@ -1,17 +1,12 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-11 17:15:16
+ * @LastEditTime: 2020-05-16 17:53:21
  */
-import { Reducer } from 'redux';
-import { routerRedux } from 'dva/router';
 import { Effect } from 'dva';
-import { stringify } from 'querystring';
-import { produce, Draft } from 'immer';
 
 import { fakeAccountLogin } from '@/services/login';
 
-import { getPageQuery } from '@/utils';
-import { setToken, getToken, removeToken } from '@/utils/cookie';
+import { setToken, removeToken } from '@/utils/cookie';
 
 export interface LoginModelState {}
 
@@ -33,7 +28,6 @@ const Model: ModelType = {
   effects: {
     *login({ payload, callback }, { call, put }) {
       const [err, data, msg] = yield call(fakeAccountLogin, payload);
-      console.log('*login -> err, data, msg', err, data, msg);
       if (!err) {
         setToken(data.token);
         window.location.href = '/';

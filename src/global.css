@@ -91,14 +91,6 @@ input[type='number'] {
   height: 40px;
   line-height: unset;
 }
-:global(.global-form .ant-select-selection) {
-  /* height: 40px; */
-  /* background: #f7f7f7; */
-}
-
-:global(.global-form .ant-select-selection__rendered) {
-  /* line-height: 40px; */
-}
 
 :global(.global-form .ant-form-explain) {
   white-space: nowrap;

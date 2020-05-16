@@ -66,7 +66,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
       </span>
     ),
     className: 'login-form-input',
-    onPressEnter: isPwd && handleSubmit,
+    onPressEnter: isPwd ? handleSubmit : () => {},
   });
 
   return (

@@ -1,8 +1,8 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-15 17:19:55
+ * @LastEditTime: 2020-05-16 18:01:06
  */
-// 设备模块
+// 商品
 export const product = [
   {
     path: '/product/manager/list',
@@ -46,6 +46,7 @@ export const product = [
     Routes: ['src/AuthRouter'],
   },
 ];
+// 商户
 export const business = [
   {
     path: '/business/manager/info',
@@ -68,9 +69,16 @@ export const business = [
     Routes: ['src/AuthRouter'],
   },
 ];
+// 系统
 export const sys = [
   { path: '/sys/manager/base', component: './sys/manager/base', Routes: ['src/AuthRouter'] },
   { path: '/sys/manager/user', component: './sys/manager/user', Routes: ['src/AuthRouter'] },
   { path: '/sys/manager/log', component: './sys/manager/log', Routes: ['src/AuthRouter'] },
   { path: '/sys/manager/role', component: './sys/manager/role', Routes: ['src/AuthRouter'] },
 ];
+// 库存
+export const stock = []
+// 订单
+export const order = []
+//财务
+export const finance = []
