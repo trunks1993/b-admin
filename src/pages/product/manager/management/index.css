@@ -9,3 +9,9 @@
   font-size: 14px;
   color: #1a61dc;
 }
+
+.tdProductName i {
+  font-size: 12px;
+  color: #666666;
+  margin-left: 5px;
+}

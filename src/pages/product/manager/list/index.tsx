@@ -6,7 +6,7 @@ import { ListItemType } from '../models/list';
 import { ListItemType as CategoryItemType } from '../models/group';
 
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form } from 'antd';
+import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
@@ -314,48 +314,63 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
         </Button>
       </div>
       <div className={Styles.filter}>
-        <MapForm className="filter-form" layout="inline" onCreate={setFilterForm}>
+        <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <CstInput name="status" style={{ display: 'none' }} />
-          <CstInput
-            name="code"
-            label="商品筛选"
-            style={{ width: '160px' }}
-            placeholder="输入商品名称/编码"
-          />
-          <CstSelect
-            name="categoryCode"
-            label="商品分组"
-            style={{ width: '160px' }}
-            placeholder="请选择分组"
-          >
-            {_.map(categoryList, (item, key) => (
-              <Select.Option key={key} value={item.code}>
-                {item.name}
-              </Select.Option>
-            ))}
-          </CstSelect>
-          <CstSelect
-            name="productTypeCode"
-            label="商品类型"
-            style={{ width: '160px' }}
-            placeholder="请选择商品类型"
-          >
-            {_.map(ProductTypes, (item, key) => (
-              <Select.Option key={key} value={key}>
-                {item}
-              </Select.Option>
-            ))}
-          </CstSelect>
-          <Form.Item>
-            <Button type="primary" icon="search" onClick={() => dispatchInit()}>
-              筛选
-            </Button>
-          </Form.Item>
-          <Form.Item>
-            <Button icon="undo" onClick={() => filterForm?.resetFields()}>
-              重置
-            </Button>
-          </Form.Item>
+          <Row>
+            <Col span={6}>
+              <CstInput
+                name="code"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="商品筛选"
+                placeholder="输入商品名称/编码"
+              />
+            </Col>
+            <Col span={6}>
+              <CstSelect
+                name="categoryCode"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="商品分组"
+                placeholder="请选择分组"
+              >
+                {_.map(categoryList, (item, key) => (
+                  <Select.Option key={key} value={item.code}>
+                    {item.name}
+                  </Select.Option>
+                ))}
+              </CstSelect>
+            </Col>
+            <Col span={6}>
+              <CstSelect
+                name="productTypeCode"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="商品类型"
+                placeholder="请选择商品类型"
+              >
+                {_.map(ProductTypes, (item, key) => (
+                  <Select.Option key={key} value={key}>
+                    {item}
+                  </Select.Option>
+                ))}
+              </CstSelect>
+            </Col>
+            <Col span={6} push={1}>
+              <Form.Item>
+                <Button type="primary" icon="search" onClick={() => dispatchInit()}>
+                  筛选
+                </Button>
+                <Button
+                  icon="undo"
+                  onClick={() => filterForm?.resetFields()}
+                  style={{ marginLeft: '10px' }}
+                >
+                  重置
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
         </MapForm>
       </div>
       <TabsPanel onChange={handleTabsPanelChange}>

@@ -13,6 +13,7 @@ import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
+import moment from 'moment';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload } = MapForm;
@@ -125,8 +126,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
     {
       title: '创建时间',
-      dataIndex: 'createTime',
       align: 'center',
+      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')
     },
     {
       title: '操作',

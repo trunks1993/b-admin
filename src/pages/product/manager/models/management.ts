@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:53:38
- * @LastEditTime: 2020-05-12 19:59:56
+ * @LastEditTime: 2020-05-16 16:53:12
  */
 import { Effect } from 'dva';
 
@@ -18,6 +18,7 @@ export interface ListItemType {
   status: number;
   introduction: string;
   brandName: string;
+  iconUrl: string;
 }
 
 export interface ManagementModelState extends TableListData<ListItemType> {}

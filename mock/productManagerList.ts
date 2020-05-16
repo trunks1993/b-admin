@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-14 20:19:43
+ * @LastEditTime: 2020-05-16 15:32:25
  */
 import { Response, Request } from 'express';
 
@@ -91,7 +91,7 @@ export default {
         result: {
           id: 16,
           code: 1000000032,
-          productSubCode: 100000028,
+          productSubCode: 100000146,
           productSubName: 'QQ音乐-绿钻豪华版12个月',
           productCode: 100025,
           productName: 'QQ音乐-绿钻豪华版',

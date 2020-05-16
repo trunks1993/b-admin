@@ -9,21 +9,13 @@ import _ from 'lodash';
 import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
-import { queryListSub } from '../services/management';
+import { queryList } from '../services/brand';
 import { ListItemSubType } from '../management';
 import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import { router } from 'umi';
+import { guid } from '@/utils';
 
-const {
-  CstInput,
-  CstBlockCheckbox,
-  CstTextArea,
-  CstSelect,
-  CstUpload,
-  CstRadio,
-  CstProductSubPanel,
-  CstEditor,
-} = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstEditor } = MapForm;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
   dispatch: Dispatch<AnyAction>;
@@ -70,6 +62,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     if (match.params.id !== '-1' && form) getGoodsInfo();
   }, [form]);
 
+  useEffect(() => {
+    handleSearch('');
+  }, []);
+
+  const ref = React.createRef();
+
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(parseInt(match.params.id));
     if (!err) {
@@ -80,7 +78,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         introduction,
         name,
         resume,
-        productSubs,
+        productSubs: _.map(productSubs, item => {
+          item.uuid = guid();
+          return item;
+        }),
       });
     }
   };
@@ -109,19 +110,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       timeout = null;
     }
     const fake = async () => {
-      const [err, data, msg] = await queryListSub(undefined, value);
-      callback(data || []);
+      const [err, data, msg] = await queryList({ name: value });
+      callback(data.list || []);
     };
 
     timeout = setTimeout(fake, 500);
   };
 
   const handleSearch = (value: string) => {
-    if (value) {
-      fetch(value, data => setOptions(data));
-    } else {
-      setOptions([]);
-    }
+    fetch(value, data => setOptions(data));
   };
 
   const radioStyle = {
@@ -225,6 +222,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             name="productSubs"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
+            getFormValue={(key: string) => form?.getFieldValue(key)}
           />
           <CstEditor
             labelCol={{ span: 4 }}

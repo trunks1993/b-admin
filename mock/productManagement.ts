@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-15 21:58:44
+ * @LastEditTime: 2020-05-16 16:54:40
  */
 import { Response, Request } from 'express';
 
@@ -17,6 +17,7 @@ const data = Array(20)
     modifyTime: '2020-04-30T03:27:54.000+0000',
     introduction: null,
     brandName: '爱奇艺爱奇艺爱奇艺',
+    iconUrl: '/data/brand/202004/fae975dc4be64c9d8e9bf1467fc65d8a_2_1.png'
   }));
 
 const noDataRes = {
@@ -71,7 +72,7 @@ export default {
         result: {
           id: 41,
           code: 100064,
-          brandCode: 10088,
+          brandCode: 1,
           name: '测试1',
           resume: '',
           status: 1,

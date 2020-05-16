@@ -4,6 +4,7 @@ import { Table, Button, Input, Icon, Modal, message } from 'antd';
 import _ from 'lodash';
 import Styles from './index.css';
 import { EditeItemSubType, modifySub, addSub, removeSub } from '../../../services/management';
+import moment from 'moment';
 const { confirm } = Modal;
 
 interface ExpandFormProps {
@@ -98,7 +99,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                   </>
                 )}
               </span>
-              <span className={Styles.createTime}>{item.createTime}</span>
+              <span className={Styles.createTime}>{ moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
               <span className={Styles.btn}>
                 {index === -1 ? (
                   <>

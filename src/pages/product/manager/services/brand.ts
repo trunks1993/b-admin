@@ -1,11 +1,13 @@
 /*
  * @Date: 2020-05-09 21:52:38
- * @LastEditTime: 2020-05-15 11:31:50
+ * @LastEditTime: 2020-05-16 15:58:44
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
 
-export interface QueryParamsType extends BaseQueryType {}
+export interface QueryParamsType extends BaseQueryType {
+  name?: string;
+}
 
 export interface EditeItemType {
   brandId?: number;

@@ -92,6 +92,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     if (match.params.id !== '-1' && form) getGoodsInfo();
   }, [form]);
 
+  useEffect(() => {
+    handleSearch('');
+  }, []);
+
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(match.params.id);
     if (!err) {
@@ -133,7 +137,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
-      console.log('handleSubmit -> value', value);
       if (error) return;
       setConfirmLoading(true);
       const isSuccess = await handleEdite(value);
@@ -155,15 +158,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       callback(data || []);
     };
 
-    timeout = setTimeout(fake, 500);
+    timeout = setTimeout(fake, 200);
   };
 
   const handleSearch = (value: string) => {
-    if (value) {
-      fetch(value, data => setOptions(data));
-    } else {
-      setOptions([]);
-    }
+    fetch(value, data => setOptions(data));
   };
 
   const radioStyle = {
@@ -255,6 +254,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             showSearch
             showArrow={false}
             filterOption={false}
+            onChange={e =>
+              form?.setFieldsValue({
+                facePrice: _.find(options, item => item.code === e)?.facePrice,
+              })
+            }
             onSearch={handleSearch}
           >
             {_.map(options, item => (
@@ -290,6 +294,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 6 }}
             help={HELP_MSG_FACE_PRICE}
+            disabled
           />
           <CstRadio
             label="库存扣减方式"

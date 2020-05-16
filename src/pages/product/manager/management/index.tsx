@@ -4,23 +4,20 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/group';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Icon } from 'antd';
+import { Table, Button, Pagination, Modal, message, Icon } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
-import { remove, EditeItemType, add, modify, getInfo } from '../services/brand';
+import { remove } from '../services/brand';
 import Styles from './index.css';
-import GlobalModal from '@/components/GlobalModal';
-import MapForm from '@/components/MapFormComponent';
-import { FormComponentProps } from 'antd/es/form';
-import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
+
 import { queryListSub, EditeItemSubType } from '../services/management';
 import ExpandForm from './components/ExpandForm';
 import _ from 'lodash';
 import { guid } from '@/utils';
 import router from 'umi/router';
+import moment from 'moment';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstUpload } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -40,47 +37,15 @@ interface ExpandedRowType {
   addFormList?: EditeItemSubType[];
 }
 
-const handleEdite = async (fields: EditeItemType) => {
-  const api = fields.categoryCode ? modify : add;
-  const [err, data, msg] = await api(fields);
-  if (!err) {
-    message.success('操作成功');
-    return true;
-  } else {
-    message.error('操作失败');
-    return false;
-  }
-};
-
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-
-  const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [formData, setFormData] = useState<ListItemType>({});
-  // confirmLoading
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
   // 表格展开
   const [expandedRows, setExpandedRows] = useState<ExpandedRowType[]>([]);
-
-  //   const [addList, setAddList] = useState<EditeItemSubType[]>([]);
 
   useEffect(() => {
     initList();
   }, [currPage]);
-
-  useEffect(() => {
-    const { code, iconUrl, name } = formData;
-    if (modalVisible && code) {
-      form?.setFieldsValue({
-        categoryCode: code,
-        iconUrl,
-        name,
-      });
-    }
-  }, [formData]);
 
   /**
    * @name: 列表加载
@@ -122,16 +87,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       },
       onCancel() {},
     });
-  };
-
-  /**
-   * @name: 编辑弹窗
-   * @param {ListItemType} record
-   */
-  const handleModalVisible = async (record: ListItemType) => {
-    const [err, data, msg] = await getInfo(record.code);
-    setModalVisible(true);
-    setFormData(data);
   };
 
   /**
@@ -198,12 +153,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         const hasLoaded = expandedRows.find(item => item.code === code && !item.loading);
         const hasKey = expandedRows.find(item => item.code === code);
         return (
-          <span>
+          <span className={Styles.tdProductName}>
+            <img
+              width="30px"
+              height="30px"
+              style={{ marginRight: '5px' }}
+              src={process.env.BASE_FILE_SERVER + record.iconUrl}
+            />
             {record.name}
             {!hasLoaded && hasKey ? (
               <Icon type="loading" />
             ) : (
               <Icon
+                style={{ transform: 'scale(0.8)' }}
                 type={hasKey ? 'up' : 'down'}
                 onClick={() => {
                   if (!hasKey) {
@@ -235,8 +197,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '创建时间',
       align: 'center',
       width: 200,
-      dataIndex: 'createTime',
-      ellipsis: true,
+      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
@@ -246,7 +207,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           <Button type="link" onClick={() => loadSubList(record.code, true)}>
             +子产品
           </Button>
-          <Button type="link" onClick={() => router.push(`/product/manager/management/${record.id}`)}>
+          <Button
+            type="link"
+            onClick={() => router.push(`/product/manager/management/${record.id}`)}
+          >
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.code)}>
@@ -257,37 +221,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
   ];
 
-  /**
-   * @name:
-   * @param {type}
-   */
-  const handleSubmit = () => {
-    form?.validateFields(async (error, value: EditeItemType) => {
-      if (error) return;
-      setConfirmLoading(true);
-      const isSuccess = await handleEdite(value);
-      setConfirmLoading(false);
-      if (isSuccess) {
-        dispatchInit();
-        setModalVisible(false);
-      }
-    });
-  };
-
-  const formItemLayout = {
-    labelCol: {
-      span: 4,
-    },
-    wrapperCol: {
-      span: 15,
-      push: 1,
-    },
-  };
-
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/management/-1`)}>
+        <Button
+          type="link"
+          icon="plus"
+          onClick={() => router.push(`/product/manager/management/-1`)}
+        >
           新增产品
         </Button>
       </div>
@@ -343,49 +284,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
-
-      <GlobalModal
-        modalVisible={modalVisible}
-        title="编辑角色"
-        onCancel={() => setModalVisible(false)}
-        onOk={handleSubmit}
-        confirmLoading={confirmLoading}
-      >
-        <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
-          <CstInput name="categoryCode" style={{ display: 'none' }} />
-          <CstInput
-            name="name"
-            label="分组名称"
-            placeholder="请输入分组名称"
-            rules={[
-              {
-                required: true,
-                message: '分组名称不能为空',
-              },
-            ]}
-          />
-          <CstUpload
-            name="iconUrl"
-            rules={[
-              {
-                validator: (rule, value, callback) => {
-                  if (value === FILE_ERROR_TYPE) callback(new Error('文件格式错误'));
-                  if (value === FILE_ERROR_SIZE) callback(new Error('文件大小不能超过2M'));
-                  callback();
-                },
-              },
-            ]}
-            action={`${process.env.BASE_FILE_SERVER}/upload`}
-            method="POST"
-            data={{
-              userName: 'yunjin_file_upload',
-              password: 'yunjin_upload_password',
-              domain: 'category',
-            }}
-            label="分组图标"
-          />
-        </MapForm>
-      </GlobalModal>
     </div>
   );
 };
