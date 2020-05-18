@@ -29,6 +29,7 @@ import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import GlobalCheckbox from '@/components/GlobCheckbox';
 import GlobalEditor from '@/components/GlobalEditor';
 import { router } from 'umi';
+import { PRODUCT_TYPE_1, PRODUCT_TYPE_2, PRODUCT_TYPE_3, PRODUCT_TYPE_4, ProductTypes } from '@/const';
 
 const {
   CstInput,
@@ -171,6 +172,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     lineHeight: '30px',
   };
 
+  const describeMap = {
+    [PRODUCT_TYPE_1]: '(卡号+密码)',
+    [PRODUCT_TYPE_2]: '(电子兑换码)',
+    [PRODUCT_TYPE_3]: '(URL访问地址)',
+    [PRODUCT_TYPE_4]: '(批充+API接口)',
+  };
+
+  const blockCheckboxOptions = _.map(ProductTypes, (item, key) => ({
+    title: item,
+    value: key,
+    subTitle: describeMap[key],
+  }))
+
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
@@ -185,7 +199,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           title="商品类型"
           style={{ width: '100%', marginBottom: '10px' }}
         >
-          <CstBlockCheckbox name="productTypeCode" />
+          <CstBlockCheckbox defaultValue={PRODUCT_TYPE_1} options={blockCheckboxOptions} name="productTypeCode" />
         </Card>
         <Card
           size="small"
@@ -251,7 +265,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                 message: '所属产品不能为空',
               },
             ]}
-            showSearch
+            showSearch={true}
             showArrow={false}
             filterOption={false}
             onChange={e =>
@@ -294,7 +308,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 6 }}
             help={HELP_MSG_FACE_PRICE}
-            disabled
+            disabled={true}
           />
           <CstRadio
             label="库存扣减方式"
@@ -377,7 +391,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                     top: '-5px',
                   }}
                 >
-                  <CstDatePicker className="minHeightFormItem" name="upTime" showTime />
+                  <CstDatePicker className="minHeightFormItem" name="upTime" showTime={true} />
                 </span>
               ) : null}
               {/* </div> */}
