@@ -130,6 +130,10 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       CstEditor: getFieldDecorator(name, options)(<GlobalEditor {...otherProps} />),
       CstTreeSelect: getFieldDecorator(name, options)(<GlobalTreeSelect {...otherProps} />),
       CstProductSubPanel: getFieldDecorator(name, options)(<ProductSubPanel {...otherProps} />),
+      CstCascader: getFieldDecorator(
+        name,
+        options,
+      )(<Cascader getPopupContainer={triggerNode => triggerNode.parentNode} {...otherProps} />),
     };
 
     if (wrapperCol && labelCol)

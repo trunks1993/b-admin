@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-16 17:40:17
+ * @LastEditTime: 2020-05-18 14:12:52
  */
 import { Response, Request } from 'express';
 
@@ -8,28 +8,22 @@ const data = Array(20)
   .fill('')
   .map((item, index) => ({
     id: index,
-    code: 1000000017 + index,
-    productSubCode: 100000021 + index,
-    productSubName: 'QQ音乐-付费音乐包1个月',
-    productCode: 100024 + index,
-    productName: 'QQ音乐-付费音乐包',
-    brandCode: 10066,
-    brandName: 'QQ音乐',
-    productTypeCode: 104,
-    price: 78400,
-    iconUrl: null,
-    resume: null,
-    soldNum: index * 10,
+    code: 11810881014385 + index,
+    custId: 10003263 + index,
+    merchantId: 10811113 + index,
+    merchantName: '刘庆',
+    telephone: '18611891120',
+    identifyType: 2,
     status: 2,
-    isSpecial: null,
-    rewardFee: null,
-    stock: 0,
-    purchaseNotes: '自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
-    usageIllustration: '<p>自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号</p>',
-    introduction: null,
-    createTime: '2020-04-28T23:02:06.000+0000',
-    modifyTime: '2020-04-28T23:02:06.000+0000',
-    productSub: null,
+    data:
+      '{"realName":"刘庆","idCard":"431224198301082898","idCardFront":"/data/secret/identify/202005/6b1159d13dc44290bdb801e345ccf42e_288_1.jpg","idCardBack":"/data/secret/identify/202005/00937749a1f344c490b745df2b5787be_289_1.jpg"}',
+    rejectText: '请填写真实姓名',
+    rejectTime: '2020-05-16T07:40:20.000+0000',
+    auditId: null,
+    auditName: null,
+    completeTime: null,
+    createTime: '2020-05-15T23:38:00.000+0000',
+    modifyTime: '2020-05-16T00:09:35.000+0000',
   }));
 
 const noDataRes = {
@@ -41,7 +35,7 @@ const noDataRes = {
 
 export default {
   // 获取列表
-  'POST /merchant/searchIdentifyWorkorder': (req: Request, res: Response) => {
+  'POST /user/searchIdentifyWorkorder': (req: Request, res: Response) => {
     const { currPage, pageSize } = req.body;
     const list = data.slice((currPage - 1) * pageSize, currPage * pageSize);
     setTimeout(() => {
@@ -58,15 +52,14 @@ export default {
       });
     }, 0);
   },
-
   // 审批认证
-  'POST /merchant/audit': (req: Request, res: Response) => {
+  'POST /user/audit': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
-    }, 1000);
+    }, 2000);
   },
   // 查询详情
-  'POST /merchant/getIdentifyWorkorder': (req: Request, res: Response) => {
+  'POST /user/getIdentifyWorkorder': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send({
         result: {
@@ -85,6 +78,7 @@ export default {
           auditId: null,
           auditName: null,
           completeTime: null,
+          remark: '测试',
           createTime: '2020-04-25T19:25:07.000+0000',
           modifyTime: '2020-05-11T06:58:04.000+0000',
         },
@@ -93,5 +87,11 @@ export default {
         resultMsg: null,
       });
     }, 1000);
+  },
+  // 删除
+  'POST /user/batchDeleteIdentifyWorkorder': (req: Request, res: Response) => {
+    setTimeout(() => {
+      res.send(noDataRes);
+    }, 2000);
   },
 };

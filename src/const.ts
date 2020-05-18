@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-11 17:56:23
+ * @LastEditTime: 2020-05-18 14:36:01
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -55,4 +55,48 @@ export const ProductTypes = {
 export const ProductStatusGU = {
   [PRODUCT_STATUS_1]: '上架',
   [PRODUCT_STATUS_2]: '下架',
+};
+
+// 商户认证
+export const IDENTIFY_TYPE_1 = 1;
+export const IDENTIFY_TYPE_2 = 2;
+export const IDENTIFY_TYPE_3 = 3;
+
+export const IdentifyTypes = {
+  [IDENTIFY_TYPE_1]: '个人',
+  [IDENTIFY_TYPE_2]: '企业',
+  [IDENTIFY_TYPE_3]: '机关',
+};
+
+export const IDENTIFY_STATUS_1 = 1; // 待审核
+export const IDENTIFY_STATUS_2 = 2; // 通过
+export const IDENTIFY_STATUS_3 = 3; // 驳回
+
+export const IdentifyStatus = {
+  [IDENTIFY_STATUS_1]: '待审核',
+  [IDENTIFY_STATUS_2]: '通过',
+  [IDENTIFY_STATUS_3]: '驳回',
+};
+
+export const IDCARD_TYPE_1 = 1; // 身份证
+export const IDCARD_TYPE_2 = 2; // 护照
+export const IDCARD_TYPE_3 = 3; // 港澳台居民居住证
+
+export const IdCardTypes = {
+  [IDCARD_TYPE_1]: '身份证',
+  [IDCARD_TYPE_2]: '护照',
+  [IDCARD_TYPE_3]: '港澳台居民居住证',
+};
+
+// 商户资料
+export const MERCHANT_STATUS_0 = 0; // 未认证
+export const MERCHANT_STATUS_1 = 1; // 待审核
+export const MERCHANT_STATUS_2 = 2; // 驳回
+export const MERCHANT_STATUS_3 = 3; // 已认证
+
+export const MerchantStatus = {
+  [MERCHANT_STATUS_0]: '待审核',
+  [MERCHANT_STATUS_1]: '通过',
+  [MERCHANT_STATUS_2]: '驳回',
+  [MERCHANT_STATUS_3]: '已认证',
 };

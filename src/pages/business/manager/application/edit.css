@@ -1,0 +1,18 @@
+.container {
+  padding: 30px;
+}
+
+.info {
+  display: block;
+  color: #f6bb66;
+  border: 1px solid #ffdfb5;
+  padding: 10px 40px;
+  background: rgba(255, 249, 242, 1);
+  margin: 30px 0;
+}
+
+.border {
+  height: 1px;
+  background: rgba(230, 230, 230, 1);
+  margin: 30px 0;
+}

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:38
- * @LastEditTime: 2020-05-16 15:58:44
+ * @LastEditTime: 2020-05-18 19:37:00
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -10,12 +10,15 @@ export interface QueryParamsType extends BaseQueryType {
 }
 
 export interface EditeItemType {
+  appId?: number;
   merchantId?: number;
   iconUrl: string;
   appName: string;
   resume: string;
   industry: string;
-  remark: string;
+  nologinUrl?: string;
+  callbackUrl?: string;
+  virtualChargeUrl?: string;
 }
 
 /**
@@ -57,6 +60,19 @@ export async function modify(data: EditeItemType): Promise<any> {
  */
 export async function remove(appId: number): Promise<any> {
   return request('/application/disableApplication', {
+    method: 'POST',
+    data: {
+      appId,
+    },
+  });
+}
+
+/** 详情
+ * @name:
+ * @param {type}
+ */
+export async function getInfo(appId: number): Promise<any> {
+  return request('/application/getApplication', {
     method: 'POST',
     data: {
       appId,

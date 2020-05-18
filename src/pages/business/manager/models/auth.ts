@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:53:29
- * @LastEditTime: 2020-05-12 22:33:29
+ * @LastEditTime: 2020-05-18 09:42:41
  */
 import { Effect } from 'dva';
 
@@ -12,12 +12,19 @@ import { TableListData } from '@/pages/data';
 export interface ListItemType {
   id: number;
   code: number;
-  name: string;
-  status?: number;
-  iconUrl?: string;
-  createTime?: string;
-  goodsCount?: number;
-  brandName?: string;
+  custId: number;
+  merchantId: number;
+  merchantName: string;
+  telephone: string;
+  identifyType: number;
+  status: number;
+  data: string;
+  rejectText: string;
+  rejectTime: string;
+  auditId: number;
+  auditName: string;
+  completeTime: string;
+  createTime: string;
 }
 
 export interface AuthModelState extends TableListData<ListItemType> {}

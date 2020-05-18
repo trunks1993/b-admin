@@ -1,29 +1,23 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-16 17:40:42
+ * @LastEditTime: 2020-05-18 14:13:55
  */
 
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
-import { ListItemType } from '../models/list';
+import { ListItemType } from '../models/info';
 
 export interface QueryParamsType extends BaseQueryType {
-  code?: number;
-  productSubCode?: number;
-  productTypeCode?: number;
-  status?: number;
+  minTime?: string;
+  maxTime?: string;
+  merchantName?: string;
+  merchantType?: 1 | 2 | 3;
+  status?: 1 | 2;
+  merchantId?: number;
+  telephone?: number;
 }
 
-export interface EditeItemType extends ListItemType{
-  resume: string; // 描述
-  purchaseNotes: string; // 购买须知
-  usageIllustration: string; // 使用须知
-  facePrice: number; // 官方价格
-  stockType: 1 | 2; // 库存扣减方式
-  goodsId?: number;
-  undisplayStock?: 'Y' | 'N' // 商品详情不显示剩余件数
-  upType: 1 | 2 | 3; //
-  upTime: string;
+export interface EditeItemType extends ListItemType {
 }
 
 export interface ModifyStatusParamType {
@@ -36,7 +30,7 @@ export interface ModifyStatusParamType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/goods/searchGoodsList', {
+  return request('/user/searchMerchantList', {
     method: 'POST',
     data,
   });
@@ -47,7 +41,7 @@ export async function queryList(data: QueryParamsType): Promise<any> {
  * @param {EditeItemType} data
  */
 export async function add(data: EditeItemType): Promise<any> {
-  return request('/goods/addGoods', {
+  return request('/user/addMerchant', {
     method: 'POST',
     data,
   });
@@ -58,7 +52,7 @@ export async function add(data: EditeItemType): Promise<any> {
  * @param {EditeItemType} data
  */
 export async function modify(data: EditeItemType): Promise<any> {
-  return request('/goods/modifyGoods', {
+  return request('/user/modifyMerchant', {
     method: 'POST',
     data,
   });
@@ -90,13 +84,13 @@ export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
 
 /**
  * @name: 获取详情
- * @param {string} goodsId
+ * @param {number} merchantId
  */
-export async function getInfo(goodsId: string): Promise<any> {
-  return request('/goods/getGoodsById', {
+export async function getInfo(merchantId: number): Promise<any> {
+  return request('/user/getMerchant', {
     method: 'POST',
     data: {
-      goodsId,
+      merchantId,
     },
   });
 }

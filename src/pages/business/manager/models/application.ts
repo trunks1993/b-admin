@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:53:19
- * @LastEditTime: 2020-05-14 21:47:33
+ * @LastEditTime: 2020-05-18 13:49:10
  */
 import { Effect } from 'dva';
 
@@ -11,19 +11,19 @@ import { TableListData } from '@/pages/data';
 
 export interface ListItemType {
   id: number;
-  merchantId: number;
-  code: number;
-  iconUrl: string;
-  appKey: string;
-  appSecret: string;
-  appName: string;
-  resume: string;
-  industry: number;
-  nologinUrl: string;
-  callbackUrl: string;
-  virtualRecharge: string;
-  remark: string;
-  status: number;
+  merchantId?: number;
+  code?: number;
+  iconUrl?: string;
+  appKey?: string;
+  appSecret?: string;
+  appName?: string;
+  resume?: string;
+  industry?: number;
+  nologinUrl?: string;
+  callbackUrl?: string;
+  virtualRecharge?: string;
+  remark?: string;
+  status?: number;
 }
 
 export interface ApplicationModelState extends TableListData<ListItemType> {}

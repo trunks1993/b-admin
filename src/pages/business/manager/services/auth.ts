@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:27
- * @LastEditTime: 2020-05-14 22:01:49
+ * @LastEditTime: 2020-05-18 14:13:47
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -29,7 +29,7 @@ export interface VerifyType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/merchant/searchIdentifyWorkorder', {
+  return request('/user/searchIdentifyWorkorder', {
     method: 'POST',
     data,
   });
@@ -40,7 +40,7 @@ export async function queryList(data: QueryParamsType): Promise<any> {
  * @param {number} id
  */
 export async function getInfo(id: number): Promise<any> {
-  return request('/merchant/getIdentifyWorkorder', {
+  return request('/user/getIdentifyWorkorder', {
     method: 'POST',
     data: {
       id,
@@ -53,8 +53,21 @@ export async function getInfo(id: number): Promise<any> {
  * @param {number} id
  */
 export async function verify(data: VerifyType): Promise<any> {
-  return request('/merchant/audit', {
+  return request('/user/audit', {
     method: 'POST',
     data,
+  });
+}
+
+/**
+ * @name: 审批认证信息
+ * @param {number[] | string[]} merchantIds
+ */
+export async function remove(merchantIds: number[] | string[]): Promise<any> {
+  return request('/user/batchDeleteIdentifyWorkorder', {
+    method: 'POST',
+    data: {
+      merchantIds,
+    },
   });
 }

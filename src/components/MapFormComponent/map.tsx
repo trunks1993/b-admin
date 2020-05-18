@@ -17,4 +17,5 @@ export default {
   CstEditor: {},
   CstTreeSelect: {},
   CstProductSubPanel: {},
+  CstCascader: {},
 };

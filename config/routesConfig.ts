@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-16 18:01:06
+ * @LastEditTime: 2020-05-18 21:08:29
  */
 // 商品
 export const product = [
@@ -54,8 +54,18 @@ export const business = [
     Routes: ['src/AuthRouter'],
   },
   {
+    path: '/business/manager/info/:id',
+    component: './business/manager/info/edit',
+    Routes: ['src/AuthRouter'],
+  },
+  {
     path: '/business/manager/auth',
     component: './business/manager/auth',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/business/manager/auth/:id',
+    component: './business/manager/auth/edit',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -63,6 +73,13 @@ export const business = [
     component: './business/manager/application',
     Routes: ['src/AuthRouter'],
   },
+
+  {
+    path: '/business/manager/application/:id',
+    component: './business/manager/application/edit',
+    Routes: ['src/AuthRouter'],
+  },
+
   {
     path: '/business/manager/setting',
     component: './business/manager/setting',

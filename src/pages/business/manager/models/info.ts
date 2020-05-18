@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 11:43:12
- * @LastEditTime: 2020-05-11 20:49:20
+ * @LastEditTime: 2020-05-18 23:15:03
  */
 import { Effect } from 'dva';
 
@@ -11,19 +11,13 @@ import { TableListData } from '@/pages/data';
 
 export interface ListItemType {
   id: number;
-  code: number;
-  productSubCode: number;
-  productSubName: string;
-  productCode: number; // 商品编码
-  productName: string; // 商品名
-  brandCode: number;
-  brandName: string;
-  productTypeCode: number; // 商品类型
-  price: number;
-  iconUrl: string;
-  soldNum: number; // 销量
-  status: number;
-  stock: number;
+  merchantType: 1 | 2 | 3;
+  merchantId?: number;
+  merchantName: string;
+  telephone: number; // 联系方式
+  email: string; // 邮箱
+  contactName: string; // 联系人
+  status: 1 | 2;
 }
 
 export interface InfoModelState extends TableListData<ListItemType> {}

@@ -369,6 +369,7 @@ export default {
         result: {
           realname: '测试用户名',
           headIcon: '/data/brand/202004/fae975dc4be64c9d8e9bf1467fc65d8a_2_1.png',
+          userId: 1,
         },
         code: '0',
         success: true,
