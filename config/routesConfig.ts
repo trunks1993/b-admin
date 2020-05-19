@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-18 21:08:29
+ * @LastEditTime: 2020-05-20 00:34:01
  */
 // 商品
 export const product = [
@@ -96,6 +96,13 @@ export const sys = [
 // 库存
 export const stock = []
 // 订单
-export const order = []
+export const order = [
+  { path: '/order/manager/transaction', component: './order/manager/transaction', Routes: ['src/AuthRouter'] },
+  { path: '/order/manager/purchase', component: './order/manager/purchase', Routes: ['src/AuthRouter'] },
+  { path: '/order/manager/purchase/:id', component: './order/manager/purchase/edit', Routes: ['src/AuthRouter'] },
+]
 //财务
-export const finance = []
+export const finance = [
+  { path: '/finance/manager/pos', component: './finance/manager/pos', Routes: ['src/AuthRouter'] },
+  { path: '/finance/manager/details', component: './finance/manager/details', Routes: ['src/AuthRouter'] },
+]

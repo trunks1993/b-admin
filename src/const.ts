@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-18 14:36:01
+ * @LastEditTime: 2020-05-19 21:11:44
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -99,4 +99,43 @@ export const MerchantStatus = {
   [MERCHANT_STATUS_1]: '通过',
   [MERCHANT_STATUS_2]: '驳回',
   [MERCHANT_STATUS_3]: '已认证',
+};
+
+// 交易订单
+export const TRANSACTION_STATUS_1 = 1; // 初始
+export const TRANSACTION_STATUS_2 = 2; // 待处理
+export const TRANSACTION_STATUS_3 = 3; // 处理中
+export const TRANSACTION_STATUS_4 = 4; // 成功
+export const TRANSACTION_STATUS_5 = 5; // 失败
+
+export const TransactionStatus = {
+  [TRANSACTION_STATUS_1]: '初始',
+  [TRANSACTION_STATUS_2]: '待处理',
+  [TRANSACTION_STATUS_3]: '处理中',
+  [TRANSACTION_STATUS_4]: '成功',
+  [TRANSACTION_STATUS_5]: '失败',
+};
+
+
+export const ORDER_STATUS_1 = 1; // 待付款
+export const ORDER_STATUS_2 = 2; // 待发货
+export const ORDER_STATUS_4 = 4; // 已完成
+
+export const OrderStatus = {
+  [ORDER_STATUS_1]: '待付款',
+  [ORDER_STATUS_2]: '待发货',
+  [ORDER_STATUS_4]: '已完成',
+};
+
+
+export const PAY_METHOD_1 = 1; // 余额
+export const PAY_METHOD_2 = 2; // 微信
+export const PAY_METHOD_3 = 3; // 支付宝
+export const PAY_METHOD_4 = 4; // 网银
+
+export const PayMethods = {
+  [PAY_METHOD_1]: '余额',
+  [PAY_METHOD_2]: '微信',
+  [PAY_METHOD_3]: '支付宝',
+  [PAY_METHOD_4]: '网银',
 };
