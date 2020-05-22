@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-19 21:11:44
+ * @LastEditTime: 2020-05-20 17:56:47
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -116,7 +116,6 @@ export const TransactionStatus = {
   [TRANSACTION_STATUS_5]: '失败',
 };
 
-
 export const ORDER_STATUS_1 = 1; // 待付款
 export const ORDER_STATUS_2 = 2; // 待发货
 export const ORDER_STATUS_4 = 4; // 已完成
@@ -126,7 +125,6 @@ export const OrderStatus = {
   [ORDER_STATUS_2]: '待发货',
   [ORDER_STATUS_4]: '已完成',
 };
-
 
 export const PAY_METHOD_1 = 1; // 余额
 export const PAY_METHOD_2 = 2; // 微信
@@ -138,4 +136,60 @@ export const PayMethods = {
   [PAY_METHOD_2]: '微信',
   [PAY_METHOD_3]: '支付宝',
   [PAY_METHOD_4]: '网银',
+};
+
+// 财务
+export const RECHARGE_STATUS_1 = 1; // 待确认
+export const RECHARGE_STATUS_2 = 2; // 已确认
+export const RECHARGE_STATUS_3 = 3; // 关闭
+
+export const RechargeStatus = {
+  [RECHARGE_STATUS_1]: '待确认',
+  [RECHARGE_STATUS_2]: '已确认',
+  [RECHARGE_STATUS_3]: '关闭',
+};
+
+// 库存
+export const STOCK_STATUS_1 = 1; // 正常
+export const STOCK_STATUS_2 = 2; // 低库存
+export const STOCK_STATUS_3 = 3; // 积压
+
+export const StockStatus = {
+  [STOCK_STATUS_1]: '正常',
+  [STOCK_STATUS_2]: '低库存',
+  [STOCK_STATUS_3]: '积压',
+};
+
+export const SUPPLIER_STATUS_1 = 0; // 正常
+export const SUPPLIER_STATUS_2 = 1; // 冻结
+export const SUPPLIER_STATUS_3 = 2; // 黑名单
+
+export const SupplierStatus = {
+  [SUPPLIER_STATUS_1]: '正常',
+  [SUPPLIER_STATUS_2]: '冻结',
+  [SUPPLIER_STATUS_3]: '黑名单',
+};
+
+export const WAREHOUSING_STATUS_1 = 1;
+export const WAREHOUSING_STATUS_2 = 2;
+export const WAREHOUSING_STATUS_3 = 3;
+export const WAREHOUSING_STATUS_4 = 4;
+export const WAREHOUSING_STATUS_5 = 5;
+export const WAREHOUSING_STATUS_6 = 6;
+export const WAREHOUSING_STATUS_7 = 7;
+export const WAREHOUSING_STATUS_8 = 8;
+export const WAREHOUSING_STATUS_9 = 9;
+export const WAREHOUSING_STATUS_10 = 10;
+
+export const WarehousingStatus = {
+  [WAREHOUSING_STATUS_1]: '初始',
+  [WAREHOUSING_STATUS_2]: '待处理',
+  [WAREHOUSING_STATUS_3]: '采购接口调用失败',
+  [WAREHOUSING_STATUS_4]: '处理中',
+  [WAREHOUSING_STATUS_5]: '查单成功',
+  [WAREHOUSING_STATUS_6]: '查单失败',
+  [WAREHOUSING_STATUS_7]: '入库中',
+  [WAREHOUSING_STATUS_8]: '成功',
+  [WAREHOUSING_STATUS_9]: '失败',
+  [WAREHOUSING_STATUS_10]: '渠道订单处理失败',
 };

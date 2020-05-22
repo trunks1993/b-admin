@@ -1,10 +1,11 @@
 /*
- * @Date: 2020-05-09 11:43:12
- * @LastEditTime: 2020-05-11 20:49:20
+ * @Date: 2020-05-19 23:41:06
+ * @LastEditTime: 2020-05-20 14:11:19
  */
+
 import { Effect } from 'dva';
 
-import { queryList } from '../services/list';
+import { queryList } from '../services/outOfStock';
 import { Reducer } from 'redux';
 import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
@@ -12,25 +13,23 @@ import { TableListData } from '@/pages/data';
 export interface ListItemType {
   id: number;
   code: number;
-  productSubCode: number;
-  productSubName: string;
-  productCode: number; // 商品编码
-  productName: string; // 商品名
-  brandCode: number;
-  brandName: string;
-  productTypeCode: number; // 商品类型
-  price: number;
-  iconUrl: string;
-  soldNum: number; // 销量
-  status: number;
-  stock: number;
+  accountNo: number;
+  destAccountNo: string;
+  type: number;
+  changeAmount: number;
+  amount: number;
+  bizType: number;
+  orderNo: string;
+  remark: string;
+  createTime: string;
+  modifyTime: string;
 }
 
-export interface ListModelState extends TableListData<ListItemType> {}
+export interface OutOfStockModelState extends TableListData<ListItemType> {}
 
 interface ModelType {
   namespace: string;
-  state: ListModelState;
+  state: OutOfStockModelState;
   effects: {
     fetchList: Effect;
   };
@@ -40,7 +39,7 @@ interface ModelType {
 }
 
 const Model: ModelType = {
-  namespace: 'productManagerList',
+  namespace: 'stockManagerOutOfStock',
   state: {
     list: [],
     total: 0,
@@ -59,7 +58,7 @@ const Model: ModelType = {
   },
 
   reducers: {
-    setList: produce((draft: Draft<ListModelState>, { payload }): void => {
+    setList: produce((draft: Draft<OutOfStockModelState>, { payload }): void => {
       draft.list = payload.list;
       draft.total = payload.totalRecords;
     }),

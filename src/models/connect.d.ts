@@ -1,7 +1,13 @@
+/*
+ * @Date: 2020-05-04 23:02:07
+ * @LastEditTime: 2020-05-21 16:55:07
+ */ 
 import { AnyAction } from 'redux';
 import { RouterTypes, Route } from 'umi';
 import { LoginModelState } from './login';
 import { UserModelState, MenuType, UserType } from './user';
+import { ListModelState } from './product';
+
 export { UserType, MenuType };
 
 export interface Loading {
@@ -33,6 +39,7 @@ export interface ConnectState {
   loading: Loading;
   login: LoginModelState;
   user: UserModelState;
+  productManagerList: ListModelState;
 }
 
 /**

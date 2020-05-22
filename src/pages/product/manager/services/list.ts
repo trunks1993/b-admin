@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-16 17:40:42
+ * @LastEditTime: 2020-05-21 16:47:28
  */
 
 import request from '@/utils/request';
@@ -12,6 +12,7 @@ export interface QueryParamsType extends BaseQueryType {
   productSubCode?: number;
   productTypeCode?: number;
   status?: number;
+  categoryCodes?: string[];
 }
 
 export interface EditeItemType extends ListItemType{

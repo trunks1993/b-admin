@@ -60,14 +60,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   const columns: ColumnProps<ListItemType>[] = [
     {
-      title: '入账时间',
-      align: 'center',
-      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
-    },
-    {
       title: '业务单号',
       align: 'center',
       dataIndex: 'code',
+    },
+    {
+      title: '入账时间',
+      align: 'center',
+      key: 'createTime',
+      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '账户编号',

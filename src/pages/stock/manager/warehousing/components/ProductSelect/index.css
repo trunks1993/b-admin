@@ -1,0 +1,12 @@
+.box {
+  display: flex;
+}
+.tree {
+  height: 400px;
+  width: 200px;
+  overflow-y: auto;
+}
+.table {
+  width: calc(100% - 200px);
+  padding: 0 10px;
+}

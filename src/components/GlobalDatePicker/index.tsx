@@ -13,7 +13,13 @@ class GlobalDatePicker extends React.Component<{
   render() {
     const { value } = this.props;
     // 请注意，我们可能还会传递其他属性
-    return <DatePicker {...this.props} value={moment(value)} onChange={this.handleDateChange} />;
+    return (
+      <DatePicker
+        {...this.props}
+        value={value ? moment(value) : null}
+        onChange={this.handleDateChange}
+      />
+    );
   }
 }
 

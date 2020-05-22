@@ -2,7 +2,7 @@ import React, { useEffect, useState, useReducer } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
-import { ListItemType } from '../models/list';
+// import { ListItemType } from '../models/list';
 import { ListItemType as CategoryItemType } from '../models/group';
 
 import { TableListData } from '@/pages/data';
@@ -25,6 +25,7 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TabsPanel from './components/TabsPanel';
 import router from 'umi/router';
+import { ListItemType } from '@/models/product';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -174,8 +175,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '商品名称',
-      dataIndex: 'productName',
       align: 'center',
+      key: 'id',
+      render: record => (
+        <>
+          <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+          <span style={{ marginLeft: '5px' }}>{record.productName}</span>
+        </>
+      ),
     },
     {
       title: '价格（元）',

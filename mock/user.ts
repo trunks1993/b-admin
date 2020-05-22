@@ -343,7 +343,7 @@ export default {
                     {
                       code: 714,
                       parentCode: 71,
-                      name: '账号充值',
+                      name: '账户充值',
                       level: 3,
                       isLeaf: 'Y',
                       uri: '/finance/manager/recharge',

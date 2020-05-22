@@ -7,10 +7,11 @@ interface GlobalModalProps {
   onOk?: () => void;
   title: string;
   confirmLoading: boolean;
+  width?: number;
 }
 
 const GlobalModal: React.FC<GlobalModalProps> = props => {
-  const { modalVisible, onCancel, onOk, title, confirmLoading } = props;
+  const { modalVisible, onCancel, onOk, title, confirmLoading, width } = props;
 
   return (
     <Modal
@@ -20,11 +21,11 @@ const GlobalModal: React.FC<GlobalModalProps> = props => {
       confirmLoading={confirmLoading}
       title={title}
       visible={modalVisible}
-      width={600}
+      width={width || 600}
       onCancel={() => onCancel && onCancel()}
       onOk={() => onOk && onOk()}
-      okButtonProps={{className: 'global-modal-btn-ok'}}
-      cancelButtonProps={{className: 'global-modal-btn-cancel'}}
+      okButtonProps={{ className: 'global-modal-btn-ok' }}
+      cancelButtonProps={{ className: 'global-modal-btn-cancel' }}
     >
       {props.children}
     </Modal>

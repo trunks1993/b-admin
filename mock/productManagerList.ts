@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-16 17:40:17
+ * @LastEditTime: 2020-05-20 15:25:14
  */
 import { Response, Request } from 'express';
 
@@ -17,13 +17,15 @@ const data = Array(20)
     brandName: 'QQ音乐',
     productTypeCode: 104,
     price: 78400,
-    iconUrl: null,
+    iconUrl: '/data/brand/202004/c8896fbb23c74751b36bb1618052abaa_7_1.png',
     resume: null,
     soldNum: index * 10,
     status: 2,
+    stockStatus: 1,
     isSpecial: null,
     rewardFee: null,
-    stock: 0,
+    stock: 15,
+    lockedStock: 10,
     purchaseNotes: '自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号',
     usageIllustration: '<p>自动充值：充值请填写QQ号，暂不支持微信等第三方登陆账号</p>',
     introduction: null,

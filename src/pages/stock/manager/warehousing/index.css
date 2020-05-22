@@ -1,0 +1,16 @@
+.toolbar {
+    height: 50px;
+    display: flex;
+    padding-left: 40px;
+    align-items: center;
+  }
+  
+  .toolbar button {
+    font-size: 14px;
+  }
+  
+  .filter {
+    border-top: 1px solid #e6e6e6;
+    padding: 20px 40px;
+  }
+  

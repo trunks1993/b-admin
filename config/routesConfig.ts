@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-20 00:34:01
+ * @LastEditTime: 2020-05-21 10:01:56
  */
 // 商品
 export const product = [
@@ -94,15 +94,58 @@ export const sys = [
   { path: '/sys/manager/role', component: './sys/manager/role', Routes: ['src/AuthRouter'] },
 ];
 // 库存
-export const stock = []
+export const stock = [
+  {
+    path: '/stock/manager/productStock',
+    component: './stock/manager/productStock',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/stock/manager/suppliers',
+    component: './stock/manager/suppliers',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/stock/manager/warehousing',
+    component: './stock/manager/warehousing',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/stock/manager/warehousing/edit',
+    component: './stock/manager/warehousing/edit',
+    Routes: ['src/AuthRouter'],
+  },
+];
+
 // 订单
 export const order = [
-  { path: '/order/manager/transaction', component: './order/manager/transaction', Routes: ['src/AuthRouter'] },
-  { path: '/order/manager/purchase', component: './order/manager/purchase', Routes: ['src/AuthRouter'] },
-  { path: '/order/manager/purchase/:id', component: './order/manager/purchase/edit', Routes: ['src/AuthRouter'] },
-]
+  {
+    path: '/order/manager/transaction',
+    component: './order/manager/transaction',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/order/manager/purchase',
+    component: './order/manager/purchase',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/order/manager/purchase/:id',
+    component: './order/manager/purchase/edit',
+    Routes: ['src/AuthRouter'],
+  },
+];
 //财务
 export const finance = [
   { path: '/finance/manager/pos', component: './finance/manager/pos', Routes: ['src/AuthRouter'] },
-  { path: '/finance/manager/details', component: './finance/manager/details', Routes: ['src/AuthRouter'] },
-]
+  {
+    path: '/finance/manager/details',
+    component: './finance/manager/details',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/finance/manager/recharge',
+    component: './finance/manager/recharge',
+    Routes: ['src/AuthRouter'],
+  },
+];
