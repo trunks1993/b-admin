@@ -1,13 +1,13 @@
 /*
  * @Date: 2020-05-05 15:29:43
- * @LastEditTime: 2020-05-15 11:10:10
+ * @LastEditTime: 2020-05-26 11:41:50
  */
 import { parse } from 'querystring';
 import _ from 'lodash';
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
-interface TreeDataItem {
+export interface TreeDataItem {
   code: number;
   name: string;
   isLeaf: 'Y' | 'N';
@@ -63,15 +63,50 @@ export const listToTree = (arr: TreeDataItem[], callback?: (item: TreeDataItem) 
 export const loopTree = (arr: TreeDataItem2[], callback?: (item: TreeDataItem2) => void) => {
   return _.map(arr, item => {
     callback && callback(item);
-    if(item.children && item.children.length > 0) loopTree(item.children, callback);
+    if (item.children && item.children.length > 0) loopTree(item.children, callback);
     return item;
-  })
-}
+  });
+};
+
+export const getSonsTree = (arr: TreeDataItem[], code: number) => {
+  var temp = [],
+    lev = 0;
+
+  var forFn = function(arr, code, lev) {
+    for (var i = 0; i < arr.length; i++) {
+      var item = arr[i];
+      if (item.parentCode == code) {
+        item.lev = lev;
+        temp.push(item.code);
+        forFn(arr, item.code, lev + 1);
+      }
+    }
+  };
+
+  forFn(arr, code, lev);
+
+  return temp;
+};
+
+export const getFather = (arr: TreeDataItem[], code: number) => {
+  return arr.find(item => item.code === code)?.parentCode;
+};
 
 export function guid() {
-	return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-		var r = Math.random() * 16 | 0,
-			v = c == 'x' ? r : (r & 0x3 | 0x8);
-		return v.toString(16);
-	});
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = (Math.random() * 16) | 0,
+      v = c == 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
 }
+
+export const getFloat = (number: string, n?: number) => {
+  let num = parseFloat(number);
+  n = n ? n : 0;
+  if (n <= 0) {
+    return Math.round(number);
+  }
+  num = Math.round(num * Math.pow(10, n)) / Math.pow(10, n); //四舍五入
+  num = parseFloat(num).toFixed(n); //补足位数
+  return num;
+};

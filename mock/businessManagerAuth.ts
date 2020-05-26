@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-18 14:12:52
+ * @LastEditTime: 2020-05-22 12:43:25
  */
 import { Response, Request } from 'express';
 
@@ -35,7 +35,7 @@ const noDataRes = {
 
 export default {
   // 获取列表
-  'POST /user/searchIdentifyWorkorder': (req: Request, res: Response) => {
+  'POST /merchant/searchIdentifyWorkorder': (req: Request, res: Response) => {
     const { currPage, pageSize } = req.body;
     const list = data.slice((currPage - 1) * pageSize, currPage * pageSize);
     setTimeout(() => {
@@ -53,13 +53,13 @@ export default {
     }, 0);
   },
   // 审批认证
-  'POST /user/audit': (req: Request, res: Response) => {
+  'POST /merchant/audit': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
     }, 2000);
   },
   // 查询详情
-  'POST /user/getIdentifyWorkorder': (req: Request, res: Response) => {
+  'POST /merchant/getIdentifyWorkorder': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send({
         result: {
@@ -89,7 +89,7 @@ export default {
     }, 1000);
   },
   // 删除
-  'POST /user/batchDeleteIdentifyWorkorder': (req: Request, res: Response) => {
+  'POST /merchant/batchDeleteIdentifyWorkorder': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
     }, 2000);

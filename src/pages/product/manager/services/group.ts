@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:27
- * @LastEditTime: 2020-05-14 22:01:49
+ * @LastEditTime: 2020-05-23 22:19:19
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -72,11 +72,14 @@ export async function getInfo(categoryCode: number): Promise<any> {
 }
 
 /**
- * @name: 获取商品分组树形菜单 
- * @param {type} 
+ * @name: 获取商品分组树形菜单
+ * @param {type}
  */
-export async function getCategoryTree(): Promise<any> {
+export async function getCategoryTree(type: number): Promise<any> {
   return request('/category/getCategoryTree', {
     method: 'POST',
+    data: {
+      type,
+    },
   });
 }

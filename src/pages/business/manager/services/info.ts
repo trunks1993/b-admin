@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-18 14:13:55
+ * @LastEditTime: 2020-05-22 12:50:34
  */
 
 import request from '@/utils/request';
@@ -30,7 +30,7 @@ export interface ModifyStatusParamType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/user/searchMerchantList', {
+  return request('/merchant/searchMerchantList', {
     method: 'POST',
     data,
   });
@@ -41,7 +41,7 @@ export async function queryList(data: QueryParamsType): Promise<any> {
  * @param {EditeItemType} data
  */
 export async function add(data: EditeItemType): Promise<any> {
-  return request('/user/addMerchant', {
+  return request('/merchant/addMerchant', {
     method: 'POST',
     data,
   });
@@ -52,7 +52,7 @@ export async function add(data: EditeItemType): Promise<any> {
  * @param {EditeItemType} data
  */
 export async function modify(data: EditeItemType): Promise<any> {
-  return request('/user/modifyMerchant', {
+  return request('/merchant/modifyMerchant', {
     method: 'POST',
     data,
   });
@@ -60,13 +60,13 @@ export async function modify(data: EditeItemType): Promise<any> {
 
 /**
  * @name: 删除
- * @param {number[] | string[]} goodsIds
+ * @param {number} merchantId
  */
-export async function remove(goodsIds: number[] | string[]): Promise<any> {
-  return request('/goods/deleteGoods', {
+export async function remove(merchantId: number): Promise<any> {
+  return request('/merchant/deleteMerchant', {
     method: 'POST',
     data: {
-      goodsIds,
+      merchantId,
     },
   });
 }
@@ -87,7 +87,7 @@ export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
  * @param {number} merchantId
  */
 export async function getInfo(merchantId: number): Promise<any> {
-  return request('/user/getMerchant', {
+  return request('/merchant/getMerchant', {
     method: 'POST',
     data: {
       merchantId,

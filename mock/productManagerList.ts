@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-20 15:25:14
+ * @LastEditTime: 2020-05-23 10:14:05
  */
 import { Response, Request } from 'express';
 
@@ -31,7 +31,10 @@ const data = Array(20)
     introduction: null,
     createTime: '2020-04-28T23:02:06.000+0000',
     modifyTime: '2020-04-28T23:02:06.000+0000',
-    productSub: null,
+    productSub: {
+      shortName: '月卡',
+      facePrice: 80000,
+    },
   }));
 
 const noDataRes = {
@@ -117,7 +120,7 @@ export default {
           undisplayStock: 'Y',
           upType: 2,
           stockType: 1,
-          upTime: '2020-04-29T00:28:25.000+0000'
+          upTime: '2020-04-29T00:28:25.000+0000',
         },
         code: '0',
         success: true,

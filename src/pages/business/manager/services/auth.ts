@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:27
- * @LastEditTime: 2020-05-18 14:13:47
+ * @LastEditTime: 2020-05-22 12:44:25
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -29,7 +29,7 @@ export interface VerifyType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/user/searchIdentifyWorkorder', {
+  return request('/merchant/searchIdentifyWorkorder', {
     method: 'POST',
     data,
   });
@@ -40,7 +40,7 @@ export async function queryList(data: QueryParamsType): Promise<any> {
  * @param {number} id
  */
 export async function getInfo(id: number): Promise<any> {
-  return request('/user/getIdentifyWorkorder', {
+  return request('/merchant/getIdentifyWorkorder', {
     method: 'POST',
     data: {
       id,
@@ -53,7 +53,7 @@ export async function getInfo(id: number): Promise<any> {
  * @param {number} id
  */
 export async function verify(data: VerifyType): Promise<any> {
-  return request('/user/audit', {
+  return request('/merchant/audit', {
     method: 'POST',
     data,
   });
@@ -64,7 +64,7 @@ export async function verify(data: VerifyType): Promise<any> {
  * @param {number[] | string[]} merchantIds
  */
 export async function remove(merchantIds: number[] | string[]): Promise<any> {
-  return request('/user/batchDeleteIdentifyWorkorder', {
+  return request('/merchant/batchDeleteIdentifyWorkorder', {
     method: 'POST',
     data: {
       merchantIds,

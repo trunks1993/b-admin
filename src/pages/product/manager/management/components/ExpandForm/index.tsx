@@ -82,7 +82,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
               <span className={Styles.brandName}>{brandName}</span>
               <span className={Styles.value}>
                 {index === -1 ? (
-                  item.facePrice + '/' + item.shortName
+                  item.facePrice + ' / ' + item.shortName
                 ) : (
                   <>
                     <input
@@ -90,7 +90,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                       defaultValue={item.facePrice}
                       onChange={e => handleInputChange(e.target.value, item.id, 'facePrice')}
                     />
-                    /
+                    <span style={{ margin: '0 5px' }}>/</span>
                     <input
                       style={{ width: '40px' }}
                       defaultValue={item.shortName}
@@ -99,7 +99,9 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                   </>
                 )}
               </span>
-              <span className={Styles.createTime}>{ moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+              <span className={Styles.createTime}>
+                {moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}
+              </span>
               <span className={Styles.btn}>
                 {index === -1 ? (
                   <>
@@ -172,7 +174,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                     defaultValue={item.facePrice}
                     onChange={e => handleAddInputChange(e.target.value, index, 'facePrice')}
                   />
-                  /
+                  <span style={{ margin: '0 5px' }}>/</span>
                   <input
                     style={{ width: '40px' }}
                     defaultValue={item.shortName}

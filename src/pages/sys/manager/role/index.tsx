@@ -46,6 +46,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [treeData, setTreeData] = React.useState<TreeDataItem[]>([]);
+  const [oldTreeData, setOldTreeData] = React.useState<TreeDataItem[]>([]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState<FormDataType>({});
   // confirmLoading
@@ -65,8 +67,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     const { sysAuthorityList, sysRole } = formData;
     if (modalVisible && sysRole?.code) {
       form?.setFieldsValue({
-        code: 123,
+        code: sysRole.code,
         name: sysRole?.name,
+        remark: sysRole.remark,
         authorityCodes: sysAuthorityList,
       });
     }
@@ -104,6 +107,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       item.label = item.name;
     });
     setTreeData(treeData);
+    setOldTreeData(data);
   };
 
   /**
@@ -175,7 +179,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setCurrPage(1);
+        dispatchInit();
         setModalVisible(false);
       }
     });
@@ -250,6 +254,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             rules={[{ required: true, message: '权限不能为空' }]}
             name="authorityCodes"
             treeData={treeData}
+            oldTreeData={oldTreeData}
           />
         </MapForm>
       </GlobalModal>

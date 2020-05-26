@@ -1,4 +1,4 @@
-import { Form, Input, Select, DatePicker, Upload, Cascader, Radio } from 'antd';
+import { Form, Input, Select, DatePicker, Upload, Cascader, Radio, InputNumber } from 'antd';
 import React, { Component } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import { GetFieldDecoratorOptions } from 'antd/es/form/Form';
@@ -134,6 +134,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
         name,
         options,
       )(<Cascader getPopupContainer={triggerNode => triggerNode.parentNode} {...otherProps} />),
+      CstInputNumber: getFieldDecorator(name, options)(<InputNumber {...otherProps} />),
     };
 
     if (wrapperCol && labelCol)

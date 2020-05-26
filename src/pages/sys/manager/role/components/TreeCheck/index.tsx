@@ -2,18 +2,19 @@ import React from 'react';
 import _ from 'lodash';
 import { Checkbox } from 'antd';
 import Styles from './index.css';
+import { getSonsTree, TreeDataItem, getFather } from '@/utils';
 
-export interface TreeDataItem {
-  value: number;
-  label: string;
-  isLeaf: 'Y' | 'N';
-  level: number;
-  parentCode: number;
-  children: TreeDataItem[];
-}
+// export interface TreeDataItem {
+//   value: number;
+//   label: string;
+//   isLeaf: 'Y' | 'N';
+//   level: number;
+//   parentCode: number;
+//   children: TreeDataItem[];
+// }
 
 interface TreeCheckProps {
-  treeData?: TreeDataItem[];
+  treeData: TreeDataItem[];
   onChange?: (value: number[]) => void;
   value?: number[];
 }
@@ -76,9 +77,45 @@ class TreeCheck extends React.Component<TreeCheckProps> {
    * @param {type} code
    */
   handleChangeChecked = (code: number) => {
-    const { onChange, value = [] } = this.props;
-    if (value.includes(code)) onChange && onChange(value.filter(item => item !== code));
-    else onChange && onChange([...value, code]);
+    const { treeData, oldTreeData, onChange, value = [] } = this.props;
+    // 获取所有子节点
+    const sons = getSonsTree(oldTreeData, code);
+
+    // 获取点击的父亲节点
+    const father = getFather(oldTreeData, code);
+
+    let newVal = [...value];
+
+    // 先判断是选中还是取消
+    const isCancel = newVal.includes(code);
+    if (!isCancel) {
+      const ffather = getFather(oldTreeData, father);
+      newVal = _.uniq([...newVal, father, ffather, code]);
+
+      // 如果是叶节点
+      if (sons.length > 0) {
+        newVal = [...newVal, ...sons];
+      }
+    } else {
+      _.remove(newVal, item => item === code);
+
+      if (sons.length > 0) {
+        newVal = _.filter(newVal, item => !sons.includes(item));
+      }
+      // debugger;
+      const currentSons = getSonsTree(oldTreeData, father);
+      if (newVal.every(item => !currentSons.includes(item))) {
+        _.remove(newVal, item => item === father);
+
+        const ffather = getFather(oldTreeData, father);
+        const ssons = getSonsTree(oldTreeData, code);
+        if(newVal.every(item => !ssons.includes(item))) {
+          _.remove(newVal, item => item === ffather);
+        }
+      }
+    }
+
+    onChange && onChange(newVal.filter(item => item));
   };
 
   render() {

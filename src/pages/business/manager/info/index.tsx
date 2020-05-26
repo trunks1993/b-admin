@@ -10,17 +10,16 @@ import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
   IdentifyTypes,
-  IDENTIFY_TYPE_1,
   IdentifyStatus,
   MerchantStatus,
 } from '@/const';
-import { getInfo, remove } from '../services/info';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { router } from 'umi';
+import { remove } from '../services/info';
 
 const { confirm } = Modal;
 const { CstInput, CstSelect } = MapForm;
@@ -60,20 +59,29 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   /**
-   * @name: 删除
-   * @param {number} userId
+   * @name: 触发列表加载effect
+   * @param {type}
    */
-  const showConfirm = (merchantIds: number[]) => {
+  const dispatchInit = (callback?: () => void) => {
+    callback && callback();
+    currPage === 1 ? initList() : setCurrPage(1);
+  };
+
+  /**
+   * @name: 删除
+   * @param {number} merchantId
+   */
+  const showConfirm = (merchantId: number) => {
     confirm({
       title: '提示',
-      content: '是否删除',
+      content: '是否注销',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        const [err, data, msg] = await remove(merchantIds);
-        if (!err) message.success('删除成功，即将刷新');
-        else message.error('删除失败，请重试');
-        initList();
+        const [err, data, msg] = await remove(merchantId);
+        if (!err) message.success('注销成功，即将刷新');
+        else message.error('注销失败，请重试');
+        dispatchInit();
       },
       onCancel() {},
     });
@@ -98,7 +106,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '状态',
       align: 'center',
-      render: record => IdentifyStatus[record.status],
+      render: record => MerchantStatus[record.status],
     },
     {
       title: '联系人',
@@ -110,39 +118,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/business/manager/info/${record.id}`)}>
+          <Button type="link" onClick={() => router.push(`/business/manager/info/${record.merchantId}`)}>
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm([record.merchantId])}>
+          <Button type="link" onClick={() => showConfirm(record.merchantId)}>
             注销
           </Button>
         </>
       ),
     },
   ];
-
-  /**
-   * @name: 批量删除表单数据状态
-   * @param {type}
-   */
-  const removeAll = async () => {
-    confirm({
-      title: '提示',
-      content: '是否删除',
-      okText: '确定',
-      cancelText: '取消',
-      onOk: async () => {
-        const [err, data, msg] = await remove(selectedRowKeys);
-        if (!err) {
-          initList();
-          setSelectedRowKeys([]);
-          message.success('删除成功，即将刷新');
-        } else message.error('删除失败，请重试');
-        initList();
-      },
-      onCancel() {},
-    });
-  };
 
   /**
    * @name: checkbox onChange 事件
@@ -199,7 +184,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   ))}
                 </CstSelect>
               </Col>
-              <Col span={6}>
+              {/* <Col span={6}>
                 <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
@@ -213,7 +198,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     </Select.Option>
                   ))}
                 </CstSelect>
-              </Col>
+              </Col> */}
               <Col span={6}>
                 <CstInput
                   labelCol={{ span: 8 }}
@@ -239,7 +224,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   <Button
                     type="primary"
                     icon="search"
-                    onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
+                    onClick={() => dispatchInit()}
                   >
                     筛选
                   </Button>

@@ -1,13 +1,13 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-11 16:01:01
+ * @LastEditTime: 2020-05-25 15:06:56
  */
 /**
  * request 网络请求工具
  * 更详细的 api 文档: https://github.com/umijs/umi-request
  */
 import { extend } from 'umi-request';
-import { notification } from 'antd';
+import { notification, message } from 'antd';
 import { METHOD_POST, whiteUrls } from '@/const';
 import { getToken, removeToken } from './cookie';
 
@@ -70,15 +70,20 @@ request.use(async (ctx, next) => {
   options.data = {
     ...data,
   };
-  
+
   // 如果是post请求并且 需要接口需要token
   const needToken = method?.toLowerCase === METHOD_POST.toLowerCase && !whiteUrls.includes(url);
 
-  if(needToken) options.data.token = getToken();
+  if (needToken) options.data.token = getToken();
 
   await next();
   const { res } = ctx;
   const { success, result, resultMsg, code } = res;
+  if (code == -2) {
+    message.error('登录失效');
+    removeToken();
+    window.location.href = '/';
+  }
   if (!success) ctx.res = [!res.success, null, resultMsg];
   else ctx.res = [!res.success, result, null];
 });

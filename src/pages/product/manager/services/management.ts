@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:48
- * @LastEditTime: 2020-05-15 20:54:05
+ * @LastEditTime: 2020-05-26 11:04:26
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -74,13 +74,13 @@ export async function modify(data: EditeItemType): Promise<any> {
 
 /**
  * @name: 删除
- * @param {number} categoryCode
+ * @param {number} productId
  */
-export async function remove(categoryCode: number): Promise<any> {
+export async function remove(productId: number): Promise<any> {
   return request('/goods/deleteProduct', {
     method: 'POST',
     data: {
-      categoryCode,
+      productId,
     },
   });
 }

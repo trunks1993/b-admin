@@ -4,7 +4,7 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/application';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox } from 'antd';
+import { Table, Button, Pagination, Modal, message, Checkbox, Select } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, IdCardTypes } from '@/const';
 import { remove, EditeItemType, add, modify, getInfo } from '../services/application';
@@ -14,9 +14,12 @@ import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { router } from 'umi';
+import { queryList as queryMerchantList } from '@/pages/business/manager/services/info';
+import { ListItemType as MerchantItemType } from '@/pages/business/manager/models/info';
+import LazyLoad from 'react-lazyload';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstUpload } = MapForm;
+const { CstInput, CstTextArea, CstUpload, CstSelect } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -47,6 +50,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState<ListItemType>({});
+
+  const [merchantList, setMerchantList] = useState<MerchantItemType>({});
+
   // confirmLoading
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
@@ -75,6 +81,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       });
     }
   }, [formData]);
+
+  useEffect(() => {
+    getMerchantList();
+  }, []);
+
+  /**
+   * @name: 获取商品分组
+   */
+  const getMerchantList = async () => {
+    const [err, data, msg] = await queryMerchantList({});
+    console.log('getMerchantList -> data', data);
+    if (!err) setMerchantList(data.list);
+  };
 
   /**
    * @name: 列表加载
@@ -134,12 +153,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '应用图标',
       align: 'center',
       render: record => (
+        // <LazyLoad overflow={true} height={30}>
         <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+        // </LazyLoad>
       ),
     },
     {
       title: '所属商户',
-      dataIndex: 'userNumber',
+      dataIndex: 'merchantName',
       align: 'center',
     },
     {
@@ -150,9 +171,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '操作',
       align: 'center',
+      fixed: 'right',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/business/manager/application/${record.id}`)}>
+          <Button
+            type="link"
+            onClick={() => router.push(`/business/manager/application/${record.id}`)}
+          >
             配置
           </Button>
           <Button type="link" onClick={() => handleModalVisible(record)}>
@@ -177,7 +202,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setCurrPage(1);
+        dispatchInit();
         setModalVisible(false);
       }
     });
@@ -273,6 +298,23 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               },
             ]}
           />
+          <CstSelect
+            label="所属商户"
+            name="merchantId"
+            placeholder="选择所属商户"
+            rules={[
+              {
+                required: true,
+                message: '所属商户不能为空',
+              },
+            ]}
+          >
+            {_.map(merchantList, item => (
+              <Select.Option key={item.merchantId} value={item.merchantId}>
+                {item.merchantName}
+              </Select.Option>
+            ))}
+          </CstSelect>
           <CstTextArea
             name="resume"
             label="一句话介绍"

@@ -134,27 +134,27 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       tax: string | number = '--';
     if (key === 'purchasePrice') {
       if (count && value) {
-        tax = noTax = Number(value) * Number(count);
+        tax = noTax = parseFloat(value) * parseFloat(count);
         if (taxRate) {
-          tax = Number(value) * Number(count) * (taxRate / 100 + 1);
+          tax = parseFloat(value) * parseFloat(count) * (taxRate / 100 + 1);
         }
       }
     } else if (key === 'count') {
       const data = _.clone(uploadDisableList);
-      data[code] = !!Number(value);
+      data[code] = !!parseFloat(value);
       setUploadDisableList(data);
 
       if (purchasePrice && value) {
-        tax = noTax = Number(value) * Number(purchasePrice);
+        tax = noTax = parseFloat(value) * parseFloat(purchasePrice);
         if (taxRate) {
-          tax = Number(value) * Number(purchasePrice) * (taxRate / 100 + 1);
+          tax = parseFloat(value) * parseFloat(purchasePrice) * (taxRate / 100 + 1);
         }
       }
     } else if (key === 'taxRate') {
       if (purchasePrice && count) {
-        tax = noTax = Number(count) * Number(purchasePrice);
+        tax = noTax = parseFloat(count) * parseFloat(purchasePrice);
         if (taxRate) {
-          tax = Number(count) * Number(purchasePrice) * (Number(value) / 100 + 1);
+          tax = parseFloat(count) * parseFloat(purchasePrice) * (parseFloat(value) / 100 + 1);
         }
       }
     }

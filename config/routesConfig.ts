@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-21 10:01:56
+ * @LastEditTime: 2020-05-22 23:36:27
  */
 // 商品
 export const product = [
@@ -29,10 +29,14 @@ export const product = [
     component: './product/manager/management/edit',
     Routes: ['src/AuthRouter'],
   },
-
   {
     path: '/product/manager/price',
     component: './product/manager/price',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/product/manager/price/:id',
+    component: './product/manager/price/edit',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -111,8 +115,18 @@ export const stock = [
     Routes: ['src/AuthRouter'],
   },
   {
+    path: '/stock/manager/warehousing/detail/:id',
+    component: './stock/manager/warehousing/detail',
+    Routes: ['src/AuthRouter'],
+  },
+  {
     path: '/stock/manager/warehousing/edit',
     component: './stock/manager/warehousing/edit',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/stock/manager/stockWater',
+    component: './stock/manager/stockWater',
     Routes: ['src/AuthRouter'],
   },
 ];

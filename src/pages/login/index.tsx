@@ -83,7 +83,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
 
       <MapForm className={Styles.form} onCreate={fromCreate}>
         <CstInput
-          name="useName"
+          name="userName"
           rules={[
             {
               required: true,

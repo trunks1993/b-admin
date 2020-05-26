@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 11:43:12
- * @LastEditTime: 2020-05-18 23:15:03
+ * @LastEditTime: 2020-05-22 13:05:11
  */
 import { Effect } from 'dva';
 
@@ -12,7 +12,7 @@ import { TableListData } from '@/pages/data';
 export interface ListItemType {
   id: number;
   merchantType: 1 | 2 | 3;
-  merchantId?: number;
+  merchantId: number;
   merchantName: string;
   telephone: number; // 联系方式
   email: string; // 邮箱

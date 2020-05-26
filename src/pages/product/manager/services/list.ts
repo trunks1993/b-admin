@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-21 16:47:28
+ * @LastEditTime: 2020-05-23 21:55:23
  */
 
 import request from '@/utils/request';
@@ -70,7 +70,7 @@ export async function modify(data: EditeItemType): Promise<any> {
  * @param {number[] | string[]} goodsIds
  */
 export async function remove(goodsIds: number[] | string[]): Promise<any> {
-  return request('/goods/deleteGoods', {
+  return request('/goods/batchDeleteGoods', {
     method: 'POST',
     data: {
       goodsIds,

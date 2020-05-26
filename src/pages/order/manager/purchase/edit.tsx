@@ -6,13 +6,14 @@ import { getInfo } from '../services/purchase';
 import _ from 'lodash';
 import { RouteComponentProps } from 'dva/router';
 import Styles from './edit.css';
-import { Card, Row, Col, Table, Steps } from 'antd';
+import { Card, Row, Col, Table, Steps, message } from 'antd';
 import { ListItemType, OrderItemType } from '../models/purchase';
 import moment from 'moment';
-import { PayMethods } from '@/const';
+import { PayMethods, TRANSTEMP } from '@/const';
 import { ColumnProps } from 'antd/lib/table/interface';
 import success from '@/assets/images/order/success.png';
 import stepSuccess from '@/assets/images/order/step-success.png';
+import { getFloat } from '@/utils';
 const { Step } = Steps;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
@@ -30,7 +31,7 @@ interface CompProps extends RouteComponentProps<{ id: string }> {
 //     totalMoney: number;
 //   };
 // }
-
+const statusText = ['', '待付款', '待发货', '已完成', '已取消'];
 const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [data, setData] = useState<ListItemType>();
 
@@ -42,6 +43,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     const [err, data, msg] = await getInfo(match.params.id);
     if (!err) {
       setData(data);
+    } else {
+      message.error(msg);
     }
   };
 
@@ -54,7 +57,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     {
       title: '单价（元）',
       align: 'center',
-      dataIndex: 'price',
+      render: record => getFloat(record.price / TRANSTEMP, 4),
     },
     {
       title: '数量',
@@ -69,12 +72,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     {
       title: '小计(元)',
       align: 'center',
-      render: record => record.detailCount * record.price,
+      render: record => getFloat((record.detailCount * record.price) / TRANSTEMP, 4),
     },
     {
       title: '退款状态',
       align: 'center',
-      dataIndex: 'status',
+      // dataIndex: 'status',
+      render: record => '',
     },
     // {
     //   title: '发货状态',
@@ -101,28 +105,36 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         <div className={Styles.resBox}>
           <div className={Styles.res}>
             <img src={success} width="60px" height="60px" />
-            <div style={{ margin: '5px 0' }}>退款成功！</div>
+            <div style={{ margin: '5px 0' }}>{statusText[data?.status]}</div>
             <div className={Styles.info}>
               如果买家提出售后要求，请积极 与买家协商，发起售后订单。
             </div>
           </div>
           <div className={Styles.step}>
-            <Steps labelPlacement="vertical" current={4}>
+            <Steps labelPlacement="vertical" current={data?.status}>
               <Step
                 title="买家下单"
-                description={moment(data?.createTime).format('YYYY-MM-DD HH:mm:ss')}
+                description={
+                  data?.createTime ? moment(data?.createTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                }
               />
               <Step
                 title="买家付款"
-                description={moment(data?.payTime).format('YYYY-MM-DD HH:mm:ss')}
+                description={
+                  data?.payTime ? moment(data?.payTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                }
               />
               <Step
                 title="平台发货"
-                description={moment(data?.deliverTime).format('YYYY-MM-DD HH:mm:ss')}
+                description={
+                  data?.deliverTime ? moment(data?.deliverTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                }
               />
               <Step
                 title="交易完成"
-                description={moment(data?.completeTime).format('YYYY-MM-DD HH:mm:ss')}
+                description={
+                  data?.completeTime ? moment(data?.completeTime).format('YYYY-MM-DD HH:mm:ss') : ''
+                }
               />
             </Steps>
           </div>
@@ -181,14 +193,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         <ul className={Styles.ul}>
           <li className={Styles.liItem}>
             <div>商品总价</div>
-            <div>￥{data?.totalPay}</div>
+            <div>￥{getFloat(data?.totalPay / TRANSTEMP, 4)}</div>
           </li>
           <li className={Styles.liItem}>
             <div>优惠</div>
-            <div>￥{data?.totalDerateFee || '--'}</div>
+            <div>￥{getFloat(data?.totalDerateFee / TRANSTEMP, 4) || '--'}</div>
           </li>
           <li className={Styles.liItem}>
-            实收金额：<span style={{ color: '#d40000' }}>￥{data?.realTotalPay}</span>
+            实收金额：
+            <span style={{ color: '#d40000' }}>
+              ￥{getFloat(data?.realTotalPay / TRANSTEMP, 4)}
+            </span>
           </li>
         </ul>
       </div>

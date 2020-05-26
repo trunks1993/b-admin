@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-05-19 21:41:01
+ * @LastEditTime: 2020-05-26 16:05:01
  */
 
 import request from '@/utils/request';
@@ -27,7 +27,7 @@ export interface EditParamsType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/merchant/order/searchOrderList', {
+  return request('/merchant/order/searchMerSubscribeOrderList', {
     method: 'POST',
     data,
   });

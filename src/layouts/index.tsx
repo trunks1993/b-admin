@@ -10,6 +10,7 @@ import { connect } from 'dva';
 import { RouteComponentProps } from 'react-router-dom';
 import { ConnectState, MenuType } from '@/models/connect';
 import _ from 'lodash';
+import { getToken } from '@/utils/cookie';
 
 interface LayoutProps extends RouteComponentProps {
   dispatch: Dispatch<AnyAction>;
@@ -27,6 +28,7 @@ interface LayoutState {}
 class BasicLayout extends Component<LayoutProps, LayoutState> {
   componentDidMount() {
     const { dispatch } = this.props;
+    if(!getToken()) return;
     dispatch({
       type: 'user/getMenu',
       callback: () => {

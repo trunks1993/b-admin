@@ -127,7 +127,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '创建时间',
       align: 'center',
-      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss')
+      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
@@ -202,7 +202,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑角色"
+        title="编辑分组"
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
@@ -219,6 +219,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               {
                 required: true,
                 message: '分组名称不能为空',
+              },
+              {
+                max: 20,
+                message: '最多输入20个字符',
               },
             ]}
           />

@@ -21,6 +21,7 @@ interface GlobalUpLoadProps {
   action?: string;
   method?: 'POST' | 'PUT';
   data?: UploadParams;
+  disabled: boolean;
 }
 interface GlobalUpLoadStates {
   loading: boolean;
@@ -64,7 +65,7 @@ class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates
   };
 
   render() {
-    const { value, action, method, data } = this.props;
+    const { value, action, method, data, disabled } = this.props;
     const { loading } = this.state;
     const uploadButton = (
       <div>
@@ -73,32 +74,38 @@ class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates
       </div>
     );
     return (
-      <Upload
-        name="avatar"
-        listType="picture-card"
-        className="avatar-uploader"
-        showUploadList={false}
-        action={action}
-        method={method}
-        data={data}
-        beforeUpload={this.beforeUpload}
-        onChange={this.handleChangeChecked}
-      >
-        {value ? (
-          <div className={Styles.imgbox}>
-            <img
-              src={process.env.BASE_FILE_SERVER + value}
-              alt="avatar"
-              style={{ width: '100%' }}
-            />
-            <div className={Styles.delete}>
-              <Icon type="delete" onClick={this.handleDelete} />
-            </div>
-          </div>
+      <>
+        {!disabled ? (
+          <Upload
+            name="avatar"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            action={action}
+            method={method}
+            data={data}
+            beforeUpload={this.beforeUpload}
+            onChange={this.handleChangeChecked}
+          >
+            {value ? (
+              <div className={Styles.imgbox}>
+                <img
+                  src={process.env.BASE_FILE_SERVER + value}
+                  alt="avatar"
+                  style={{ width: '100%' }}
+                />
+                <div className={Styles.delete}>
+                  <Icon type="delete" onClick={this.handleDelete} />
+                </div>
+              </div>
+            ) : (
+              uploadButton
+            )}
+          </Upload>
         ) : (
-          uploadButton
+          <img width="60px" height="60px" src={process.env.BASE_FILE_SERVER + value} />
         )}
-      </Upload>
+      </>
     );
   }
 }

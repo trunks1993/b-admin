@@ -16,6 +16,7 @@ import {
   OrderStatus,
   ORDER_STATUS_1,
   ORDER_STATUS_2,
+  TRANSTEMP,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -26,6 +27,7 @@ import TabsPanel from './TabsPanel';
 import moment from 'moment';
 import router from 'umi/router';
 import { deliver, cancel } from '../services/purchase';
+import { getFloat } from '@/utils';
 
 const { CstInput, CstSelect } = MapForm;
 const { confirm } = Modal;
@@ -218,13 +220,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               {_.map(item.orderItemList, (v, index) => (
                 <span key={index} className={Styles.item}>
                   <Col span={5}>{v.productSubName}</Col>
-                  <Col span={2}>￥{v.price}</Col>
+                  <Col span={2}>￥{getFloat(v.price / TRANSTEMP, 4)}</Col>
                   <Col span={2}>{v.detailCount}</Col>
                   {index === 0 ? (
                     <>
                       <Col span={3}>{item.telephone}</Col>
                       <Col span={5}>{item.merchantName}</Col>
-                      <Col span={2}>￥{item.totalPay}</Col>
+                      <Col span={2}>￥{getFloat(item.totalPay / TRANSTEMP, 4)}</Col>
                       <Col span={2}>{OrderStatus[item.status]}</Col>
                       <Col span={3} style={{ display: 'flex', flexDirection: 'column' }}>
                         <Button
@@ -245,7 +247,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                         )}
                       </Col>
                     </>
-                  ) : null}
+                  ) : (
+                    <>
+                      <Col span={15}></Col>
+                    </>
+                  )}
                 </span>
               ))}
             </Row>

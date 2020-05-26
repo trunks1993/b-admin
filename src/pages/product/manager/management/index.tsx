@@ -7,7 +7,7 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Icon } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
-import { remove } from '../services/brand';
+import { remove } from '../services/management';
 import Styles from './index.css';
 
 import { queryListSub, EditeItemSubType } from '../services/management';
@@ -71,18 +71,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   /**
    * @name: 删除
-   * @param {number} code
+   * @param {number} id
    */
-  const showConfirm = (code: number) => {
+  const showConfirm = (id: number) => {
     confirm({
       title: '提示',
       content: '是否删除',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        const [err, data, msg] = await remove(code);
+        const [err, data, msg] = await remove(id);
         if (!err) message.success('删除成功，即将刷新');
-        else message.error('删除失败，请重试');
+        else message.error(msg);
         dispatchInit();
       },
       onCancel() {},
@@ -213,7 +213,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           >
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm(record.code)}>
+          <Button type="link" onClick={() => showConfirm(record.id)}>
             删除
           </Button>
         </>

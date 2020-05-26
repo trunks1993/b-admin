@@ -18,4 +18,5 @@ export default {
   CstTreeSelect: {},
   CstProductSubPanel: {},
   CstCascader: {},
+  CstInputNumber: {},
 };

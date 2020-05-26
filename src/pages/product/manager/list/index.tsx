@@ -16,6 +16,7 @@ import {
   PRODUCT_STATUS_1,
   PRODUCT_STATUS_2,
   ProductStatusGU,
+  TRANSTEMP,
 } from '@/const';
 import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
@@ -26,6 +27,8 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import TabsPanel from './components/TabsPanel';
 import router from 'umi/router';
 import { ListItemType } from '@/models/product';
+import LazyLoad from 'react-lazyload';
+import { getFloat } from '@/utils';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -179,15 +182,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       key: 'id',
       render: record => (
         <>
+          {/* <LazyLoad overflow={true} height={30}> */}
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+          {/* </LazyLoad> */}
           <span style={{ marginLeft: '5px' }}>{record.productName}</span>
         </>
       ),
     },
     {
       title: '价格（元）',
-      dataIndex: 'price',
       align: 'center',
+      // dataIndex: 'price',
+      render: record => getFloat(record.price / TRANSTEMP, 4),
     },
     {
       title: '商品类型',

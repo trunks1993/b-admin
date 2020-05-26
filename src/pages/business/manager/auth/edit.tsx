@@ -8,9 +8,16 @@ import _ from 'lodash';
 import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
-import { IdentifyTypes, IDENTIFY_TYPE_1, IDENTIFY_TYPE_2, IdCardTypes } from '@/const';
+import {
+  IdentifyTypes,
+  IDENTIFY_TYPE_1,
+  IDENTIFY_TYPE_2,
+  IdCardTypes,
+  IDENTIFY_TYPE_3,
+} from '@/const';
 import { ConnectState, UserType } from '@/models/connect';
 import { router } from 'umi';
+import GlobalModal from '@/components/GlobalModal';
 
 const { CstInput, CstBlockCheckbox, CstTextArea, CstSelect, CstUpload } = MapForm;
 
@@ -34,12 +41,12 @@ const handleEdite = async (fields: VerifyType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
@@ -49,6 +56,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [identifyType, setIdentifyType] = useState(0);
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     if (match.params.id !== '-1' && form) getGoodsInfo();
@@ -66,7 +74,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
       setIdentifyType(identifyType);
       let formData = {};
       if (identifyType === IDENTIFY_TYPE_1) {
-        const { realName, idCard, idCardBack, idCardFront, idCardType } = JSON.parse(data.data);
+        const { realName, idCard, idCardBack, idCardFront, idCardType = 1 } = JSON.parse(data.data);
         formData = {
           identifyType,
           telephone,
@@ -110,7 +118,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
       setConfirmLoading(true);
       const isSuccess = await handleEdite({ ...value, auditResult });
       setConfirmLoading(false);
-      if(isSuccess) router.goBack();
+      if (isSuccess) router.goBack();
     });
   };
 
@@ -123,13 +131,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
     title: item,
     value: key,
     subTitle: describeMap[key],
-  }));
+  })).filter(item => item.value != IDENTIFY_TYPE_3);
+
+  const formItemLayout = {
+    labelCol: {
+      span: 4,
+    },
+    wrapperCol: {
+      span: 20,
+      push: 1,
+    },
+  };
 
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <CstInput name="userId" defaultValue={user.userId} style={{ display: 'none' }} />
-        <CstInput name="realname" defaultValue={user.realname} style={{ display: 'none' }} />
         <CstInput name="id" defaultValue={match.params.id} style={{ display: 'none' }} />
         <Card
           size="small"
@@ -137,11 +153,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           title="认证类型"
           style={{ width: '100%', marginBottom: '10px' }}
         >
-          <CstBlockCheckbox
-            defaultValue={IDENTIFY_TYPE_1}
-            options={blockCheckboxOptions}
-            name="identifyType"
-          />
+          <CstBlockCheckbox disabled={true} options={blockCheckboxOptions} name="identifyType" />
         </Card>
         <Card
           size="small"
@@ -152,19 +164,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           {identifyType === IDENTIFY_TYPE_1 ? (
             <>
               <CstInput
+                disabled
                 label="认证手机号"
                 name="telephone"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstSelect
+                disabled
                 label="证件类型"
                 name="idCardType"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               >
                 {_.map(IdCardTypes, (item, key) => (
-                  <Select.Option key={key} value={key}>
+                  <Select.Option key={key} value={parseInt(key)}>
                     {item}
                   </Select.Option>
                 ))}
@@ -172,6 +186,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
               <Row>
                 <Col span={12} push={2}>
                   <CstUpload
+                    disabled
                     name="idCardFront"
                     help={helpMsg.idCardFront}
                     label="身份证照片"
@@ -181,6 +196,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 </Col>
                 <Col span={4} pull={5}>
                   <CstUpload
+                    disabled
                     name="idCardBack"
                     help={helpMsg.idCardBack}
                     labelCol={{ span: 4 }}
@@ -189,6 +205,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 </Col>
               </Row>
               <CstInput
+                disabled
                 label="身份证姓名"
                 placeholder="请输入商品名称"
                 name="realName"
@@ -196,6 +213,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
+                disabled
                 label="身份证号码"
                 placeholder="请输入商品名称"
                 name="idCard"
@@ -206,12 +224,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           ) : (
             <>
               <CstInput
+                disabled
                 label="认证手机号"
                 name="contactTelephone"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
+                disabled
                 label="企业名称"
                 placeholder="请输入商品名称"
                 name="businessName"
@@ -219,12 +239,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
+                disabled
                 label="统一社会信用代码"
                 name="creditCode"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstUpload
+                disabled
                 label="营业执照照片"
                 name="identityPhoto"
                 labelCol={{ span: 4 }}
@@ -240,20 +262,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           style={{ width: '100%', marginBottom: '10px' }}
         >
           <CstInput
+            disabled
             label="联系人姓名"
             name={identifyType === IDENTIFY_TYPE_1 ? 'realName' : 'contactName'}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
           <CstInput
+            disabled
             label="联系人手机"
             name="telephone"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
           <CstTextArea
+            disabled
             label="备注"
-            placeholder="请输入备注信息"
             name="remark"
             autoSize={{ minRows: 4, maxRows: 5 }}
             labelCol={{ span: 4 }}
@@ -261,18 +285,45 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           />
         </Card>
       </MapForm>
+      <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
         <Button loading={confirmLoading} type="primary" onClick={() => handleSubmit('PASS')}>
           审批通过
         </Button>
-        <Button loading={confirmLoading} style={{ marginLeft: '20px' }} onClick={() => handleSubmit('REJECT')}>
+        <Button
+          loading={confirmLoading}
+          style={{ marginLeft: '20px' }}
+          onClick={() => setModalVisible(true)}
+        >
           审批否决
         </Button>
       </div>
+      <GlobalModal
+        modalVisible={modalVisible}
+        title="审批否决"
+        onCancel={() => setModalVisible(false)}
+        onOk={() => handleSubmit('REJECT')}
+        confirmLoading={confirmLoading}
+        width={400}
+      >
+        <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
+          <CstInput name="id" defaultValue={match.params.id} style={{ display: 'none' }} />
+          <div style={{ padding: '15px 25px' }}>审批否决，需要填写否决原因</div>
+          <CstTextArea
+            placeholder="请填写否决原因"
+            name="rejectText"
+            rules={[
+              {
+                required: true,
+                message: '请填写否决原因',
+              },
+            ]}
+            autoSize={{ minRows: 4, maxRows: 6 }}
+          />
+        </MapForm>
+      </GlobalModal>
     </div>
   );
 };
 
-export default connect(({ user }: ConnectState) => ({
-  user: user.user,
-}))(Comp);
+export default Comp;

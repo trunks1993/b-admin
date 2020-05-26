@@ -138,6 +138,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
   };
 
   /**
+   * @name: 触发列表加载effect
+   * @param {type}
+   */
+  const dispatchInit = (callback?: () => void) => {
+    callback && callback();
+    currPage === 1 ? initList() : setCurrPage(1);
+  };
+
+  /**
    * @name: 打开弹窗设置回显字段
    * @param {ListItemType} record
    */
@@ -200,7 +209,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setCurrPage(1);
+        dispatchInit();
         setModalVisible(false);
       }
     });
@@ -260,7 +269,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
                   wrapperCol={{ span: 16 }}
                   name="roleCode"
                   label="角色"
-                  placeholder="请选择角色"
+                  placeholder="全部"
                 >
                   {_.map(roles, (item, index) => (
                     <Select.Option key={index} value={item.code}>
@@ -275,7 +284,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
                   wrapperCol={{ span: 16 }}
                   name="status"
                   label="状态"
-                  placeholder="请选择角色"
+                  placeholder="全部"
                 >
                   {_.map(UserStatuMap, (item, key) => (
                     <Select.Option key={key} value={key}>
@@ -290,7 +299,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
                   wrapperCol={{ span: 16 }}
                   name="realname"
                   label="账号"
-                  placeholder="请输入用户名称"
+                  placeholder="输入登录账号"
                 />
               </Col>
               <Col span={6} push={1}>
@@ -391,7 +400,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
             placeholder="请输入密码"
             rules={[
               {
-                required: true,
+                required: !formData.userId,
                 message: '密码不能为空',
               },
             ]}

@@ -1,11 +1,11 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-20 17:56:47
+ * @LastEditTime: 2020-05-25 23:14:08
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
 export const DEFAULT_PAGE_SIZE = 10; // 默认每页条数
-
+export const TRANSTEMP = 10000; // 金额转换倍数
 export const METHOD_POST = 'POST'; // post
 
 // 不需要带token的api
@@ -47,6 +47,13 @@ export const ProductTypes = {
   [PRODUCT_TYPE_2]: '兑换码',
   [PRODUCT_TYPE_3]: '短链接',
   [PRODUCT_TYPE_4]: '直充',
+};
+
+export const PRICE_STATUS_1 = 1; // 卡密
+export const PRICE_STATUS_2 = 2; // 兑换码
+export const PriceStatus = {
+  [PRICE_STATUS_1]: '正常',
+  [PRICE_STATUS_2]: '失效',
 };
 
 // 上下架
@@ -95,8 +102,8 @@ export const MERCHANT_STATUS_2 = 2; // 驳回
 export const MERCHANT_STATUS_3 = 3; // 已认证
 
 export const MerchantStatus = {
-  [MERCHANT_STATUS_0]: '待审核',
-  [MERCHANT_STATUS_1]: '通过',
+  [MERCHANT_STATUS_0]: '未认证',
+  [MERCHANT_STATUS_1]: '待审核',
   [MERCHANT_STATUS_2]: '驳回',
   [MERCHANT_STATUS_3]: '已认证',
 };
@@ -192,4 +199,21 @@ export const WarehousingStatus = {
   [WAREHOUSING_STATUS_8]: '成功',
   [WAREHOUSING_STATUS_9]: '失败',
   [WAREHOUSING_STATUS_10]: '渠道订单处理失败',
+};
+
+// 流水
+export const WATER_STATUS_1 = 1;
+export const WATER_STATUS_2 = 2;
+
+export const WaterStatus = {
+  [WATER_STATUS_1]: '出库',
+  [WATER_STATUS_2]: '入库',
+};
+
+//
+export const WORK_TYPE_1 = 1;
+export const WORK_TYPE_2 = 2;
+export const WorkTypes = {
+  [WORK_TYPE_1]: '批量',
+  [WORK_TYPE_2]: '直冲',
 };

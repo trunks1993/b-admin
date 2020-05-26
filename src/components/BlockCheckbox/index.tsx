@@ -13,11 +13,12 @@ interface BlockCheckboxProps {
   onChange?: (key: string | number) => void;
   value?: string | number;
   options: OptionItemType[];
+  disabled?: boolean;
 }
 
 class BlockCheckbox extends React.Component<BlockCheckboxProps> {
   render() {
-    const { value, onChange, options } = this.props;
+    const { value, onChange, options, disabled } = this.props;
     return (
       <div>
         <ul className={Styles.blockBox}>
@@ -27,6 +28,7 @@ class BlockCheckbox extends React.Component<BlockCheckboxProps> {
                 className={classnames(Styles.block, { active: value == item.value })}
                 key={item.value}
                 onClick={() => {
+                  if(disabled) return;
                   onChange && onChange(item.value);
                 }}
               >

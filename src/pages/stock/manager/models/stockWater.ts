@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:06
- * @LastEditTime: 2020-05-20 14:13:18
+ * @LastEditTime: 2020-05-22 11:46:09
  */
 
 import { Effect } from 'dva';
@@ -13,14 +13,14 @@ import { TableListData } from '@/pages/data';
 export interface ListItemType {
   id: number;
   code: number;
-  accountNo: number;
-  destAccountNo: string;
-  type: number;
-  changeAmount: number;
+  goodsCode: number;
+  goodsName: string;
+  type: number; // 1出库 2入库
   amount: number;
-  bizType: number;
-  orderNo: string;
-  remark: string;
+  surplus: number;
+  orderNo: number;
+  operId: number;
+  operName: string;
   createTime: string;
   modifyTime: string;
 }

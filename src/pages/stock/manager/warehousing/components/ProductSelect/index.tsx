@@ -3,7 +3,7 @@ import { Tree, Table, Pagination, Col, Row, Form, Button, Checkbox } from 'antd'
 import { queryList } from '@/pages/product/manager/services/group';
 import { ListItemType } from '@/pages/product/manager/models/group';
 import Styles from './index.css';
-import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, StockStatus } from '@/const';
+import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, StockStatus, TRANSTEMP } from '@/const';
 import { TableListData } from '@/pages/data';
 import { Dispatch, AnyAction } from 'redux';
 import { ColumnProps } from 'antd/lib/table/interface';
@@ -14,6 +14,7 @@ import { FormComponentProps } from 'antd/es/form';
 import MapForm from '@/components/MapFormComponent';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import _ from 'lodash';
+import { getFloat } from '@/utils';
 const { CstInput, CstCheckbox, CstSelect, CstPassword } = MapForm;
 
 const { TreeNode } = Tree;
@@ -43,8 +44,13 @@ const Comp: React.FC<CompProps> = props => {
   useImperativeHandle(myForwardedRef, () => ({
     getSelectedGoods: () => {
       return _.map(selectedRowKeys, item => {
-        const { productName, code } = JSON.parse(item);
-        return { productName, goodsCode: code };
+        const {
+          productName,
+          code,
+          productTypeCode,
+          productSub: { facePrice, shortName },
+        } = JSON.parse(item);
+        return { productName, goodsCode: code, productTypeCode, facePrice, shortName };
       });
     },
   }));
@@ -115,7 +121,7 @@ const Comp: React.FC<CompProps> = props => {
       clearTimeout(timeout);
       timeout = null;
     }
-    timeout = setTimeout(() => dispatchInit(() => setSelectedRowKeys([])), 2000);
+    timeout = setTimeout(() => dispatchInit(() => setSelectedRowKeys([])), 500);
   };
 
   // /**
@@ -163,7 +169,7 @@ const Comp: React.FC<CompProps> = props => {
     {
       title: '面值/规格',
       align: 'center',
-      dataIndex: 'stock',
+      render: record => getFloat(record.productSub.facePrice / TRANSTEMP, 4) + '/' + record.productSub.shortName,
     },
   ];
 

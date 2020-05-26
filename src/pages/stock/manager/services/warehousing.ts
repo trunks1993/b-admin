@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:12
- * @LastEditTime: 2020-05-22 02:03:20
+ * @LastEditTime: 2020-05-23 15:49:12
  */
 
 import request from '@/utils/request';
@@ -63,6 +63,20 @@ export async function check(goodsCode: number, fileUrl: string): Promise<any> {
     data: {
       goodsCode,
       fileUrl,
+    },
+  });
+}
+
+/**
+ * @name: 详情
+ * @param {type}
+ */
+export async function getInfo(status: number, code: string): Promise<any> {
+  return request('/goods/getWorkorder', {
+    method: 'POST',
+    data: {
+      status,
+      code,
     },
   });
 }

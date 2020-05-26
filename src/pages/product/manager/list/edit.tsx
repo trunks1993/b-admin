@@ -29,7 +29,16 @@ import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import GlobalCheckbox from '@/components/GlobCheckbox';
 import GlobalEditor from '@/components/GlobalEditor';
 import { router } from 'umi';
-import { PRODUCT_TYPE_1, PRODUCT_TYPE_2, PRODUCT_TYPE_3, PRODUCT_TYPE_4, ProductTypes } from '@/const';
+import {
+  PRODUCT_TYPE_1,
+  PRODUCT_TYPE_2,
+  PRODUCT_TYPE_3,
+  PRODUCT_TYPE_4,
+  ProductTypes,
+  TRANSTEMP,
+} from '@/const';
+import { getFloat } from '@/utils';
+import { patternName, patternPrice } from '@/rules';
 
 const {
   CstInput,
@@ -79,10 +88,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
-    stock: HELP_MSG_STOCK,
-    iconUrl: HELP_MSG_ICONURL,
-  });
+  const [msgProductName, setMsgProductName] = useState(HELP_MSG_PRODUCT_NAME);
+  const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
+  const [msgIconUrl, setMsgIconUrl] = useState(HELP_MSG_ICONURL);
+  const [msgStock, setMsgStock] = useState(HELP_MSG_STOCK);
+
   const [options, setOptions] = useState<ListItemSubType[]>([]);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -120,8 +130,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         resume,
         iconUrl,
         productSubCode,
-        price,
-        facePrice,
+        price: getFloat(price / TRANSTEMP, 4),
+        facePrice: getFloat(facePrice / TRANSTEMP, 4),
         stockType,
         stock,
         undisplayStock,
@@ -143,7 +153,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setModalVisible(false);
+        router.goBack();
       }
     });
   };
@@ -183,7 +193,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     title: item,
     value: key,
     subTitle: describeMap[key],
-  }))
+  }));
 
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
@@ -199,7 +209,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           title="商品类型"
           style={{ width: '100%', marginBottom: '10px' }}
         >
-          <CstBlockCheckbox defaultValue={PRODUCT_TYPE_1} options={blockCheckboxOptions} name="productTypeCode" />
+          <CstBlockCheckbox
+            defaultValue={PRODUCT_TYPE_1}
+            options={blockCheckboxOptions}
+            name="productTypeCode"
+          />
         </Card>
         <Card
           size="small"
@@ -209,11 +223,28 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         >
           <CstInput
             label="商品名称"
-            help={HELP_MSG_PRODUCT_NAME}
+            help={msgProductName}
             placeholder="请输入商品名称"
             name="productName"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
+            rules={[
+              {
+                required: true,
+                validator: (rule, value, callback) => {
+                  if (!value) {
+                    setMsgProductName('商品名称不能为空');
+                    callback(new Error('商品名称不能为空'));
+                  } else if (value.length < 1 || value.length > 40) {
+                    setMsgProductName('不能超过40个字符');
+                    callback(new Error('不能超过40个字符'));
+                  } else {
+                    setMsgProductName(HELP_MSG_PRODUCT_NAME);
+                    callback();
+                  }
+                },
+              },
+            ]}
           />
           <CstTextArea
             label="描述"
@@ -222,7 +253,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             autoSize={{ minRows: 4, maxRows: 5 }}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
-            help={HELP_MSG_RESUME}
+            help={msgResume}
+            rules={[
+              {
+                validator: (rule, value, callback) => {
+                  if (value.length > 60) {
+                    setMsgResume('不能超过60个字符');
+                    callback(new Error('不能超过60个字符'));
+                  } else {
+                    setMsgResume(HELP_MSG_RESUME);
+                    callback();
+                  }
+                },
+              },
+            ]}
           />
           <CstUpload
             name="iconUrl"
@@ -230,13 +274,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               {
                 validator: (rule, value, callback) => {
                   if (value === FILE_ERROR_TYPE) {
-                    setHelpMsg({ ...helpMsg, iconUrl: '文件格式错误' });
+                    setMsgIconUrl('文件格式错误');
                     callback(new Error('文件格式错误'));
                   } else if (value === FILE_ERROR_SIZE) {
-                    setHelpMsg({ ...helpMsg, iconUrl: '文件大小不能超过2M' });
+                    setMsgIconUrl('文件大小不能超过2M');
                     callback(new Error('文件大小不能超过2M'));
                   } else {
-                    setHelpMsg({ ...helpMsg, iconUrl: HELP_MSG_ICONURL });
+                    setMsgIconUrl(HELP_MSG_ICONURL);
                     callback();
                   }
                 },
@@ -249,7 +293,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               password: 'yunjin_upload_password',
               domain: 'product',
             }}
-            help={helpMsg.iconUrl}
+            help={msgIconUrl}
             label="商品图"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
@@ -297,9 +341,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                 required: true,
                 message: '商品价格不能为空',
               },
+              {
+                pattern: patternPrice,
+                message: '请输入大于0的数字',
+              },
             ]}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 6 }}
+            onBlur={e =>
+              form?.setFieldsValue({
+                price: getFloat(e.target.value, 4),
+              })
+            }
           />
           <CstInput
             label="官方价"
@@ -342,7 +395,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                   keyMap={['Y', 'N']}
                   className="minHeightFormItem"
                 />
-                <div>{helpMsg.stock}</div>
+                <div>{msgStock}</div>
               </>
             }
             rules={[
@@ -350,10 +403,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                 required: true,
                 validator: (rule, value, callback) => {
                   if (!value) {
-                    setHelpMsg({ ...helpMsg, stock: '商品库存不能为空' });
+                    setMsgStock('商品库存不能为空');
                     callback(new Error('商品库存不能为空'));
+                  } else if (value && !/(^[1-9]\d*$)/.test(value)) {
+                    setMsgStock('请输入大于0的正整数');
+                    callback(new Error('请输入大于0的正整数'));
                   } else {
-                    setHelpMsg({ ...helpMsg, stock: HELP_MSG_STOCK });
+                    setMsgStock(HELP_MSG_STOCK);
                     callback();
                   }
                 },

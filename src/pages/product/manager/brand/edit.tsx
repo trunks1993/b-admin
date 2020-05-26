@@ -57,7 +57,7 @@ interface ErrMsgType {
 }
 
 const HELP_MSG_PRODUCT_NAME = '填写商品名称，方便快速检索相关产品';
-const HELP_MSG_RESUME = '在商品详情页标题下面展示卖点信息，建议60字以内';
+const HELP_MSG_RESUME = '用一句话描述该品牌，建议60字以内';
 const HELP_MSG_ICONURL =
   '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片，你可以拖拽图片调整顺序，最多上传15张';
 const HELP_MSG_FACE_PRICE = '默认情况下，官方价为产品面值，在商品详情会以划线形式显示';
@@ -89,6 +89,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [radioValue, setRadioValue] = useState(1);
   const [treeData, setTreeData] = useState<TreeDataItem2[]>();
+  const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
   useEffect(() => {
     if (match.params.id !== '-1' && form) getBrandInfo();
@@ -99,13 +100,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   }, []);
 
   const getTree = async () => {
-    const [err, data, msg] = await getCategoryTree();
-    const tree = loopTree(data.children, item => {
-      item.value = item.id;
-      item.title = item.label;
-      item.key = item.id;
-    });
-    setTreeData(tree);
+    const [err, data, msg] = await getCategoryTree(1);
+    if (!err) {
+      const tree = loopTree(data.children, item => {
+        item.value = item.id;
+        item.title = item.label;
+        item.key = item.id;
+      });
+      setTreeData(tree);
+    } else {
+      message.error(msg);
+    }
   };
 
   /**
@@ -136,7 +141,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setModalVisible(false);
+        router.goBack();
       }
     });
   };
@@ -170,7 +175,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   };
 
   return (
-    <div style={{ height: '100%', position: 'relative' }}>
+    <div style={{ height: '100%', position: 'relative', paddingTop: '30px' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="brandId"
@@ -179,21 +184,42 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         />
         <CstInput
           label="品牌名"
-          help={HELP_MSG_PRODUCT_NAME}
-          placeholder="请输入商品名称"
           name="name"
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
+          rules={[
+            {
+              required: true,
+              message: '请输入品牌名称',
+            },
+            {
+              max: 20,
+              message: '最多输入20个字符',
+            },
+          ]}
         />
         <CstTextArea
-          label="描述"
-          placeholder="请输入商品描述"
-          name="resume"
-          autoSize={{ minRows: 4, maxRows: 5 }}
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 8 }}
-          help={HELP_MSG_RESUME}
-        />
+            label="描述"
+            placeholder="请输入商品描述"
+            name="resume"
+            autoSize={{ minRows: 4, maxRows: 5 }}
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 8 }}
+            help={msgResume}
+            rules={[
+              {
+                validator: (rule, value, callback) => {
+                  if (value.length > 60) {
+                    setMsgResume('不能超过60个字符');
+                    callback(new Error('不能超过60个字符'));
+                  } else {
+                    setMsgResume(HELP_MSG_RESUME);
+                    callback();
+                  }
+                },
+              },
+            ]}
+          />
         <CstUpload
           label="品牌logo"
           name="iconUrl"
@@ -242,6 +268,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           name="introduction"
         />
       </MapForm>
+      <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
         <Button type="primary" onClick={handleSubmit}>
           保存

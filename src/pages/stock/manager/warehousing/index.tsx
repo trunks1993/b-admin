@@ -83,7 +83,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
 
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
   const [categoryList, setCategoryList] = useState<CategoryItemType[]>([]);
   const [brandList, setBrandList] = useState<BrandItemType[]>([]);
   const [goodsCode, setGoodsCode] = useState<number>();
@@ -201,7 +200,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     {
       title: '采购订单号',
       align: 'center',
-      dataIndex: 'stock',
+      dataIndex: 'orderId',
     },
     {
       title: '采购自供应商',
@@ -218,22 +217,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       align: 'center',
       render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
-    // {
-    //   title: '可用库存(件)',
-    //   align: 'center',
-    //   render: record => record.stock - record.lockedStock,
-    // },
-    // {
-    //   title: '平均成本(元)',
-    //   align: 'center',
-    //   dataIndex: 'lockedStock',
-    // },
     {
       title: '操作',
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => handleModalVisible(record.code)}>
+          <Button
+            type="link"
+            onClick={() =>
+              router.push(`/stock/manager/warehousing/detail/${record.code}-${record.status}`)
+            }
+          >
             详情
           </Button>
         </>
@@ -261,7 +255,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   return (
     <div>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => router.push(`/stock/manager/warehousing/edit`)}>
+        <Button
+          type="link"
+          icon="plus"
+          onClick={() => router.push(`/stock/manager/warehousing/edit`)}
+        >
           新建商品入库
         </Button>
       </div>

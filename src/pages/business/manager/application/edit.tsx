@@ -11,6 +11,7 @@ import { Form, Button, Row, Col, Table, Tabs, message } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { getInfo, EditeItemType, modify, add } from '../services/application';
 import { router } from 'umi';
+import { patternUrl } from '@/rules';
 const { CstInput } = MapForm;
 const { TabPane } = Tabs;
 
@@ -30,12 +31,33 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
+const HELP_MSG_CALLBACKURL = (
+  <>
+    该接口用来向第三方应用服务器反馈交易结果请求，查看<a>技术文档</a>
+  </>
+);
+
+const HELP_MSG_VIRTUALCHARGEURL = (
+  <>
+    该接口用来向您的服务器发起虚拟商品充值请求，查看<a>技术文档</a>
+  </>
+);
+
+const HELP_MSG_NOLOGINRUL = (
+  <>
+    该接口开放给客户端，通过生成免登录URL与平台同步信息，查看<a>技术文档</a>
+  </>
+);
+
 const Comp: React.FC<CompProps> = props => {
   const { match } = props;
   const [activeKey, setActiveKey] = useState('1');
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [msgCallbackUrl, setMsgCallbackUrl] = useState(HELP_MSG_CALLBACKURL);
+  const [msgVirtualChargeUrl, setMsgVirtualChargeUrl] = useState(HELP_MSG_VIRTUALCHARGEURL);
+  const [msgNologinUrl, setMsgNologinUrl] = useState(HELP_MSG_NOLOGINRUL);
 
   useEffect(() => {
     if (activeKey == '1') initInfo();
@@ -114,40 +136,79 @@ const Comp: React.FC<CompProps> = props => {
               <CstInput
                 label="免登录接口:"
                 defaultValue="http://"
+                placeholder="http://"
                 name="nologinUrl"
                 labelCol={{ span: 3 }}
                 wrapperCol={{ span: 10 }}
-                help={
-                  <>
-                    该接口开放给客户端，通过生成免登录URL与平台同步信息，查看<a>技术文档</a>
-                  </>
-                }
+                help={msgNologinUrl}
+                rules={[
+                  {
+                    validator: (rule, value, callback) => {
+                      if (value && !patternUrl.test(value)) {
+                        setMsgNologinUrl('免登录接口地址格式有误');
+                        callback(new Error('免登录接口地址格式有误'));
+                      } else {
+                        setMsgNologinUrl(HELP_MSG_NOLOGINRUL);
+                        callback();
+                      }
+                    },
+                  },
+                ]}
               />
               <div className={Styles.border}></div>
               <CstInput
                 label="结果通知:"
+                placeholder="http://"
                 defaultValue="http://"
                 name="callbackUrl"
                 labelCol={{ span: 3 }}
                 wrapperCol={{ span: 10 }}
+                rules={[
+                  {
+                    required: true,
+                    validator: (rule, value, callback) => {
+                      if (!value) {
+                        setMsgCallbackUrl('结果通知地址不能为空');
+                        callback(new Error('结果通知地址不能为空'));
+                      } else if (!patternUrl.test(value)) {
+                        setMsgCallbackUrl('结果通知地址格式有误');
+                        callback(new Error('结果通知地址格式有误'));
+                      } else {
+                        setMsgCallbackUrl(HELP_MSG_CALLBACKURL);
+                        callback();
+                      }
+                    },
+                  },
+                ]}
                 help={
-                  <>
-                    该接口用来向第三方应用服务器反馈交易结果请求，查看<a>技术文档</a>
-                  </>
+                  // <>
+                  //   该接口用来向第三方应用服务器反馈交易结果请求，查看<a>技术文档</a>
+                  // </>
+                  msgCallbackUrl
                 }
               />
               <div className={Styles.border}></div>
               <CstInput
                 label="虚拟商品充值："
                 defaultValue="http://"
+                placeholder="http://"
                 name="virtualChargeUrl"
                 labelCol={{ span: 3 }}
                 wrapperCol={{ span: 10 }}
-                help={
-                  <>
-                    该接口用来向您的服务器发起虚拟商品充值请求，查看<a>技术文档</a>
-                  </>
-                }
+                help={msgVirtualChargeUrl}
+                rules={[
+                  {
+                    validator: (rule, value, callback) => {
+                      if (value && !patternUrl.test(value)) {
+                        setMsgVirtualChargeUrl('虚拟商品充值地址格式有误');
+                        callback(new Error('虚拟商品充值地址格式有误'));
+                      } else {
+                        setMsgVirtualChargeUrl(HELP_MSG_VIRTUALCHARGEURL);
+                        callback();
+                      }
+                    },
+                  },
+                ]}
               />
               <Form.Item
                 colon={false}

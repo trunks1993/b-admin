@@ -13,7 +13,8 @@ import { queryList } from '../services/brand';
 import { ListItemSubType } from '../management';
 import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import { router } from 'umi';
-import { guid } from '@/utils';
+import { guid, getFloat } from '@/utils';
+import { TRANSTEMP } from '@/const';
 
 const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstEditor } = MapForm;
 
@@ -55,6 +56,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     iconUrl: HELP_MSG_ICONURL,
   });
   const [options, setOptions] = useState<ListItemSubType[]>([]);
+  const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -70,16 +72,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
 
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(parseInt(match.params.id));
-    if (!err) {
-      const { brandCode, iconUrl, introduction, name, resume, productSubs } = data;
+    if (!err && data) {
+      const { brandCode, iconUrl, introduction, name, resume, productSubList } = data;
       form?.setFieldsValue({
         iconUrl,
         brandCode,
         introduction,
         name,
         resume,
-        productSubs: _.map(productSubs, item => {
+        productSubs: _.map(productSubList, item => {
           item.uuid = guid();
+          item.facePrice = getFloat(item.facePrice / TRANSTEMP, 4);
           return item;
         }),
       });
@@ -99,6 +102,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       setConfirmLoading(false);
       if (isSuccess) {
         setModalVisible(false);
+        router.goBack();
       }
     });
   };
@@ -143,11 +147,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         >
           <CstInput
             label="产品名称"
-            help={HELP_MSG_PRODUCT_NAME}
             placeholder="请输入产品名称"
             name="name"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
+            rules={[
+              {
+                required: true,
+                message: '产品名称不能为空',
+              },
+              {
+                max: 40,
+                message: '最多输入40个字符',
+              },
+            ]}
           />
           <CstTextArea
             label="描述"
@@ -156,7 +169,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             autoSize={{ minRows: 4, maxRows: 5 }}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
-            help={HELP_MSG_RESUME}
+            help={msgResume}
+            rules={[
+              {
+                validator: (rule, value, callback) => {
+                  if (value.length > 60) {
+                    setMsgResume('不能超过60个字符');
+                    callback(new Error('不能超过60个字符'));
+                  } else {
+                    setMsgResume(HELP_MSG_RESUME);
+                    callback();
+                  }
+                },
+              },
+            ]}
           />
           <CstUpload
             name="iconUrl"
@@ -232,6 +258,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           />
         </Card>
       </MapForm>
+      <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
         <Button type="primary" onClick={handleSubmit}>
           保存
