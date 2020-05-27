@@ -101,7 +101,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         if (!err) {
           message.success('操作成功');
           dispatchInit();
-        } else message.error('删除失败，请重试');
+        } else message.error(msg);
       },
       onCancel() {},
     });
@@ -226,7 +226,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     <>
                       <Col span={3}>{item.telephone}</Col>
                       <Col span={5}>{item.merchantName}</Col>
-                      <Col span={2}>￥{getFloat(item.totalPay / TRANSTEMP, 4)}</Col>
+                      <Col span={2}>￥{getFloat(item.realTotalPay / TRANSTEMP, 4)}</Col>
                       <Col span={2}>{OrderStatus[item.status]}</Col>
                       <Col span={3} style={{ display: 'flex', flexDirection: 'column' }}>
                         <Button

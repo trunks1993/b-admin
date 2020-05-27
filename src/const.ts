@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-27 16:06:19
+ * @LastEditTime: 2020-05-27 19:24:50
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -125,12 +125,16 @@ export const TransactionStatus = {
 
 export const ORDER_STATUS_1 = 1; // 待付款
 export const ORDER_STATUS_2 = 2; // 待发货
+export const ORDER_STATUS_3 = 3; // 待充值
 export const ORDER_STATUS_4 = 4; // 已完成
+export const ORDER_STATUS_5 = 5; // 已取消
 
 export const OrderStatus = {
   [ORDER_STATUS_1]: '待付款',
   [ORDER_STATUS_2]: '待发货',
+  [ORDER_STATUS_3]: '待充值',
   [ORDER_STATUS_4]: '已完成',
+  [ORDER_STATUS_5]: '已取消',
 };
 
 export const PAY_METHOD_1 = 1; // 余额

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-05-26 16:05:01
+ * @LastEditTime: 2020-05-27 19:27:38
  */
 
 import request from '@/utils/request';
@@ -48,12 +48,14 @@ export async function cancel(orderId: number): Promise<any> {
 
 /**
  * @name: 发货
- * @param {EditParamsType} data
+ * @param {number} orderId
  */
-export async function deliver(data: EditParamsType): Promise<any> {
+export async function deliver(orderId: number): Promise<any> {
   return request('/merchant/order/deliverOrder', {
     method: 'POST',
-    data,
+    data: {
+      orderId,
+    },
   });
 }
 

@@ -12,6 +12,10 @@ import {
   IdentifyTypes,
   IDENTIFY_TYPE_1,
   IdentifyStatus,
+  IDENTIFY_TYPE_2,
+  IDENTIFY_STATUS_2,
+  IDENTIFY_STATUS_3,
+  IDENTIFY_STATUS_1,
 } from '@/const';
 import { getInfo, remove } from '../services/auth';
 import Styles from './index.css';
@@ -112,12 +116,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/business/manager/auth/${record.id}`)}>
-            审批
-          </Button>
-          <Button type="link" onClick={() => showConfirm([record.merchantId])}>
-            删除
-          </Button>
+          {record.status === IDENTIFY_STATUS_1 ? (
+            <Button type="link" onClick={() => router.push(`/business/manager/auth/${record.id}`)}>
+              审批
+            </Button>
+          ) : null}
+          {record.status !== IDENTIFY_STATUS_2 ? (
+            <Button type="link" onClick={() => showConfirm([record.merchantId])}>
+              删除
+            </Button>
+          ) : null}
         </>
       ),
     },

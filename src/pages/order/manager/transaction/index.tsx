@@ -13,6 +13,7 @@ import {
   IDENTIFY_TYPE_1,
   IdentifyStatus,
   TransactionStatus,
+  TRANSTEMP,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -21,6 +22,7 @@ import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
+import { getFloat } from '@/utils';
 
 const { CstInput, CstSelect } = MapForm;
 
@@ -67,7 +69,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '订单号/外部订单号',
       align: 'center',
-      dataIndex: 'customerOrderNo',
+      render: record => (
+        <span>
+          <div>{record.orderId}</div>
+          <div>{record.customerOrderNo}</div>
+        </span>
+      ),
     },
     {
       title: '状态',
@@ -82,7 +89,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '充值金额(元)',
       align: 'center',
-      dataIndex: 'totalPay',
+      render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },
     {
       title: '商品',
@@ -97,14 +104,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '完成时间',
       align: 'center',
-      render: record => moment(record.completeTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record =>
+        record.completeTime && moment(record.completeTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '耗时',
       align: 'center',
       render: record => {
         const time = moment(record.completeTime).valueOf() - moment(record.createTime).valueOf();
-        return time / 1000 + 's';
+        return record.completeTime ? time / 1000 + 's' : '';
       },
     },
     {

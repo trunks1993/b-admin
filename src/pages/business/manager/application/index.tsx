@@ -70,7 +70,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   }, [modalVisible]);
 
   useEffect(() => {
-    const { id, iconUrl, appName, resume, industry } = formData;
+    const { id, iconUrl, appName, resume, industry, merchantId } = formData;
     if (modalVisible && id) {
       form?.setFieldsValue({
         appId: id,
@@ -78,6 +78,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         appName,
         resume,
         industry,
+        merchantId,
       });
     }
   }, [formData]);
@@ -164,7 +165,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
     {
       title: '一句话介绍',
-      dataIndex: 'remark',
+      dataIndex: 'resume',
       align: 'center',
     },
     {
