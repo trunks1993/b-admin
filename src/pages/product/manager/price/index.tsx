@@ -13,6 +13,7 @@ import {
   PriceStatus,
   PRICE_STATUS_1,
   PRICE_STATUS_2,
+  TRANSTEMP,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -34,6 +35,7 @@ import { queryList as queryBrandList } from '@/pages/product/manager/services/br
 import LazyLoad from 'react-lazyload';
 import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
+import { getFloat } from '@/utils';
 
 const { CstInput, CstSelect, CstOther } = MapForm;
 const { confirm } = Modal;
@@ -90,10 +92,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         goodsCode,
         shortName,
         goodsName,
-        facePrice,
+        facePrice: getFloat(facePrice / TRANSTEMP, 4),
         rebate,
-        decMoney,
-        price,
+        decMoney: getFloat(decMoney / TRANSTEMP, 4),
+        price: getFloat(price / TRANSTEMP, 4),
       });
     }
   }, [formData]);
@@ -212,9 +214,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       key: 'id',
       render: record => (
         <>
-          <LazyLoad overflow={true} height={30}>
-            <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          </LazyLoad>
+          {/* <LazyLoad overflow={true} height={30}> */}
+          <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+          {/* </LazyLoad> */}
           <span style={{ marginLeft: '5px' }}>{record.goodsName}</span>
         </>
       ),
@@ -227,7 +229,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '价格(元)',
       align: 'center',
-      render: record => record.price,
+      render: record => getFloat(record.price / TRANSTEMP, 4),
     },
     {
       title: '商品类型',
@@ -237,7 +239,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '面值/规格',
       align: 'center',
-      render: record => record.facePrice + '/' + record.shortName,
+      render: record => getFloat(record.facePrice / TRANSTEMP, 4) + '/' + record.shortName,
     },
     {
       title: '状态',
@@ -432,7 +434,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         columns={columns}
         pagination={false}
         dataSource={list}
-        // scroll={{ x: 2200 }}
+        scroll={{ x: 1300 }}
         rowKey={record => record.id.toString()}
       />
       <div className="global-pagination">
@@ -462,7 +464,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           <CstInput name="merchantId" label="商户号" disabled />
           <CstInput name="goodsName" label="商品名称" disabled />
           <CstOther name="shortNameAndfacePrice" label="面值/规格">
-            <input className={Styles.input} value={formData.facePrice + '元'} disabled />
+            <input
+              className={Styles.input}
+              value={getFloat(formData.facePrice / TRANSTEMP, 4) + '元'}
+              disabled
+            />
             <span style={{ margin: '0 5px' }}>/</span>
             <input className={Styles.input} value={formData.shortName} disabled />
           </CstOther>

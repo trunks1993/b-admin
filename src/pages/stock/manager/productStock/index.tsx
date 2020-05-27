@@ -236,7 +236,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           <Button type="link" onClick={() => handleModalVisible(record.code)}>
             采购
           </Button>
-          <Button type="link" onClick={() => showConfirm(record.id)}>
+          <Button type="link" onClick={() => router.push(`/stock/manager/stockWater?goods=${record.productName}`)}>
             库存流水
           </Button>
         </>
@@ -266,9 +266,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <Row>
-            <Col span={6}>
+            <Col span={8}>
               <CstInput
-                name="code"
+                name="goods"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="商品筛选"
@@ -276,13 +276,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
               />
             </Col>
 
-            <Col span={6}>
+            <Col span={8}>
               <CstSelect
                 name="categoryCode"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="商品分组"
-                placeholder="请选择分组"
+                placeholder="全部"
               >
                 {_.map(categoryList, (item, key) => (
                   <Select.Option key={key} value={item.code}>
@@ -292,13 +292,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
               </CstSelect>
             </Col>
 
-            <Col span={6}>
+            <Col span={8}>
               <CstSelect
                 name="brandCode"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="品牌"
-                placeholder="请选择品牌"
+                placeholder="全部"
               >
                 {_.map(brandList, (item, key) => (
                   <Select.Option key={key} value={item.code}>
@@ -307,13 +307,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                 ))}
               </CstSelect>
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <CstSelect
                 name="stockStatus"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="状态"
-                placeholder="请选择状态"
+                placeholder="全部"
               >
                 {_.map(StockStatus, (item, key) => (
                   <Select.Option key={key} value={key}>
@@ -322,10 +322,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                 ))}
               </CstSelect>
             </Col>
-            <Col span={6}>
+            <Col span={8} push={1}>
               <CstCheckbox name="hasStock" title="仅显示有库存" keyMap={['Y', 'N']} />
             </Col>
-            <Col span={6} push={1}>
+            <Col span={8} push={2}>
               <Form.Item>
                 <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                   筛选

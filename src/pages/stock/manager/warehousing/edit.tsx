@@ -18,17 +18,18 @@ import {
   PRODUCT_TYPE_4,
   ProductTypes,
   DEFAULT_PAGE_NUM,
+  TRANSTEMP,
 } from '@/const';
-import { EditeItemType, GoodsItemType, check } from '../services/warehousing';
-import { add } from '../services/suppliers';
+import { EditeItemType, GoodsItemType, check, add } from '../services/warehousing';
 import { ConnectState } from '@/models/connect';
 import GlobalModal from '@/components/GlobalModal';
 import ProductSelect from './components/ProductSelect';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { ListItemType } from '@/models/product';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
+import { getFloat } from '@/utils';
 
-const { CstInput, CstTextArea, CstSelect, CstDatePicker, CstOther } = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstDatePicker, CstOther, CstInputNumber } = MapForm;
 
 const { confirm } = Modal;
 
@@ -108,6 +109,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         if (!err) {
           message.success('商品入库成功');
           router.goBack();
+        } else {
+          message.error(msg);
         }
       }
 
@@ -126,38 +129,68 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
    * @param {type}
    */
   const handleInputChange = (value: string, key: string, code: number) => {
-    const count = form?.getFieldValue('count-' + code);
-    const purchasePrice = form?.getFieldValue('purchasePrice-' + code);
-    const taxRate = form?.getFieldValue('taxRate-' + code);
+    // const val = parseFloat(value);
+    // const count = parseInt(form?.getFieldValue('count-' + code));
+    // const purchasePrice = parseFloat(form?.getFieldValue('purchasePrice-' + code)) * TRANSTEMP;
+    // const taxRate = parseFloat(form?.getFieldValue('taxRate-' + code)) * 100;
 
-    let noTax: string | number = '--',
-      tax: string | number = '--';
-    if (key === 'purchasePrice') {
-      if (count && value) {
-        tax = noTax = parseFloat(value) * parseFloat(count);
-        if (taxRate) {
-          tax = parseFloat(value) * parseFloat(count) * (taxRate / 100 + 1);
-        }
-      }
-    } else if (key === 'count') {
-      const data = _.clone(uploadDisableList);
-      data[code] = !!parseFloat(value);
-      setUploadDisableList(data);
+    // let noTax: string | number = '--',
+    //   tax: string | number = '--';
 
-      if (purchasePrice && value) {
-        tax = noTax = parseFloat(value) * parseFloat(purchasePrice);
-        if (taxRate) {
-          tax = parseFloat(value) * parseFloat(purchasePrice) * (taxRate / 100 + 1);
-        }
-      }
-    } else if (key === 'taxRate') {
-      if (purchasePrice && count) {
-        tax = noTax = parseFloat(count) * parseFloat(purchasePrice);
-        if (taxRate) {
-          tax = parseFloat(count) * parseFloat(purchasePrice) * (parseFloat(value) / 100 + 1);
-        }
-      }
-    }
+    // if (key === 'purchasePrice') {
+    //   if (count && val) {
+    //     const res = (val * TRANSTEMP * count) / TRANSTEMP;
+    //     tax = noTax = getFloat(res, 4);
+    //     if (taxRate) {
+    //       tax = getFloat((res * (taxRate + TRANSTEMP)) / TRANSTEMP, 4);
+    //     }
+    //   }
+    // } else if (key === 'count') {
+    //   const data = _.clone(uploadDisableList);
+    //   data[code] = !!val;
+    //   setUploadDisableList(data);
+
+    //   if (purchasePrice && val) {
+    //     const res = (purchasePrice * val) / TRANSTEMP;
+    //     tax = noTax = getFloat(res, 4);
+    //     if (taxRate) {
+    //       tax = getFloat((res * (taxRate + TRANSTEMP)) / TRANSTEMP, 4);
+    //     }
+    //   }
+    // } else if (key === 'taxRate') {
+    //   if (purchasePrice && count) {
+    //     const res = (purchasePrice * count) / TRANSTEMP;
+    //     tax = noTax = getFloat(res, 4);
+    //     if (taxRate) {
+    //       tax = getFloat((res * (val * 100 + TRANSTEMP)) / TRANSTEMP, 4);
+    //     }
+    //   }
+    // }
+    const val = parseFloat(value);
+
+    const map = {
+      purchasePrice: {
+        purchasePrice: val || 0,
+        taxRate: parseFloat(form?.getFieldValue('taxRate-' + code)) * 100 || 0,
+        count: parseInt(form?.getFieldValue('count-' + code)) || 0,
+      },
+      count: {
+        count: val || 0,
+        purchasePrice: parseFloat(form?.getFieldValue('purchasePrice-' + code)) || 0,
+        taxRate: parseFloat(form?.getFieldValue('taxRate-' + code)) * 100 || 0,
+      },
+      taxRate: {
+        taxRate: val * 100 || 0,
+        purchasePrice: parseFloat(form?.getFieldValue('purchasePrice-' + code)) || 0,
+        count: parseInt(form?.getFieldValue('count-' + code)) || 0,
+      },
+    };
+
+    const { purchasePrice, taxRate, count } = map[key];
+    const res = purchasePrice * TRANSTEMP * count;
+    const noTax = getFloat(res / TRANSTEMP, 4);
+    const tax = getFloat((res * (taxRate + TRANSTEMP)) / TRANSTEMP / TRANSTEMP, 4);
+
     form?.setFieldsValue({
       ['noTax-' + code]: noTax,
       ['tax-' + code]: tax,
@@ -202,7 +235,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         ['fileUrl-' + code]: fileUrl,
       });
       const [err, data, msg] = await check(code, fileUrl);
-
+      if (err) {
+        form?.setFields({
+          ['count-' + code]: {
+            value: '',
+            errors: [new Error('请核对入库数量')],
+          },
+        });
+        return message.error(msg);
+      }
       const m = _.clone(countMap);
       m[code] = data.count;
       setCountMap(m);
@@ -213,7 +254,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         form?.setFields({
           ['count-' + code]: {
             value: count,
-            errors: [new Error('数量校验有误')],
+            errors: [new Error('请核对入库数量')],
           },
         });
       }
@@ -241,17 +282,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       align: 'center',
       width: 100,
       render: record => (
-        <CstInput
+        <CstInputNumber
           name={'purchasePrice-' + record.goodsCode}
           placeholder="请输入"
-          className="dynamic-inpui-1"
+          className="dynamic-inpui-2"
+          size="small"
+          precision={4}
+          min={0}
           rules={[
             {
               required: true,
               message: '请填写采购价',
             },
           ]}
-          onChange={e => handleInputChange(e.target.value, 'purchasePrice', record.goodsCode)}
+          onBlur={e => handleInputChange(e.target.value, 'purchasePrice', record.goodsCode)}
         />
       ),
     },
@@ -260,10 +304,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       align: 'center',
       width: 100,
       render: record => (
-        <CstInput
+        <CstInputNumber
           name={'count-' + record.goodsCode}
           placeholder="请输入"
           className="dynamic-inpui-2"
+          size="small"
+          min={1}
+          precision={0}
           rules={[
             {
               validator: (rule, value, callback) => {
@@ -274,7 +321,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
               },
             },
           ]}
-          onChange={e => handleInputChange(e.target.value, 'count', record.goodsCode)}
+          onBlur={e => handleInputChange(e.target.value, 'count', record.goodsCode)}
         />
       ),
     },
@@ -283,17 +330,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       align: 'center',
       width: 100,
       render: record => (
-        <CstInput
+        <CstInputNumber
           name={'taxRate-' + record.goodsCode}
           placeholder="请输入"
           className="dynamic-inpui-2"
+          size="small"
+          min={0}
+          precision={2}
           // rules={[
           //   {
           //     required: true,
           //     message: '请填写税率',
           //   },
           // ]}
-          onChange={e => handleInputChange(e.target.value, 'taxRate', record.goodsCode)}
+          onBlur={e => handleInputChange(e.target.value, 'taxRate', record.goodsCode)}
         />
       ),
     },

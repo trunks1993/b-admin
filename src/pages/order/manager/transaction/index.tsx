@@ -103,8 +103,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '耗时',
       align: 'center',
       render: record => {
-        const time =
-          moment(record.completeTime).valueOf() - moment(record.createTime).valueOf();
+        const time = moment(record.completeTime).valueOf() - moment(record.createTime).valueOf();
         return time / 1000 + 's';
       },
     },

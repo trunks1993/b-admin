@@ -13,6 +13,7 @@ import {
   IDENTIFY_TYPE_1,
   IdentifyStatus,
   SupplierStatus,
+  TRANSTEMP,
 } from '@/const';
 import {
   remove,
@@ -31,6 +32,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
 import { getInfo } from '@/pages/business/manager/services/application';
+import { getFloat } from '@/utils';
 
 const { confirm } = Modal;
 const { CstInput, CstSelect } = MapForm;
@@ -93,7 +95,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         });
       }, 2000);
     }
-  }, [formData]);
+  }, [form]);
+
+  /**
+   * @name: 触发列表加载effect
+   * @param {type}
+   */
+  const dispatchInit = (callback?: () => void) => {
+    callback && callback();
+    currPage === 1 ? initList() : setCurrPage(1);
+  };
 
   /**
    * @name: 列表加载
@@ -177,7 +188,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setCurrPage(1);
+        dispatchInit();
         setModalVisible(false);
       }
     });
@@ -203,12 +214,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         }),
       };
       setConfirmLoading(true);
-      const [err] = await batchModifyAmount(paramObj);
-      setConfirmLoading(false);
+      const [err, data, msg] = await batchModifyAmount(paramObj);
       if (!err) {
-        setCurrPage(1);
+        dispatchInit();
         setModalBlanceVisible(false);
+      } else {
+        message.error(msg);
       }
+      setConfirmLoading(false);
     });
   };
 
@@ -217,13 +230,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @param {type}
    */
   const handleModalVisible = async (record: ListItemType) => {
-    const data = await new Promise(resolve => {
-      setTimeout(() => {
-        resolve(record);
-      });
-    });
     setModalVisible(true);
-    setFormData(data);
+    setFormData(record);
   };
 
   const columns: ColumnProps<ListItemType>[] = [
@@ -244,8 +252,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
     {
       title: '系统余额(元)',
-      dataIndex: 'amount',
       align: 'center',
+      render: record => getFloat((record.amount || 0) / TRANSTEMP, 4),
     },
     // {
     //   title: '查询余额(元)',
@@ -308,7 +316,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="status"
                   label="状态"
-                  placeholder="请选择状态"
+                  placeholder="全部"
                 >
                   {_.map(SupplierStatus, (item, key) => (
                     <Select.Option key={key} value={key}>

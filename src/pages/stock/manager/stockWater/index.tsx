@@ -16,6 +16,7 @@ import { ListItemType as SuppliersItemType } from '../models/suppliers';
 
 import moment from 'moment';
 import { ListItemType } from '../models/stockWater';
+import { RouteComponentProps } from 'dva/router';
 
 const { CstInput, CstSelect } = MapForm;
 
@@ -23,9 +24,13 @@ interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
   supplierList: SuppliersItemType[];
+  location: Location;
 }
 
-const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loading }) => {
+const Comp: React.FC<CompProps> = props => {
+  const { dispatch, list, supplierList, total, loading } = props;
+  const goods = props.location.query.goods;
+
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
@@ -39,7 +44,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
    * @name: 列表加载
    */
   const initList = () => {
-    const data = filterForm?.getFieldsValue();
+    let data = filterForm?.getFieldsValue();
+    goods && (data = { ...data, goods });
     dispatch({
       type: 'stockManagerStockWater/fetchList',
       queryParams: {
@@ -68,7 +74,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     {
       title: '制单时间',
       align: 'center',
-      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record =>
+        record.createTime && moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '单据类型',
@@ -107,21 +114,23 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <Row>
-            <Col span={12}>
+            <Col span={8}>
               <CstInput
-                name="goodsCode"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
+                name="goods"
+                defaultValue={goods}
+                disabled={!!goods}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
                 label="商品筛选"
                 placeholder="输入商品名称/编码"
               />
             </Col>
 
-            <Col span={12}>
+            <Col span={8}>
               <CstSelect
                 name="type"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
                 label="单据类型"
                 placeholder="全部"
               >

@@ -64,7 +64,7 @@ const Comp: React.FC<CompProps> = ({ match }) => {
    */
   const getSupplierList = async () => {
     setLoading(true);
-    const [code, status] = match.params.id.split('-');
+    const [status, code] = match.params.id.split('-');
     const [err, data, msg] = await getInfo(code, status);
     setLoading(false);
     if (!err) {
