@@ -50,6 +50,7 @@ const {
   CstCheckbox,
   CstDatePicker,
   CstEditor,
+  CstInputNumber,
 } = MapForm;
 
 const { confirm } = Modal;
@@ -79,7 +80,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -235,9 +236,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                   if (!value) {
                     setMsgProductName('商品名称不能为空');
                     callback(new Error('商品名称不能为空'));
-                  } else if (value.length < 1 || value.length > 40) {
-                    setMsgProductName('不能超过40个字符');
-                    callback(new Error('不能超过40个字符'));
                   } else {
                     setMsgProductName(HELP_MSG_PRODUCT_NAME);
                     callback();
@@ -257,7 +255,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             rules={[
               {
                 validator: (rule, value, callback) => {
-                  if (value.length > 60) {
+                  if (value && value.length > 60) {
                     setMsgResume('不能超过60个字符');
                     callback(new Error('不能超过60个字符'));
                   } else {
@@ -312,11 +310,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             showSearch={true}
             showArrow={false}
             filterOption={false}
-            onChange={e =>
+            onChange={e => {
+              const fp = _.find(options, item => item.code === e)?.facePrice;
               form?.setFieldsValue({
-                facePrice: _.find(options, item => item.code === e)?.facePrice,
-              })
-            }
+                facePrice: getFloat(fp / TRANSTEMP, 4),
+              });
+            }}
             onSearch={handleSearch}
           >
             {_.map(options, item => (
@@ -332,27 +331,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           title="价格/库存"
           style={{ width: '100%', marginBottom: '10px' }}
         >
-          <CstInput
+          <CstInputNumber
             label="价格"
-            placeholder="请输入商品价格"
+            placeholder="请输入"
             name="price"
+            min={0}
+            precision={4}
+            size="large"
             rules={[
               {
                 required: true,
                 message: '商品价格不能为空',
               },
-              {
-                pattern: patternPrice,
-                message: '请输入大于0的数字',
-              },
             ]}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 6 }}
-            onBlur={e =>
-              form?.setFieldsValue({
-                price: getFloat(e.target.value, 4),
-              })
-            }
+            wrapperCol={{ span: 20 }}
           />
           <CstInput
             label="官方价"
@@ -383,9 +376,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               </span>
             </Radio>
           </CstRadio>
-          <CstInput
+          <CstInputNumber
             label="库存"
-            placeholder="请输入库存数量"
+            placeholder="请输入"
+            size="large"
+            min={0}
+            precision={0}
             name="stock"
             help={
               <>
@@ -401,22 +397,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             rules={[
               {
                 required: true,
-                validator: (rule, value, callback) => {
-                  if (!value) {
-                    setMsgStock('商品库存不能为空');
-                    callback(new Error('商品库存不能为空'));
-                  } else if (value && !/(^[1-9]\d*$)/.test(value)) {
-                    setMsgStock('请输入大于0的正整数');
-                    callback(new Error('请输入大于0的正整数'));
-                  } else {
-                    setMsgStock(HELP_MSG_STOCK);
-                    callback();
-                  }
-                },
+                message: '商品库存不能为空',
               },
             ]}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 6 }}
+            wrapperCol={{ span: 20 }}
           />
         </Card>
         <Card

@@ -115,7 +115,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     }
     const fake = async () => {
       const [err, data, msg] = await queryList({ name: value });
-      callback(data.list || []);
+      if (!err) {
+        callback(data.list || []);
+      }
     };
 
     timeout = setTimeout(fake, 500);
@@ -173,7 +175,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             rules={[
               {
                 validator: (rule, value, callback) => {
-                  if (value.length > 60) {
+                  if (value && value.length > 60) {
                     setMsgResume('不能超过60个字符');
                     callback(new Error('不能超过60个字符'));
                   } else {

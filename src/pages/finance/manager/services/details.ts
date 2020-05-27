@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:12
- * @LastEditTime: 2020-05-20 00:43:08
+ * @LastEditTime: 2020-05-27 15:54:42
  */
 
 import request from '@/utils/request';
@@ -22,7 +22,7 @@ export interface QueryParamsType extends BaseQueryType {
  * @param {QueryParamsType} data
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
-  return request('/merchant/searchMerchantAccount', {
+  return request('/merchant/searchMerchantAccountTrace', {
     method: 'POST',
     data,
   });

@@ -91,7 +91,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const getMerchantList = async () => {
     const [err, data, msg] = await queryMerchantList({});
-    console.log('getMerchantList -> data', data);
     if (!err) setMerchantList(data.list);
   };
 
@@ -248,7 +247,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑应用"
+        title={formData.id ? '编辑应用' : '新增应用'}
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}

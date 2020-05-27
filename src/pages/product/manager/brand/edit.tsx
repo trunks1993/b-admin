@@ -209,7 +209,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             rules={[
               {
                 validator: (rule, value, callback) => {
-                  if (value.length > 60) {
+                  if (value && value.length > 60) {
                     setMsgResume('不能超过60个字符');
                     callback(new Error('不能超过60个字符'));
                   } else {
@@ -248,7 +248,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           data={{
             userName: 'yunjin_file_upload',
             password: 'yunjin_upload_password',
-            domain: 'product',
+            domain: 'brand',
           }}
           help={helpMsg.iconUrl}
           labelCol={{ span: 4 }}

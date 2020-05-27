@@ -225,7 +225,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑角色"
+        title={formData.sysRole?.code ? '编辑角色' : '新增角色'}
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}

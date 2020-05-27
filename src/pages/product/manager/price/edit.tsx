@@ -330,7 +330,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           </div> */}
           <div className={Styles.btn}>
             <Button type="primary" onClick={handleSubmit}>
-              确认入库
+              确认
             </Button>
             <Button style={{ marginLeft: '20px' }} onClick={() => router.goBack()}>
               取消

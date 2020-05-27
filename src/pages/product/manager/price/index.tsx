@@ -37,7 +37,7 @@ import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
 import { getFloat } from '@/utils';
 
-const { CstInput, CstSelect, CstOther } = MapForm;
+const { CstInput, CstSelect, CstOther, CstInputNumber } = MapForm;
 const { confirm } = Modal;
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -94,8 +94,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         goodsName,
         facePrice: getFloat(facePrice / TRANSTEMP, 4),
         rebate,
-        decMoney: getFloat(decMoney / TRANSTEMP, 4),
-        price: getFloat(price / TRANSTEMP, 4),
+        decMoney: decMoney / TRANSTEMP,
+        price: price / TRANSTEMP,
       });
     }
   }, [formData]);
@@ -109,7 +109,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const getBrand = async () => {
     const [err, data, msg] = await queryBrandList({});
-    if (!err) setBrandList(data.list);
+    if (!err && data) setBrandList(data.list);
   };
 
   /**
@@ -202,6 +202,33 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     setFormData(data);
   };
 
+  /**
+   * @name:
+   * @param {type}
+   */
+  const handleInputChange = (value: number, key: string) => {
+    const { facePrice } = formData;
+    if (key === 'rebate') {
+      const price = (value * 100 * facePrice) / 1000;
+      form?.setFieldsValue({
+        price: price / TRANSTEMP,
+        decMoney: (facePrice - price) / TRANSTEMP,
+      });
+    } else if (key === 'price') {
+      const transVal = value * TRANSTEMP;
+      form?.setFieldsValue({
+        rebate: (transVal / facePrice) * 10,
+        decMoney: (facePrice - transVal) / TRANSTEMP,
+      });
+    } else if (key === 'decMoney') {
+      const price = facePrice - value * TRANSTEMP;
+      form?.setFieldsValue({
+        price: price / TRANSTEMP,
+        rebate: price / facePrice * 10,
+      });
+    }
+  };
+
   const columns: ColumnProps<ListItemType>[] = [
     // {
     //   title: '商品名称',
@@ -212,19 +239,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '商品名称',
       align: 'center',
       key: 'id',
+      width: 200,
       render: record => (
-        <>
-          {/* <LazyLoad overflow={true} height={30}> */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          {/* </LazyLoad> */}
-          <span style={{ marginLeft: '5px' }}>{record.goodsName}</span>
-        </>
+          <span style={{ textAlign: 'left' }}>
+            <span style={{ marginLeft: '5px' }}>{record.goodsName}</span>
+            <span style={{ marginLeft: '5px' }}>{record.goodsCode}</span>
+          </span>
+        </div>
       ),
     },
     {
-      title: '商品号',
+      title: '商户号',
       align: 'center',
-      dataIndex: 'goodsCode',
+      dataIndex: 'merchantId',
     },
     {
       title: '价格(元)',
@@ -472,56 +501,46 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             <span style={{ margin: '0 5px' }}>/</span>
             <input className={Styles.input} value={formData.shortName} disabled />
           </CstOther>
-          <CstInput
+          <CstInputNumber
             name="rebate"
             label="折扣"
-            labelCol={{
-              span: 4,
-            }}
-            wrapperCol={{
-              span: 7,
-              push: 1,
-            }}
+            size="large"
+            min={0}
+            precision={2}
             rules={[
               {
                 required: true,
                 message: '请输入',
               },
             ]}
+            onChange={e => handleInputChange(e, 'rebate')}
           />
-          <CstInput
+          <CstInputNumber
             name="decMoney"
             label="减钱"
-            labelCol={{
-              span: 4,
-            }}
-            wrapperCol={{
-              span: 7,
-              push: 1,
-            }}
+            size="large"
+            precision={4}
             rules={[
               {
                 required: true,
                 message: '请输入',
               },
             ]}
+            onChange={e => handleInputChange(e, 'decMoney')}
           />
-          <CstInput
+          <CstInputNumber
             name="price"
-            labelCol={{
-              span: 4,
-            }}
-            wrapperCol={{
-              span: 7,
-              push: 1,
-            }}
+            size="large"
             label="定价"
+            precision={4}
+            min={0}
             rules={[
               {
                 required: true,
                 message: '请输入',
               },
             ]}
+            onChange={e => handleInputChange(e, 'price')}
           />
         </MapForm>
       </GlobalModal>
@@ -530,7 +549,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 };
 
 export default connect(({ productManagerPrice, loading }: ConnectState) => ({
-  list: productManagerPrice.list,
+  list: productManagerPrice.list || [],
   total: productManagerPrice.total,
   loading: loading.effects['productManagerPrice/fetchList'],
 }))(Comp);

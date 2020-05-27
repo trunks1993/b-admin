@@ -3,7 +3,13 @@ import { Tree, Table, Pagination, Col, Row, Form, Button, Checkbox } from 'antd'
 import { queryList } from '@/pages/product/manager/services/group';
 import { ListItemType } from '@/pages/product/manager/models/group';
 import Styles from './index.css';
-import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, StockStatus, TRANSTEMP } from '@/const';
+import {
+  DEFAULT_PAGE_NUM,
+  DEFAULT_PAGE_SIZE,
+  StockStatus,
+  TRANSTEMP,
+  ProductStatusGU,
+} from '@/const';
 import { TableListData } from '@/pages/data';
 import { Dispatch, AnyAction } from 'redux';
 import { ColumnProps } from 'antd/lib/table/interface';
@@ -85,7 +91,9 @@ const Comp: React.FC<CompProps> = props => {
    */
   const initTreeData = async () => {
     const [err, data, msg] = await queryList({});
-    setTreeData(data.list);
+    if (!err) {
+      setTreeData(data.list);
+    }
   };
 
   /**
@@ -150,16 +158,16 @@ const Comp: React.FC<CompProps> = props => {
       align: 'center',
       key: 'id',
       render: record => (
-        <>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          <span style={{ marginLeft: '5px' }}>{record.productName}</span>
-        </>
+          <span>{record.productSub.name}</span>
+        </div>
       ),
     },
     {
       title: '状态',
       align: 'center',
-      render: record => StockStatus[record.stockStatus],
+      render: record => ProductStatusGU[record.status],
     },
     {
       title: '库存数量（件）',
@@ -169,7 +177,8 @@ const Comp: React.FC<CompProps> = props => {
     {
       title: '面值/规格',
       align: 'center',
-      render: record => getFloat(record.productSub.facePrice / TRANSTEMP, 4) + '/' + record.productSub.shortName,
+      render: record =>
+        getFloat(record.productSub.facePrice / TRANSTEMP, 4) + '/' + record.productSub.shortName,
     },
   ];
 
@@ -240,11 +249,11 @@ const Comp: React.FC<CompProps> = props => {
             onChange={(currPage: number) => setCurrPage(currPage)}
             defaultPageSize={DEFAULT_PAGE_SIZE}
             total={total}
-            showQuickJumper
+            // showQuickJumper
           />
-          <span className="global-pagination-data">
+          {/* <span className="global-pagination-data">
             共 {total} 条 ,每页 {pageSize} 条
-          </span>
+          </span> */}
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ import _ from 'lodash';
 import Styles from './index.css';
 import { EditeItemSubType, modifySub, addSub, removeSub } from '../../../services/management';
 import moment from 'moment';
+import { TRANSTEMP } from '@/const';
+import { getFloat } from '@/utils';
 const { confirm } = Modal;
 
 interface ExpandFormProps {
@@ -35,7 +37,9 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
    */
   const handleInputChange = (value: string, id: number, key: string) => {
     const obj = _.map(editList, item => {
-      item.productSubId === id && (item[key] = value);
+      if (key === 'facePrice' && item.productSubId === id)
+        item[key] = getFloat(value / TRANSTEMP, 4);
+      else item.productSubId === id && (item[key] = value);
       return item;
     });
     setEditList(obj);
@@ -82,12 +86,12 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
               <span className={Styles.brandName}>{brandName}</span>
               <span className={Styles.value}>
                 {index === -1 ? (
-                  item.facePrice + ' / ' + item.shortName
+                  getFloat(item.facePrice / TRANSTEMP, 4) + ' / ' + item.shortName
                 ) : (
                   <>
                     <input
                       style={{ width: '40px' }}
-                      defaultValue={item.facePrice}
+                      defaultValue={getFloat(item.facePrice / TRANSTEMP, 4)}
                       onChange={e => handleInputChange(e.target.value, item.id, 'facePrice')}
                     />
                     <span style={{ margin: '0 5px' }}>/</span>

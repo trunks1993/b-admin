@@ -188,7 +188,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       dataIndex: 'brandName',
     },
     {
-      title: '面值/规格',
+      title: '面值（元）/规格',
       align: 'center',
       width: 100,
       render: () => '--',

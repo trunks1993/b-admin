@@ -7,7 +7,7 @@ import { ListItemType } from '../models/recharge';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, RechargeStatus } from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, RechargeStatus, TRANSTEMP } from '@/const';
 // import { remove, add, modify, EditeItemType, modifyStatus } from '../services/recharge';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -18,6 +18,7 @@ import router from 'umi/router';
 import moment from 'moment';
 import GlobalModal from '@/components/GlobalModal';
 import { modify } from '../services/recharge';
+import { getFloat } from '@/utils';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -188,7 +189,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '充值金额(元)',
       align: 'center',
-      dataIndex: 'amount',
+      // dataIndex: 'amount',
+      render: record => getFloat(record.amount / TRANSTEMP, 4),
     },
     {
       title: '状态',
@@ -203,7 +205,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '完成时间',
       align: 'center',
-      render: record => moment(record.completeTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record =>
+        record.completeTime && moment(record.completeTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
@@ -244,7 +247,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="账户编号"
-                placeholder="输入账户编号"
+                placeholder="请输入"
               />
             </Col>
             <Col span={6}>
@@ -253,7 +256,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="业务单号"
-                placeholder="输入业务单号"
+                placeholder="请输入"
               />
             </Col>
             <Col span={6} push={1}>
@@ -280,7 +283,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           columns={columns}
           pagination={false}
           dataSource={list}
-          scroll={{ x: 1300 }}
+          // scroll={{ x: 1300 }}
           rowKey={record => record.id.toString()}
         />
         <div className="global-pagination">
@@ -303,7 +306,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         onOk={() => setModalVisible(false)}
         confirmLoading={confirmLoading}
       >
-        <img src={previewImg} />
+        <img width="100%" src={previewImg} />
       </GlobalModal>
     </div>
   );

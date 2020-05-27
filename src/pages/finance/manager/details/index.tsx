@@ -13,6 +13,8 @@ import {
   IDENTIFY_TYPE_1,
   IdentifyStatus,
   TransactionStatus,
+  TRANSTEMP,
+  BizTypes,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -21,6 +23,7 @@ import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
+import { getFloat } from '@/utils';
 
 const { CstInput, CstSelect } = MapForm;
 
@@ -78,22 +81,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '业务类型',
       align: 'center',
-      dataIndex: 'bizType',
+      render: record => BizTypes[record.bizType],
     },
     {
       title: '收支类型',
       align: 'center',
-      dataIndex: 'type',
+      render: record => (record.type === 1 ? '收入' : '支出'),
     },
     {
       title: '变动金额(元)',
       align: 'center',
-      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record => getFloat(record.changeAmount / TRANSTEMP, 4),
     },
     {
       title: '当前余额(元)',
       align: 'center',
-      render: record => moment(record.modifyTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record => getFloat(record.amount / TRANSTEMP, 4),
     },
     {
       title: '关联订单号',
@@ -120,7 +123,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="code"
                   label="业务单号"
-                  placeholder="请输入业务单号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7}>
@@ -129,18 +132,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="merchantId"
                   label="商户号"
-                  placeholder="请输入商户号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7}>
                 <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
-                  name="status"
+                  name="bizType"
                   label="业务类型"
-                  placeholder="请选择业务类型"
+                  placeholder="全部"
                 >
-                  {_.map(TransactionStatus, (item, key) => (
+                  {_.map(BizTypes, (item, key) => (
                     <Select.Option key={key} value={key}>
                       {item}
                     </Select.Option>
@@ -167,7 +170,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="accountNo"
                   label="账户编号"
-                  placeholder="请输入账户编号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7}>
@@ -176,13 +179,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="type"
                   label="收支类型"
-                  placeholder="请选择收支类型"
+                  placeholder="全部"
                 >
-                  {_.map(TransactionStatus, (item, key) => (
-                    <Select.Option key={key} value={key}>
-                      {item}
-                    </Select.Option>
-                  ))}
+                  <Select.Option value={1}>收入</Select.Option>
+                  <Select.Option value={2}>支出</Select.Option>
                 </CstSelect>
               </Col>
               <Col span={7} push={2}>
@@ -213,7 +213,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         columns={columns}
         pagination={false}
         dataSource={list}
-        scroll={{ x: 1300 }}
+        // scroll={{ x: 1300 }}
         rowKey={record => record.id.toString()}
       />
       <div className="global-pagination">

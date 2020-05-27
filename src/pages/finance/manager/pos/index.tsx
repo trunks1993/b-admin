@@ -13,6 +13,7 @@ import {
   IDENTIFY_TYPE_1,
   IdentifyStatus,
   TransactionStatus,
+  TRANSTEMP,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -21,6 +22,7 @@ import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
+import { getFloat } from '@/utils';
 
 const { CstInput, CstSelect } = MapForm;
 
@@ -67,22 +69,23 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '商户名称/商户号',
       align: 'center',
-      dataIndex: 'customerOrderNo',
+      // dataIndex: 'customerOrderNo',
+      render: record => record.merchantName + '/' + record.merchantId,
     },
     {
       title: '状态',
       align: 'center',
-      render: record => TransactionStatus[record.status],
+      render: record => (record.status === 1 ? '有效' : '无效'),
     },
     {
       title: '账户余额(元)',
       align: 'center',
-      dataIndex: 'rechargeAccount',
+      render: record => getFloat(record.amount / TRANSTEMP, 4),
     },
     {
       title: '余额报警阈值(元)',
       align: 'center',
-      dataIndex: 'doorsillAmount',
+      render: record => getFloat(record.doorsillAmount / TRANSTEMP, 4),
     },
     {
       title: '创建时间',
@@ -129,7 +132,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="accountNo"
                   label="账户编号"
-                  placeholder="请输入账户编号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7}>
@@ -138,7 +141,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="merchantId"
                   label="商户号"
-                  placeholder="请输入商户号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7}>
@@ -147,13 +150,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="status"
                   label="账户状态"
-                  placeholder="请选择账户状态"
+                  placeholder="全部"
                 >
-                  {_.map(TransactionStatus, (item, key) => (
-                    <Select.Option key={key} value={key}>
-                      {item}
-                    </Select.Option>
-                  ))}
+                  <Select.Option value={1}>有效</Select.Option>
+                  <Select.Option value={2}>无效</Select.Option>
                 </CstSelect>
               </Col>
             </Row>
@@ -176,7 +176,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   wrapperCol={{ span: 16 }}
                   name="merchantName"
                   label="商户名称"
-                  placeholder="请输入商户号"
+                  placeholder="请输入"
                 />
               </Col>
               <Col span={7} push={2}>

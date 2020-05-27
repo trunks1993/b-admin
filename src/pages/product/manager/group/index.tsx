@@ -202,7 +202,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑分组"
+        title={formData.code ? '编辑分组' : '新增分组'}
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}

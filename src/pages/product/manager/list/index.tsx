@@ -179,14 +179,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     {
       title: '商品名称',
       align: 'center',
+      width: 260,
       key: 'id',
       render: record => (
-        <>
-          {/* <LazyLoad overflow={true} height={30}> */}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          {/* </LazyLoad> */}
-          <span style={{ marginLeft: '5px' }}>{record.productName}</span>
-        </>
+          <span style={{ textAlign: 'left' }}>
+            <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
+            <div style={{ marginLeft: '5px' }}>{record.code}</div>
+          </span>
+        </div>
       ),
     },
     {

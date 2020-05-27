@@ -168,6 +168,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
     // }
     const val = parseFloat(value);
 
+    if (key === 'count') {
+      const data = _.clone(uploadDisableList);
+      data[code] = !!val;
+      setUploadDisableList(data);
+    }
+
     const map = {
       purchasePrice: {
         purchasePrice: val || 0,

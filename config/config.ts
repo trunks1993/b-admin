@@ -10,6 +10,7 @@ const path = require('path');
 // ref: https://umijs.org/config/
 const config: IConfig = {
   treeShaking: true,
+  history: 'hash',
   alias: {
     '@': path.resolve(path.resolve(__dirname, 'src')),
   },

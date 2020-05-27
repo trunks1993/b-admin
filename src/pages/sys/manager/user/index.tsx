@@ -297,7 +297,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
                 <CstInput
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
-                  name="realname"
+                  name="userName"
                   label="账号"
                   placeholder="输入登录账号"
                 />
@@ -376,7 +376,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
 
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑用户"
+        title={formData.userId ? '编辑用户' : '新增用户'}
         onCancel={() => setModalVisible(false)}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}

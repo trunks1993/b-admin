@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-25 23:14:08
+ * @LastEditTime: 2020-05-27 16:06:19
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -154,6 +154,20 @@ export const RechargeStatus = {
   [RECHARGE_STATUS_1]: '待确认',
   [RECHARGE_STATUS_2]: '已确认',
   [RECHARGE_STATUS_3]: '关闭',
+};
+
+export const BIZ_TYPE_1 = 1; // 充值
+export const BIZ_TYPE_2 = 2; // 提现
+export const BIZ_TYPE_3 = 3; // 采购
+export const BIZ_TYPE_4 = 4; // 加款
+export const BIZ_TYPE_5 = 5; // 减款
+
+export const BizTypes = {
+  [BIZ_TYPE_1]: '充值',
+  [BIZ_TYPE_2]: '提现',
+  [BIZ_TYPE_3]: '采购',
+  [BIZ_TYPE_4]: '加款',
+  [BIZ_TYPE_5]: '减款',
 };
 
 // 库存
