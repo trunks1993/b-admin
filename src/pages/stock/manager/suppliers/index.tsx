@@ -83,17 +83,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       minorContactName,
     } = formData;
     if (modalVisible && id) {
-      setTimeout(() => {
-        form?.setFieldsValue({
-          id,
-          name,
-          address,
-          mainTelephone,
-          mainContactName,
-          minorTelephone,
-          minorContactName,
-        });
-      }, 2000);
+      form?.setFieldsValue({
+        id,
+        name,
+        address,
+        mainTelephone,
+        mainContactName,
+        minorTelephone,
+        minorContactName,
+      });
     }
   }, [form]);
 
@@ -415,8 +413,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       </div>
       <GlobalModal
         modalVisible={modalVisible}
-        title="编辑供应商"
-        onCancel={() => setModalVisible(false)}
+        title={formData.id ? '编辑供应商' : '新增供应商'}
+        onCancel={() => {
+          setModalVisible(false);
+          setFormData({});
+        }}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
       >

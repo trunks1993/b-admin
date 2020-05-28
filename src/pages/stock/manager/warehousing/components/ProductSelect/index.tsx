@@ -51,12 +51,18 @@ const Comp: React.FC<CompProps> = props => {
     getSelectedGoods: () => {
       return _.map(selectedRowKeys, item => {
         const {
-          productName,
+          productSubName,
           code,
           productTypeCode,
           productSub: { facePrice, shortName },
         } = JSON.parse(item);
-        return { productName, goodsCode: code, productTypeCode, facePrice, shortName };
+        return {
+          productName: productSubName,
+          goodsCode: code,
+          productTypeCode,
+          facePrice,
+          shortName,
+        };
       });
     },
   }));

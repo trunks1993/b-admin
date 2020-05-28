@@ -199,27 +199,27 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           ]}
         />
         <CstTextArea
-            label="描述"
-            placeholder="请输入商品描述"
-            name="resume"
-            autoSize={{ minRows: 4, maxRows: 5 }}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 8 }}
-            help={msgResume}
-            rules={[
-              {
-                validator: (rule, value, callback) => {
-                  if (value && value.length > 60) {
-                    setMsgResume('不能超过60个字符');
-                    callback(new Error('不能超过60个字符'));
-                  } else {
-                    setMsgResume(HELP_MSG_RESUME);
-                    callback();
-                  }
-                },
+          label="描述"
+          placeholder="请输入商品描述"
+          name="resume"
+          autoSize={{ minRows: 4, maxRows: 5 }}
+          labelCol={{ span: 4 }}
+          wrapperCol={{ span: 8 }}
+          help={msgResume}
+          rules={[
+            {
+              validator: (rule, value, callback) => {
+                if (value && value.length > 60) {
+                  setMsgResume('不能超过60个字符');
+                  callback(new Error('不能超过60个字符'));
+                } else {
+                  setMsgResume(HELP_MSG_RESUME);
+                  callback();
+                }
               },
-            ]}
-          />
+            },
+          ]}
+        />
         <CstUpload
           label="品牌logo"
           name="iconUrl"
@@ -249,6 +249,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             userName: 'yunjin_file_upload',
             password: 'yunjin_upload_password',
             domain: 'brand',
+            secret: 'N',
           }}
           help={helpMsg.iconUrl}
           labelCol={{ span: 4 }}
@@ -261,12 +262,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           name="categoryCodes"
           treeData={treeData}
         />
-        <CstEditor
+        <CstTextArea
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 15 }}
           label="使用须知"
           name="introduction"
-        />
+          autoSize={{ minRows: 4, maxRows: 5 }}
+        ></CstTextArea>
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>

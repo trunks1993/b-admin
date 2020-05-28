@@ -38,7 +38,7 @@ import { EditeItemType, batchBuyGoods } from '../services/productStock';
 import { ListItemType } from '@/models/product';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstSelect, CstCheckbox } = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstCheckbox, CstInputNumber } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -71,7 +71,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -195,12 +195,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     {
       title: '商品名称',
       align: 'center',
+      width: 260,
       key: 'id',
       render: record => (
-        <>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          <span style={{ marginLeft: '5px' }}>{record.productName}</span>
-        </>
+          <span style={{ textAlign: 'left' }}>
+            <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
+            <div style={{ marginLeft: '5px' }}>{record.code}</div>
+          </span>
+        </div>
       ),
     },
     {
@@ -236,7 +240,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           <Button type="link" onClick={() => handleModalVisible(record.code)}>
             采购
           </Button>
-          <Button type="link" onClick={() => router.push(`/stock/manager/stockWater?goods=${record.productName}`)}>
+          <Button
+            type="link"
+            onClick={() => router.push(`/stock/manager/stockWater?goods=${record.productName}`)}
+          >
             库存流水
           </Button>
         </>
@@ -390,10 +397,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
               </Select.Option>
             ))}
           </CstSelect>
-          <CstInput
+          <CstInputNumber
             name="buyNum"
             label="采购数量"
-            placeholder="请输入采购数量"
+            placeholder="请输入"
+            min={1}
+            precision={0}
+            size="large"
             rules={[
               {
                 required: true,
@@ -413,11 +423,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   );
 };
 
-export default connect(
-  ({ productManagerList, stockManagerSuppliers, loading }: ConnectState) => ({
-    list: productManagerList.list,
-    total: productManagerList.total,
-    supplierList: stockManagerSuppliers?.list,
-    loading: loading.effects['productManagerList/fetchList'],
-  }),
-)(Comp);
+export default connect(({ productManagerList, stockManagerSuppliers, loading }: ConnectState) => ({
+  list: productManagerList.list,
+  total: productManagerList.total,
+  supplierList: stockManagerSuppliers?.list,
+  loading: loading.effects['productManagerList/fetchList'],
+}))(Comp);

@@ -252,7 +252,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 data={{
                   userName: 'yunjin_file_upload',
                   password: 'yunjin_upload_password',
-                  domain: 'identityPhoto',
+                  domain: 'certi',
+                  secret: 'Y',
                 }}
                 help={msgIdentityPhoto}
                 labelCol={{ span: 4 }}
@@ -347,7 +348,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 data={{
                   userName: 'yunjin_file_upload',
                   password: 'yunjin_upload_password',
-                  domain: 'identityPhoto',
+                  domain: 'certi',
+                  secret: 'Y',
                 }}
                 help={msgIdentityPhoto}
                 labelCol={{ span: 4 }}
@@ -427,7 +429,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 data={{
                   userName: 'yunjin_file_upload',
                   password: 'yunjin_upload_password',
-                  domain: 'identityPhoto',
+                  domain: 'certi',
+                  secret: 'Y',
                 }}
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
@@ -462,7 +465,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                 data={{
                   userName: 'yunjin_file_upload',
                   password: 'yunjin_upload_password',
-                  domain: 'identityPhoto',
+                  domain: 'certi',
+                  secret: 'Y',
                 }}
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}

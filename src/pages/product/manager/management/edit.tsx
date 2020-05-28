@@ -15,8 +15,9 @@ import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import { router } from 'umi';
 import { guid, getFloat } from '@/utils';
 import { TRANSTEMP } from '@/const';
+import { Editor } from '@tinymce/tinymce-react';
 
-const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstEditor } = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstOther } = MapForm;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
   dispatch: Dispatch<AnyAction>;
@@ -59,8 +60,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [tinymceData, setTinymceData] = useState();
 
   useEffect(() => {
+    setTinymceData('');
     if (match.params.id !== '-1' && form) getGoodsInfo();
   }, [form]);
 
@@ -74,6 +77,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     const [err, data, msg] = await getInfo(parseInt(match.params.id));
     if (!err && data) {
       const { brandCode, iconUrl, introduction, name, resume, productSubList } = data;
+      setTinymceData(introduction);
       form?.setFieldsValue({
         iconUrl,
         brandCode,
@@ -210,6 +214,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               userName: 'yunjin_file_upload',
               password: 'yunjin_upload_password',
               domain: 'product',
+              secret: 'N',
             }}
             help={helpMsg.iconUrl}
             label="产品图"
@@ -252,12 +257,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             wrapperCol={{ span: 15 }}
             getFormValue={(key: string) => form?.getFieldValue(key)}
           />
-          <CstEditor
+          {/* <CstEditor
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
             name="introduction"
-          />
+            data={tinymceData}
+          /> */}
+          <CstTextArea
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 15 }}
+            label="使用须知"
+            name="introduction"
+            autoSize={{ minRows: 4, maxRows: 5 }}
+          ></CstTextArea>
         </Card>
       </MapForm>
       <div className={Styles.btnBlock}></div>

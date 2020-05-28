@@ -248,6 +248,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               userName: 'yunjin_file_upload',
               password: 'yunjin_upload_password',
               domain: 'product',
+              secret: 'N',
             }}
             help={helpMsg.iconUrl}
             label="商品图"

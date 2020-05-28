@@ -234,6 +234,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               userName: 'yunjin_file_upload',
               password: 'yunjin_upload_password',
               domain: 'category',
+              secret: 'N',
             }}
             label="分组图标"
           />

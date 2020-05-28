@@ -206,12 +206,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
     form?.validateFields(async (error, value: EditeUserItemType) => {
       if (error) return;
       setConfirmLoading(true);
-      const isSuccess = await handleEdite(value);
+      try {
+        const isSuccess = await handleEdite(value);
+        if (isSuccess) {
+          dispatchInit();
+          setModalVisible(false);
+        }
+      } catch (error) {}
       setConfirmLoading(false);
-      if (isSuccess) {
-        dispatchInit();
-        setModalVisible(false);
-      }
     });
   };
 

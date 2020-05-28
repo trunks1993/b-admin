@@ -1,46 +1,64 @@
 import React from 'react';
-import { Editor } from '@tinymce/tinymce-react';
 
 interface GlobalEditorProps {
   value?: string;
   onChange?: (e: string) => void;
 }
 class GlobalEditor extends React.Component<GlobalEditorProps> {
+  state = {
+    hasInit: false,
+    hasChange: false,
+  };
+
   handleEditorChange = (content: string) => {
     const { onChange } = this.props;
     onChange && onChange(content);
   };
 
-  render() {
-    const { value } = this.props;
-    const editorObj = {
-      height: '400px',
-      menubar: false,
+  initTinymce() {
+    const { tinymceId, menubar, height, toolbar, content, getContent } = this.props;
+    const _this = this;
+    window.tinymce.init({
       language: 'zh_CN',
-      //   language_url : '翻译中文的路径，我尝试很多种方法都不成功，最后叫后台的老哥放进项目的服务器上了，用的线上地址',
-      plugins: 'table lists link image preview code',
-      toolbar: `formatselect | code | preview | bold italic strikethrough forecolor backcolor | 
-      link image | alignleft aligncenter alignright alignjustify  | 
-      numlist bullist outdent indent`,
-      relative_urls: false,
-      file_picker_types: 'image',
-      //   images_upload_url: {'上传图片的路径'},
-      //   image_advtab: true,
-      //   image_uploadtab: true,
-      //   images_upload_handler:(blobInfo, success, failure)=>{
-      //   		//这里写你上传图片的方法
-      //   }
-    };
-    return (
-      <Editor
-        inline={false}
-        selector="editorStateRef" // 选择器
-        apiKey="5s3sribyo3d9ne7zviv7mz4nrcdrt4yhmt55gzcb5rb0f61g"
-        initialValue={value}
-        init={{ ...editorObj }}
-        onEditorChange={this.handleEditorChange}
-      />
-    );
+      selector: `#${tinymceId}`,
+      height: height,
+      body_class: 'panel-body ',
+      object_resizing: false,
+      menubar: menubar,
+      end_container_on_empty_block: true,
+      powerpaste_word_import: 'clean',
+      code_dialog_width: 1000,
+      advlist_bullet_styles: 'square',
+      advlist_number_styles: 'default',
+      imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
+      default_link_target: '_blank',
+      link_title: false,
+      nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
+      init_instance_callback: editor => {
+        if (content) {
+          editor.setContent(content);
+        }
+        _this.setState({
+          hasInit: true,
+        });
+        editor.on('NodeChange Change KeyUp SetContent', () => {
+          _this.setState({
+            hasChange: true,
+          });
+        });
+      },
+      setup(editor) {
+        editor.on('FullscreenStateChanged', e => {
+          _this.setState({
+            fullscreen: e.state,
+          });
+        });
+      },
+    });
+  }
+
+  render() {
+    return <div></div>;
   }
 }
 

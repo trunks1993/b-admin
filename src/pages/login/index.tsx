@@ -74,7 +74,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
       <div className={Styles.formTitle}>
         <img src={icon} width="100" height="100" />
         <span style={{ fontSize: '24px', lineHeight: '24px', marginTop: '28px' }}>
-          星营销业务运营系统
+          星权益业务运营系统
         </span>
         <span style={{ fontSize: '14px', lineHeight: '14px', marginTop: '8px' }}>
           X-Marketing Business Operation

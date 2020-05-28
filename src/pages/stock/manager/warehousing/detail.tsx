@@ -121,12 +121,18 @@ const Comp: React.FC<CompProps> = ({ match }) => {
           <Col span={8}>入库类型：{WorkTypes[baseInfo.bizType]}</Col>
 
           <Col span={8}>供应商：{baseInfo.supplierName}</Col>
-          <Col span={8}>入库日期：{moment(baseInfo.completeTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
+          <Col span={8}>
+            入库日期：
+            {baseInfo.completeTime && moment(baseInfo.completeTime).format('YYYY-MM-DD HH:mm:ss')}
+          </Col>
           {/* <Col span={8}>制单人：{baseInfo.orderId}</Col> */}
 
           <Col span={8}>备注：--</Col>
           <Col span={8}>对账状态：{baseInfo.未对账}</Col>
-          <Col span={8}>制单时间：{moment(baseInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}</Col>
+          <Col span={8}>
+            制单时间：
+            {baseInfo.createTime && moment(baseInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}
+          </Col>
         </Row>
       </Card>
       <Card

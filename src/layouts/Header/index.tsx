@@ -73,15 +73,15 @@ const Header: React.FC<HeaderProps> = ({ user, dispatch, loading }) => {
       <div className={Styles.warrper}>
         <Title />
         <span className={Styles.left}>
-          <Input
+          {/* <Input
             className="head-input"
             placeholder="请输入客户名称"
             addonAfter={<Icon type="search" />}
-          />
+          /> */}
           <span style={{ display: 'flex' }}>
-            <Tool />
+            {/* <Tool />
             <ToolNoBage src={msg} toolName="消息" />
-            <ToolNoBage src={lock} toolName="锁屏" />
+            <ToolNoBage src={lock} toolName="锁屏" /> */}
             <FuncContext.Provider value={dispatch}>
               <Name user={user} loading={loading} />
             </FuncContext.Provider>

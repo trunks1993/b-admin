@@ -98,7 +98,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [radioValue, setRadioValue] = useState(1);
-  const [check, setCheck] = useState('Y');
+  const [tinymceData, setTinymceData] = useState();
 
   useEffect(() => {
     if (match.params.id !== '-1' && form) getGoodsInfo();
@@ -126,6 +126,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         upType,
       } = data;
       setRadioValue(upType);
+      setTinymceData(usageIllustration);
       form?.setFieldsValue({
         productName,
         resume,
@@ -290,6 +291,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               userName: 'yunjin_file_upload',
               password: 'yunjin_upload_password',
               domain: 'product',
+              secret: 'N',
             }}
             help={msgIconUrl}
             label="商品图"
@@ -441,14 +443,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               暂不售卖，放入仓库
             </Radio>
           </CstRadio>
-          <CstEditor
+          <CstTextArea
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
             name="usageIllustration"
-          />
+            autoSize={{ minRows: 4, maxRows: 5 }}
+          ></CstTextArea>
         </Card>
       </MapForm>
+      <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
         <Button type="primary" onClick={handleSubmit}>
           保存

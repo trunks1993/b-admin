@@ -151,9 +151,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        const [err, data, msg] = await modify(record.code, record.status);
+        const [err, data, msg] = await modify(record.code, 2);
         if (!err) message.success('操作成功，即将刷新');
-        else message.error('操作成功');
+        else message.error(msg);
         dispatchInit();
       },
     });

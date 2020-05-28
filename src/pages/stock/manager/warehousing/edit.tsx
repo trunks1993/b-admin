@@ -105,13 +105,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
           }
         });
         paramObj.data = _.map(codeMap, item => item);
-        const [err, data, msg] = await add(paramObj);
-        if (!err) {
-          message.success('商品入库成功');
-          router.goBack();
-        } else {
-          message.error(msg);
-        }
+        try {
+          const [err, data, msg] = await add(paramObj);
+          if (!err) {
+            message.success('商品入库成功');
+            router.goBack();
+          } else {
+            message.error(msg);
+          }
+        } catch (error) {}
       }
 
       // if (error) return;
