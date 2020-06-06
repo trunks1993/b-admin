@@ -1,38 +1,31 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Dispatch, AnyAction } from 'redux';
-import { connect } from 'dva';
+import React, { useEffect, useState } from 'react';
 
-import { Table, Button, Modal, message, Select, Card, Upload, Row, Col } from 'antd';
+import { Table, Card, Row, Col } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { RouteComponentProps } from 'dva/router';
-import MapForm from '@/components/MapFormComponent';
-import Styles from './edit.css';
-import { ListItemType as SuppliersItemType } from '../models/suppliers';
 
-import { router } from 'umi';
-import {
-  PRODUCT_TYPE_1,
-  PRODUCT_TYPE_2,
-  PRODUCT_TYPE_3,
-  PRODUCT_TYPE_4,
-  ProductTypes,
-  DEFAULT_PAGE_NUM,
-  WorkTypes,
-} from '@/const';
-import { EditeItemType, GoodsItemType, check, getInfo } from '../services/warehousing';
-import { add } from '../services/suppliers';
-import { ConnectState } from '@/models/connect';
-import GlobalModal from '@/components/GlobalModal';
-import ProductSelect from './components/ProductSelect';
+import { DEFAULT_PAGE_NUM, WorkTypes, TRANSTEMP } from '@/const';
+import { GoodsItemType, getInfo } from '../services/warehousing';
+// import { add } from '../services/suppliers';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { ListItemType } from '@/models/product';
-import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import moment from 'moment';
+import { getFloat } from '@/utils';
 
-const { CstInput, CstTextArea, CstSelect, CstDatePicker, CstOther } = MapForm;
-
-const { confirm } = Modal;
+const add = (arr: GoodsItemType[]) => {
+  const o = { hasTax: 0, noTax: 0 };
+  if (arr && arr.length > 0) {
+    _.map(arr, item => {
+      o.hasTax = getFloat((o.hasTax + item.purchasePrice * item.buyNumber) / TRANSTEMP, 4);
+      o.noTax = getFloat(
+        (o.noTax + item.purchasePrice * item.buyNumber * Number(1).add(item.taxRate / 100)) /
+          TRANSTEMP,
+        4,
+      );
+    });
+  }
+  return o;
+};
 
 interface CompProps extends RouteComponentProps<{ id: string }> {}
 
@@ -82,7 +75,8 @@ const Comp: React.FC<CompProps> = ({ match }) => {
     {
       title: '采购价(元)',
       align: 'center',
-      dataIndex: 'purchasePrice',
+      // dataIndex: 'purchasePrice',
+      render: record => getFloat(record.purchasePrice / TRANSTEMP, 4),
     },
     {
       title: '入库数量',
@@ -97,13 +91,17 @@ const Comp: React.FC<CompProps> = ({ match }) => {
     {
       title: '不含税小计(元)',
       align: 'center',
-      render: record => record.purchasePrice * record.buyNumber,
+      render: record => getFloat((record.purchasePrice * record.buyNumber) / TRANSTEMP, 4),
     },
     {
       title: '含税小计(元)',
       align: 'center',
       render: record =>
-        record.purchasePrice * record.buyNumber * Number(1).add(record.taxRate / 100),
+        getFloat(
+          (record.purchasePrice * record.buyNumber * Number(1).add(record.taxRate / 100)) /
+            TRANSTEMP,
+          4,
+        ),
     },
   ];
 
@@ -118,11 +116,11 @@ const Comp: React.FC<CompProps> = ({ match }) => {
         <Row>
           <Col span={8}>单据编号：{baseInfo.code}</Col>
           <Col span={8}>采购订单号：{baseInfo.orderId}</Col>
-          <Col span={8}>入库类型：{WorkTypes[baseInfo.bizType]}</Col>
+          <Col span={8}>业务类型：{WorkTypes[baseInfo.bizType]}</Col>
 
           <Col span={8}>供应商：{baseInfo.supplierName}</Col>
           <Col span={8}>
-            入库日期：
+            采购时间：
             {baseInfo.completeTime && moment(baseInfo.completeTime).format('YYYY-MM-DD HH:mm:ss')}
           </Col>
           {/* <Col span={8}>制单人：{baseInfo.orderId}</Col> */}
@@ -141,7 +139,12 @@ const Comp: React.FC<CompProps> = ({ match }) => {
         title="商品明细"
         style={{ width: '100%', marginBottom: '10px' }}
       >
-        <span>共 1 件商品，合计不含税小计：0.00 元， 含税小计：0.00 元</span>
+        <span>
+          共 1 件商品，合计不含税小计：
+          {add(goodsList)?.hasTax}
+          元， 含税小计：
+          {add(goodsList)?.noTax}元
+        </span>
         <Table
           className="global-table"
           columns={columns}

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-05-27 19:27:38
+ * @LastEditTime: 2020-06-04 20:37:04
  */
 
 import request from '@/utils/request';
@@ -14,6 +14,10 @@ export interface QueryParamsType extends BaseQueryType {
   endCreateTime?: string;
   merchantId?: number;
   customerOrderNo?: number;
+}
+
+export interface QueryTraceParamsType extends BaseQueryType {
+  itemCode: number | string;
 }
 
 export interface EditParamsType {
@@ -69,5 +73,16 @@ export async function getInfo(orderId: number): Promise<any> {
     data: {
       orderId,
     },
+  });
+}
+
+/**
+ * @name: 查询详情列表
+ * @param {QueryParamsType} data
+ */
+export async function queryListTrace(data: QueryTraceParamsType): Promise<any> {
+  return request('/merchant/order/searchOrderChargeTraceList', {
+    method: 'POST',
+    data,
   });
 }

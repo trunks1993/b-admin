@@ -18,9 +18,8 @@
 }
 
 .wrapper {
-  background: #ffffff;
+  /* background: #ffffff; */
   margin-top: 10px;
   height: calc(100% - 50px);
   overflow: auto;
-  /* padding-bottom: 100px; */
 }

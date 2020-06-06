@@ -8,23 +8,12 @@ import { ListItemType } from '../models/warehousing';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import {
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_PAGE_NUM,
-  UserStatuMap,
-  ProductTypes,
-  PRODUCT_STATUS_1,
-  PRODUCT_STATUS_2,
-  ProductStatusGU,
-  StockStatus,
-  WarehousingStatus,
-} from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WarehousingStatus, WorkTypes } from '@/const';
 // import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import router from 'umi/router';
 import { queryList as queryGroupList } from '@/pages/product/manager/services/group';
 import { queryList as queryBrandList } from '@/pages/product/manager/services/brand';
@@ -182,16 +171,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     });
   };
 
-  /**
-   * @name: 打开弹窗设置回显字段
-   * @param {number} goodsCode
-   */
-  const handleModalVisible = async (goodsCode: number) => {
-    // const [err, data, msg] = await getSysUserInfo(record.id);
-    setModalVisible(true);
-    setGoodsCode(goodsCode);
-  };
-
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '单据编号',
@@ -199,9 +178,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       dataIndex: 'code',
     },
     {
-      title: '采购订单号',
+      title: '业务类型',
       align: 'center',
-      dataIndex: 'orderId',
+      render: record => WorkTypes[record.bizType],
     },
     {
       title: '采购自供应商',
@@ -218,6 +197,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       align: 'center',
       render: record =>
         record.createTime && moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '采购订单号',
+      align: 'center',
+      dataIndex: 'orderId',
     },
     {
       title: '操作',
@@ -237,25 +221,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     },
   ];
 
-  /**
-   * @name: 表单提交
-   * @param {type}
-   */
-  const handleSubmit = () => {
-    form?.validateFields(async (error, value: EditeItemType) => {
-      if (error) return;
-      setConfirmLoading(true);
-      const isSuccess = await handleEdite(value);
-      setConfirmLoading(false);
-      if (isSuccess) {
-        dispatchInit();
-        setModalVisible(false);
-      }
-    });
-  };
-
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         <Button
           type="link"
@@ -269,13 +236,26 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <Row>
             <Col span={8}>
-              <CstInput
+              {/* <CstInput
                 name="goods"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="商品筛选"
                 placeholder="输入商品名称/编码"
-              />
+              /> */}
+              <CstSelect
+                name="bizType"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="业务类型"
+                placeholder="全部"
+              >
+                {_.map(WorkTypes, (item, key) => (
+                  <Select.Option key={key} value={key}>
+                    {item}
+                  </Select.Option>
+                ))}
+              </CstSelect>
             </Col>
 
             <Col span={8}>

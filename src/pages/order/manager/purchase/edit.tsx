@@ -14,6 +14,7 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import success from '@/assets/images/order/success.png';
 import stepSuccess from '@/assets/images/order/step-success.png';
 import { getFloat } from '@/utils';
+import GlobalCard from '@/components/GlobalCard';
 const { Step } = Steps;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
@@ -31,12 +32,14 @@ interface CompProps extends RouteComponentProps<{ id: string }> {
 //     totalMoney: number;
 //   };
 // }
-const statusText = ['', '待付款', '待发货', '已完成', '已取消'];
+const statusText = ['', '待付款', '待发货', '已完成', '已完成', '已取消'];
 const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [data, setData] = useState<ListItemType>();
 
   useEffect(() => {
-    getOrderInfo();
+    try {
+      getOrderInfo();
+    } catch (error) {}
   }, []);
 
   const getOrderInfo = async () => {
@@ -89,9 +92,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
 
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
-      <Card
-        size="small"
-        type="inner"
+      <GlobalCard
         title={
           <>
             <span>采购单号：{match.params.id}</span>
@@ -100,7 +101,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             </span>
           </>
         }
-        style={{ width: '100%', marginBottom: '10px' }}
       >
         <div className={Styles.resBox}>
           <div className={Styles.res}>
@@ -139,13 +139,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             </Steps>
           </div>
         </div>
-      </Card>
-      <Card
-        size="small"
-        type="inner"
-        title="买家信息"
-        style={{ width: '100%', marginBottom: '10px' }}
-      >
+      </GlobalCard>
+      <GlobalCard title="买家信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
         <Row style={{ paddingLeft: '30px' }}>
           <Col span={24} style={{ paddingBottom: '20px' }}>
             手机号：{data?.telephone}
@@ -155,34 +150,24 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           </Col>
           <Col span={24}>商户号：{data?.merchantId}</Col>
         </Row>
-      </Card>
-      <Card
-        size="small"
-        type="inner"
-        title="付款信息"
-        style={{ width: '100%', marginBottom: '10px' }}
-      >
+      </GlobalCard>
+      <GlobalCard title="付款信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
         <Row style={{ paddingLeft: '30px' }}>
           <Col span={24} style={{ paddingBottom: '20px' }}>
             支付方式：{PayMethods[data?.payMethod || 1]}
           </Col>
           <Col span={24}>支付流水号：{data?.payCode}</Col>
         </Row>
-      </Card>
-      <Card
-        size="small"
-        type="inner"
-        title="发货信息"
-        style={{ width: '100%', marginBottom: '10px' }}
-      >
+      </GlobalCard>
+      <GlobalCard title="发货信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
         <Row style={{ paddingLeft: '30px' }}>
           <Col span={24} style={{ paddingBottom: '20px' }}>
             配送方式：{data?.deliverMethod}
           </Col>
           <Col span={24}>配货员：{data?.deliverUserName}</Col>
         </Row>
-      </Card>
-      <div style={{ background: '#ffffff' }}>
+      </GlobalCard>
+      <div style={{ background: '#ffffff', marginTop: '10px' }}>
         <Table
           className="global-table"
           columns={columns}

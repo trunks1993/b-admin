@@ -28,3 +28,9 @@
   background: rgba(247, 247, 247, 1);
   color: #cbcbcb;
 }
+
+.container {
+  background: #fff;
+  min-height: 100%;
+  padding-bottom: 20px;
+}

@@ -29,6 +29,7 @@ import router from 'umi/router';
 import { ListItemType } from '@/models/product';
 import LazyLoad from 'react-lazyload';
 import { getFloat } from '@/utils';
+import moment from 'moment';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -65,7 +66,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -181,6 +182,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       align: 'center',
       width: 260,
       key: 'id',
+      fixed: 'left',
       render: record => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
@@ -199,14 +201,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     },
     {
       title: '商品类型',
-      // dataIndex: 'productTypeCode',
       align: 'center',
       render: record => ProductTypes[record.productTypeCode],
     },
     {
       title: '库存',
       align: 'center',
-      dataIndex: 'stock',
+      dataIndex: 'displayStock',
     },
     {
       title: '销量',
@@ -214,8 +215,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       align: 'center',
     },
     {
+      title: '创建时间',
+      align: 'center',
+      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: '商品状态',
+      align: 'center',
+      render: record => ProductStatusGU[record.status],
+    },
+    {
       title: '操作',
       align: 'center',
+      fixed: 'right',
       render: record => (
         <>
           <Button type="link" onClick={() => router.push(`/product/manager/list/${record.id}`)}>
@@ -262,7 +274,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           dispatchInit(() => setSelectedRowKeys([]));
           message.success('操作成功');
         } else {
-          message.error('操作失败');
+          message.error(msg);
         }
       },
       onCancel() {},
@@ -322,7 +334,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         <Button type="primary" onClick={() => router.push(`/product/manager/list/-1`)}>
           发布商品
@@ -334,7 +346,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           <Row>
             <Col span={6}>
               <CstInput
-                name="code"
+                name="goods"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 label="商品筛选"
@@ -388,73 +400,76 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           </Row>
         </MapForm>
       </div>
-      <TabsPanel onChange={handleTabsPanelChange}>
-        <div style={{ padding: '20px' }}>
-          <span>
-            <Checkbox
-              indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
-              onChange={handleSelectAll}
-              checked={selectedRowKeys.length > 0}
-            >
-              当页全选
-            </Checkbox>
-          </span>
-          <span>
-            <Button
-              loading={confirmLoading}
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(PRODUCT_STATUS_1)}
-            >
-              上架
-            </Button>
-            <Button
-              loading={confirmLoading}
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => handleChangeDataStatus(PRODUCT_STATUS_2)}
-              style={{ marginLeft: '10px' }}
-            >
-              下架
-            </Button>
-            <Button
-              loading={confirmLoading}
-              disabled={selectedRowKeys.length === 0}
-              onClick={handleRemoveList}
-              style={{ marginLeft: '10px' }}
-            >
-              删除
-            </Button>
-            <Button
-              loading={confirmLoading}
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => {}}
-              style={{ marginLeft: '10px' }}
-            >
-              批量设置
-            </Button>
-          </span>
-        </div>
-        <Table
-          className="global-table"
-          rowSelection={rowSelection}
-          loading={loading}
-          columns={columns}
-          pagination={false}
-          dataSource={list}
-          rowKey={record => record.id.toString()}
-        />
-        <div className="global-pagination">
-          <Pagination
-            current={currPage}
-            onChange={(currPage: number) => setCurrPage(currPage)}
-            defaultPageSize={DEFAULT_PAGE_SIZE}
-            total={total}
-            showQuickJumper
+      <div style={{ padding: '0 40px' }}>
+        <TabsPanel onChange={handleTabsPanelChange}>
+          <div style={{ padding: '20px' }}>
+            <span>
+              <Checkbox
+                indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
+                onChange={handleSelectAll}
+                checked={selectedRowKeys.length > 0}
+              >
+                当页全选
+              </Checkbox>
+            </span>
+            <span>
+              <Button
+                loading={confirmLoading}
+                disabled={selectedRowKeys.length === 0}
+                onClick={() => handleChangeDataStatus(PRODUCT_STATUS_1)}
+              >
+                上架
+              </Button>
+              <Button
+                loading={confirmLoading}
+                disabled={selectedRowKeys.length === 0}
+                onClick={() => handleChangeDataStatus(PRODUCT_STATUS_2)}
+                style={{ marginLeft: '10px' }}
+              >
+                下架
+              </Button>
+              <Button
+                loading={confirmLoading}
+                disabled={selectedRowKeys.length === 0}
+                onClick={handleRemoveList}
+                style={{ marginLeft: '10px' }}
+              >
+                删除
+              </Button>
+              <Button
+                loading={confirmLoading}
+                disabled={selectedRowKeys.length === 0}
+                onClick={() => {}}
+                style={{ marginLeft: '10px' }}
+              >
+                批量设置
+              </Button>
+            </span>
+          </div>
+          <Table
+            className="global-table"
+            rowSelection={rowSelection}
+            loading={loading}
+            columns={columns}
+            pagination={false}
+            dataSource={list}
+            scroll={{ x: 1500 }}
+            rowKey={record => record.id.toString()}
           />
-          <span className="global-pagination-data">
-            共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
-          </span>
-        </div>
-      </TabsPanel>
+          <div className="global-pagination">
+            <Pagination
+              current={currPage}
+              onChange={(currPage: number) => setCurrPage(currPage)}
+              defaultPageSize={DEFAULT_PAGE_SIZE}
+              total={total}
+              showQuickJumper
+            />
+            <span className="global-pagination-data">
+              共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
+            </span>
+          </div>
+        </TabsPanel>
+      </div>
     </div>
   );
 };

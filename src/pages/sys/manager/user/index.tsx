@@ -52,7 +52,7 @@ const handleEdite = async (fields: EditeUserItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -230,7 +230,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
       setSelectedRowKeys([]);
       message.success('操作成功');
     } else {
-      message.error('操作失败');
+      message.error(msg);
     }
   };
 
@@ -255,9 +255,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+        <Button
+          type="link"
+          icon="plus"
+          onClick={() => {
+            setModalVisible(true);
+            setFormData({});
+          }}
+        >
           添加用户
         </Button>
       </div>
@@ -393,6 +400,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
               {
                 required: true,
                 message: '账号不能为空',
+              },
+              {
+                max: 20,
+                message: '最多不超过20位字符',
               },
             ]}
           />

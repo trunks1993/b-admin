@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 
 /*
  * @Date: 2020-05-07 16:32:46
- * @LastEditTime: 2020-05-19 22:55:41
+ * @LastEditTime: 2020-06-04 20:28:52
  */
 const data = Array(20)
   .fill('')
@@ -88,6 +88,24 @@ const data = Array(20)
         modifyTime: '2020-05-07T18:39:00.000+0000',
       },
     ],
+  }));
+
+const data2 = Array(20)
+  .fill('')
+  .map((item, index) => ({
+    id: index,
+    itemCode: 11810850244739 + index,
+    traceId: 11810884703707,
+    orderId: 118100277162,
+    goodsCode: 1000000117,
+    objNo: '1000004',
+    amount: 8,
+    workOrderNo: null,
+    status: 7,
+    startTime: null,
+    endTime: null,
+    createTime: '2020-05-07T06:03:20.000+0000',
+    modifyTime: '2020-05-07T06:29:55.000+0000',
   }));
 
 const noDataRes = {
@@ -194,6 +212,25 @@ export default {
           deliverUserId: null,
           deliverUserName: '测试配货员',
           completeType: null,
+        },
+        code: '0',
+        success: true,
+        resultMsg: null,
+      });
+    }, 0);
+  },
+
+  // 直冲订单详情
+  'POST /merchant/order/searchOrderChargeTraceList': (req: Request, res: Response) => {
+    const { currPage, pageSize } = req.body;
+    const list = data2.slice((currPage - 1) * pageSize, currPage * pageSize);
+    setTimeout(() => {
+      res.send({
+        result: {
+          list: list,
+          totalPage: 8,
+          totalRecords: data.length,
+          currPage: 1,
         },
         code: '0',
         success: true,

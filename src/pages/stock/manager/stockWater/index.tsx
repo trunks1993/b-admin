@@ -72,10 +72,9 @@ const Comp: React.FC<CompProps> = props => {
       dataIndex: 'code',
     },
     {
-      title: '制单时间',
+      title: '商品名称',
       align: 'center',
-      render: record =>
-        record.createTime && moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      dataIndex: 'goodsName',
     },
     {
       title: '单据类型',
@@ -83,12 +82,7 @@ const Comp: React.FC<CompProps> = props => {
       render: record => WaterStatus[record.type],
     },
     {
-      title: '商品名称',
-      align: 'center',
-      dataIndex: 'goodsName',
-    },
-    {
-      title: '出入库',
+      title: '出入库（件）',
       align: 'center',
       dataIndex: 'amount',
     },
@@ -103,6 +97,12 @@ const Comp: React.FC<CompProps> = props => {
       dataIndex: 'operName',
     },
     {
+      title: '制单时间',
+      align: 'center',
+      render: record =>
+        record.createTime && moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
       title: '关联单据编号',
       align: 'center',
       dataIndex: 'orderNo',
@@ -110,7 +110,7 @@ const Comp: React.FC<CompProps> = props => {
   ];
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <Row>

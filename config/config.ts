@@ -18,7 +18,7 @@ const config: IConfig = {
     'primary-color': '#1A61DC',
   },
   define: {
-    'process.env.MAIN_TITLE': '星营销',
+    'process.env.MAIN_TITLE': '星权益运营系统',
     'process.env.BASE_API': '/baseApi',
     'process.env.BASE_FILE_SERVER': '/file',
   },
@@ -39,6 +39,12 @@ const config: IConfig = {
         {
           path: '/dashboard',
           component: './dashboard',
+          Routes: ['src/AuthRouter'],
+        },
+        { path: '/changeUser', component: './sys/setting/changeUser', Routes: ['src/AuthRouter'] },
+        {
+          path: '/changePassword',
+          component: './sys/setting/changePassword',
           Routes: ['src/AuthRouter'],
         },
         ...product,

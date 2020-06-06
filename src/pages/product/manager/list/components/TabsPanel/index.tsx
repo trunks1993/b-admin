@@ -10,7 +10,7 @@ interface TabsPanelProps {
 const TabsPanel: React.FC<TabsPanelProps> = props => {
   const { onChange, children } = props;
   return (
-    <Tabs onChange={onChange} type="card">
+    <Tabs className="global-tabs" onChange={onChange} type="card">
       <TabPane tab="全部" key="">
         {children}
       </TabPane>

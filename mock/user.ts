@@ -1,3 +1,9 @@
+const noDataRes = {
+  result: {},
+  code: '0',
+  success: true,
+  resultMsg: null,
+};
 export default {
   // 获取菜单
   'POST /sys/loadUserMenu': (req: any, res: any) => {
@@ -376,5 +382,12 @@ export default {
         resultMsg: null,
       });
     }, 0);
+  },
+
+  // 修改密码
+  'POST /sys/modifyPassword': (req: any, res: any) => {
+    setTimeout(() => {
+      res.send(noDataRes);
+    }, 1000);
   },
 };

@@ -18,6 +18,7 @@ import {
 import { ConnectState, UserType } from '@/models/connect';
 import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
+import GlobalCard from '@/components/GlobalCard';
 
 const { CstInput, CstBlockCheckbox, CstTextArea, CstSelect, CstUpload } = MapForm;
 
@@ -147,20 +148,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput name="id" defaultValue={match.params.id} style={{ display: 'none' }} />
-        <Card
-          size="small"
-          type="inner"
-          title="认证类型"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="认证类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox disabled={true} options={blockCheckboxOptions} name="identifyType" />
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="认证信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="认证信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           {identifyType === IDENTIFY_TYPE_1 ? (
             <>
               <CstInput
@@ -254,13 +245,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
               />
             </>
           )}
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="其它信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="其它信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstInput
             disabled
             label="联系人姓名"
@@ -283,7 +269,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
-        </Card>
+        </GlobalCard>
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>

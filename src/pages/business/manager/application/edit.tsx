@@ -26,7 +26,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };

@@ -29,13 +29,14 @@ interface FormDataType {
 }
 
 const handleEdite = async (fields: EditeItemType) => {
+  fields.authorityCodes = [1, ...fields.authorityCodes];
   const api = fields.code ? modify : add;
   const [err, data, msg] = await api(fields);
   if (!err) {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -196,9 +197,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+        <Button
+          type="link"
+          icon="plus"
+          onClick={() => {
+            setModalVisible(true);
+            setFormData({});
+          }}
+        >
           添加角色
         </Button>
       </div>

@@ -20,6 +20,8 @@ import { router } from 'umi';
 import options from '@/cities';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { ruleName, patternName } from '@/rules';
+import GlobalCard from '@/components/GlobalCard';
+import moment from 'moment';
 
 const {
   CstInput,
@@ -56,7 +58,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -135,7 +137,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
 
   const describeMap = {
     [IDENTIFY_TYPE_1]: '一般为个体户、个体工商户 、个体经营',
-    [IDENTIFY_TYPE_2]: '一般为有限公司、有限责 任公司',
+    [IDENTIFY_TYPE_2]: '一般为有限公司、有限责任公司',
   };
 
   const blockCheckboxOptions = _.map(IdentifyTypes, (item, key) => ({
@@ -145,19 +147,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
   })).filter(item => item.value != IDENTIFY_TYPE_3);
 
   return (
-    <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
+    <div style={{ height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="merchantId"
           defaultValue={match.params.id === '-1' ? '' : match.params.id}
           style={{ display: 'none' }}
         />
-        <Card
-          size="small"
-          type="inner"
-          title="选择主体类型"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="选择主体类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox
             disabled={match.params.id !== '-1'}
             defaultValue={IDENTIFY_TYPE_1}
@@ -167,13 +164,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
               setIdentifyType(e);
             }}
           />
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="营业执照"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+
+        <GlobalCard title="营业执照" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           {identifyType == IDENTIFY_TYPE_1 ? (
             <>
               <CstInput
@@ -187,11 +180,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
                         setMsgBusinessName('商户名称不能为空');
                         callback(new Error('商户名称不能为空'));
                       } else if (!patternName.test(value)) {
-                        setMsgBusinessName('只支持6-32位的中英文字母和数字组合');
-                        callback(new Error('只支持6-32位的中英文字母和数字组合'));
-                      } else if (value.length < 6 || value.length > 32) {
-                        setMsgBusinessName('只支持6-32位的中英文字母和数字组合');
-                        callback(new Error('只支持6-32位的中英文字母和数字组合'));
+                        setMsgBusinessName('只支持最长32位中英文字母和数字组合');
+                        callback(new Error('只支持最长32位中英文字母和数字组合'));
+                      } else if (value.length > 32) {
+                        setMsgBusinessName('只支持最长32位中英文字母和数字组合');
+                        callback(new Error('只支持最长32位中英文字母和数字组合'));
                       } else {
                         setMsgBusinessName(HELP_MSG_BUSINESSNAME);
                         callback();
@@ -279,7 +272,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
             <>
               <CstInput
                 label="企业名称"
-                placeholder="请输入商品名称"
+                placeholder="请输入企业名称"
                 rules={[
                   {
                     required: true,
@@ -372,13 +365,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
               />
             </>
           )}
-        </Card>
+        </GlobalCard>
 
-        <Card
-          size="small"
-          type="inner"
+        <GlobalCard
           title={identifyType == IDENTIFY_TYPE_1 ? '经营者证件' : '法定代表人证件'}
-          style={{ width: '100%', marginBottom: '10px' }}
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
         >
           <CstSelect
             label="证件类型"
@@ -513,6 +505,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
           <CstDatePicker
             label="证件有效期"
             name="idCardValidity"
+            disabledDate={current => current && current < moment().startOf('day')}
             rules={[
               {
                 required: true,
@@ -522,14 +515,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
-        </Card>
+        </GlobalCard>
 
-        <Card
-          size="small"
-          type="inner"
-          title="其它信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="其它信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstInput
             label="联系人姓名"
             name="contactName"
@@ -573,7 +561,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
               },
             ]}
           />
-        </Card>
+        </GlobalCard>
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>

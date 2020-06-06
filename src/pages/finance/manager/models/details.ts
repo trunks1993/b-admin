@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:06
- * @LastEditTime: 2020-05-20 00:33:11
+ * @LastEditTime: 2020-06-05 09:58:39
  */
 
 import { Effect } from 'dva';
@@ -9,6 +9,7 @@ import { queryList } from '../services/details';
 import { Reducer } from 'redux';
 import produce, { Draft } from 'immer';
 import { TableListData } from '@/pages/data';
+import { message } from 'antd';
 
 export interface ListItemType {
   id: number;
@@ -53,6 +54,8 @@ const Model: ModelType = {
           type: 'setList',
           payload: data,
         });
+      } else {
+        message.error(msg);
       }
     },
   },

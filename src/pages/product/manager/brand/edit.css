@@ -10,5 +10,11 @@
 }
 
 .btnBlock {
-  height: 50px;
+  height: 60px;
+}
+
+.container {
+  background: #fff;
+  min-height: 100%;
+  padding-top: 30px;
 }

@@ -39,6 +39,7 @@ import {
 } from '@/const';
 import { getFloat } from '@/utils';
 import { patternName, patternPrice } from '@/rules';
+import GlobalCard from '@/components/GlobalCard';
 
 const {
   CstInput,
@@ -205,24 +206,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           defaultValue={match.params.id === '-1' ? '' : match.params.id}
           style={{ display: 'none' }}
         />
-        <Card
-          size="small"
-          type="inner"
-          title="商品类型"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="商品类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox
             defaultValue={PRODUCT_TYPE_1}
             options={blockCheckboxOptions}
             name="productTypeCode"
           />
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="基本信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="基本信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstInput
             label="商品名称"
             help={msgProductName}
@@ -326,13 +317,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               </Select.Option>
             ))}
           </CstSelect>
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="价格/库存"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="价格/库存" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstInputNumber
             label="价格"
             placeholder="请输入"
@@ -347,7 +333,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               },
             ]}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
+            wrapperCol={{ span: 6 }}
           />
           <CstInput
             label="官方价"
@@ -403,15 +389,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               },
             ]}
             labelCol={{ span: 4 }}
-            wrapperCol={{ span: 20 }}
+            wrapperCol={{ span: 6 }}
           />
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="其他信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="其他信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstRadio
             label="上架时间"
             name="upType"
@@ -450,7 +431,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             name="usageIllustration"
             autoSize={{ minRows: 4, maxRows: 5 }}
           ></CstTextArea>
-        </Card>
+        </GlobalCard>
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>

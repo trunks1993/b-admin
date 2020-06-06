@@ -9,14 +9,15 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
-  IdentifyTypes,
-  IDENTIFY_TYPE_1,
-  IdentifyStatus,
   TransactionStatus,
   OrderStatus,
   ORDER_STATUS_1,
   ORDER_STATUS_2,
   TRANSTEMP,
+  PRODUCT_TYPE_4,
+  TraceStatus,
+  TRACE_STATUS_5,
+  TRACE_STATUS_6,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -26,8 +27,9 @@ import _ from 'lodash';
 import TabsPanel from './TabsPanel';
 import moment from 'moment';
 import router from 'umi/router';
-import { deliver, cancel } from '../services/purchase';
+import { deliver, cancel, queryListTrace } from '../services/purchase';
 import { getFloat } from '@/utils';
+import GlobalModal from '@/components/GlobalModal';
 
 const { CstInput, CstSelect } = MapForm;
 const { confirm } = Modal;
@@ -39,6 +41,10 @@ interface CompProps extends TableListData<ListItemType> {
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [modalVisible, setModalVisible] = useState<string | number>('');
+  const [modalTitle, setModalTitle] = useState('');
+
+  const [traceList, setTraceList] = useState([]);
 
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
 
@@ -47,6 +53,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   useEffect(() => {
     initList();
   }, [currPage]);
+
+  useEffect(() => {
+    if (modalVisible) initTraceList();
+    else setTraceList([]);
+  }, [modalVisible]);
 
   /**
    * @name:
@@ -72,6 +83,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         ...data,
       },
     });
+  };
+
+  /**
+   * @name: 列表加载
+   */
+  const initTraceList = async () => {
+    try {
+      const [err, data, msg] = await queryListTrace({
+        currPage: 1,
+        pageSize: 10000,
+        itemCode: modalVisible,
+      });
+      if (!err) setTraceList(data.list);
+    } catch (error) {}
   };
 
   /**
@@ -106,6 +131,36 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       onCancel() {},
     });
   };
+
+  const columns: ColumnProps<ListItemType>[] = [
+    {
+      title: '序号',
+      align: 'center',
+      // dataIndex: 'index',
+      render: (record, arr, index) => index + 1,
+    },
+    {
+      title: '充值账号',
+      align: 'center',
+      dataIndex: 'objNo',
+    },
+    {
+      title: '充值数量（件）',
+      align: 'center',
+      dataIndex: 'amount',
+    },
+    {
+      title: '充值状态',
+      align: 'center',
+      // dataIndex: 'status',
+      render: record => TraceStatus[record.status],
+    },
+    {
+      title: '备注',
+      align: 'center',
+      dataIndex: 'remark',
+    },
+  ];
 
   return (
     <div className={Styles.container}>
@@ -221,7 +276,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 <span key={index} className={Styles.item}>
                   <Col span={5}>{v.productSubName}</Col>
                   <Col span={2}>￥{getFloat(v.price / TRANSTEMP, 4)}</Col>
-                  <Col span={2}>{v.detailCount}</Col>
+                  <Col span={2}>
+                    {v.productTypeCode === PRODUCT_TYPE_4 ? (
+                      <Button
+                        type="link"
+                        onClick={() => {
+                          setModalVisible(v.code);
+                          setModalTitle(v.productSubName);
+                        }}
+                      >
+                        {v.detailCount}
+                      </Button>
+                    ) : (
+                      v.detailCount
+                    )}
+                  </Col>
                   {index === 0 ? (
                     <>
                       <Col span={3}>{item.telephone}</Col>
@@ -236,7 +305,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                         >
                           查看详情
                         </Button>
-                        {(item.status === ORDER_STATUS_1 || item.status === ORDER_STATUS_2) && (
+                        {(item.status === ORDER_STATUS_1 ||
+                          (item.status === ORDER_STATUS_2 &&
+                            item.orderItemList.some(
+                              item => item.productTypeCode !== PRODUCT_TYPE_4,
+                            ))) && (
                           <Button
                             size="small"
                             type="primary"
@@ -270,6 +343,59 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <GlobalModal
+        modalVisible={!!modalVisible}
+        title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>{`${modalTitle}-直充明细`}</div>}
+        confirmLoading={confirmLoading}
+        cancelText={
+          <Button
+            type="link"
+            onClick={e => {
+              e.stopPropagation();
+            }}
+          >
+            <span style={{ color: '#333333' }}>
+              充值账号
+              <span style={{ color: '#1A61DC', fontWeight: 'bold', margin: '0 5px' }}>
+                {traceList.length}
+              </span>
+              个
+            </span>
+            <span style={{ color: '#333333', marginLeft: '10px' }}>
+              充值成功
+              <span style={{ color: '#1A61DC', fontWeight: 'bold', margin: '0 5px' }}>
+                {_.filter(traceList, item => item.status === TRACE_STATUS_5).length}
+              </span>
+              件
+            </span>
+            <span style={{ color: '#333333', marginLeft: '10px' }}>
+              充值失败
+              <span style={{ color: '#DD0000', fontWeight: 'bold', margin: '0 5px' }}>
+                {_.filter(traceList, item => item.status === TRACE_STATUS_6).length}
+              </span>
+              件
+            </span>
+          </Button>
+        }
+        onOk={() => setModalVisible('')}
+        onCancel={() => setModalVisible('')}
+        cancelButtonProps={{
+          className: 'global-modal-btn-cancel',
+          type: 'link',
+          style: { position: 'absolute', left: 0 },
+        }}
+        width={560}
+      >
+        <Table
+          className="global-table"
+          loading={loading}
+          columns={columns}
+          pagination={false}
+          dataSource={traceList}
+          scroll={{ y: 200 }}
+          rowKey={record => record.id.toString()}
+        />
+      </GlobalModal>
     </div>
   );
 };

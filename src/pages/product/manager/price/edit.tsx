@@ -13,11 +13,12 @@ import { ListItemType as MerchantItemType } from '@/pages/business/manager/model
 import { router } from 'umi';
 import { ProductTypes, DEFAULT_PAGE_NUM, TRANSTEMP } from '@/const';
 import GlobalModal from '@/components/GlobalModal';
-import ProductSelect from '@/pages/stock/manager/warehousing/components/ProductSelect';
+import ProductSelect from '@/components/ProductSelect';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { PriceItemType, EditeItemType, add } from '../services/price';
 import { getFloat } from '@/utils';
+import GlobalCard from '@/components/GlobalCard';
 
 const { CstInput, CstSelect, CstCheckbox, CstInputNumber } = MapForm;
 
@@ -27,17 +28,6 @@ interface CompProps extends RouteComponentProps<{ id: string }> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
 }
-
-const handleEdite = async (fields: EditeItemType) => {
-  const [err, data, msg] = await add(fields);
-  if (!err) {
-    message.success('操作成功');
-    return true;
-  } else {
-    message.error('操作失败');
-    return false;
-  }
-};
 
 const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
@@ -260,12 +250,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <Card
-          size="small"
-          type="inner"
-          title="基本信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="基本信息" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <Row>
             <Col span={12}>
               <CstSelect
@@ -293,20 +278,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               <CstCheckbox name="isEffect" keyMap={['Y', 'N']} title="设置后立即生效"></CstCheckbox>
             </Col>
           </Row>
-        </Card>
-        <Card
-          size="small"
-          type="inner"
+        </GlobalCard>
+        <GlobalCard
           title="商品明细"
-          style={{ width: '100%', marginBottom: '10px' }}
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
         >
-          <div>
+          <div style={{ padding: '0 40px 20px 40px' }}>
             <Button type="primary" onClick={() => setModalVisible(true)}>
               选择商品
             </Button>
             <Button style={{ marginLeft: '20px' }}>批量导入</Button>
           </div>
-          <span style={{ marginTop: '20px', display: 'inline-block' }}>
+          <span style={{ padding: '0 40px', display: 'inline-block' }}>
             注：定价 = 原价(面值/规格) * 折扣 = 原价 - 让利金额(减钱)
           </span>
           <Table
@@ -336,7 +320,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               取消
             </Button>
           </div>
-        </Card>
+        </GlobalCard>
       </MapForm>
 
       <GlobalModal
@@ -353,7 +337,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         }}
         title="选择商品"
         confirmLoading={confirmLoading}
-        width={800}
+        width={1000}
       >
         <ProductSelect ref={ref} />
       </GlobalModal>

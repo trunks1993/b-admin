@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-27 19:24:50
+ * @LastEditTime: 2020-06-05 19:10:42
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -49,8 +49,8 @@ export const ProductTypes = {
   [PRODUCT_TYPE_4]: '直充',
 };
 
-export const PRICE_STATUS_1 = 1; // 卡密
-export const PRICE_STATUS_2 = 2; // 兑换码
+export const PRICE_STATUS_1 = 1; // 正常
+export const PRICE_STATUS_2 = 2; // 失效
 export const PriceStatus = {
   [PRICE_STATUS_1]: '正常',
   [PRICE_STATUS_2]: '失效',
@@ -121,6 +121,25 @@ export const TransactionStatus = {
   [TRANSACTION_STATUS_3]: '处理中',
   [TRANSACTION_STATUS_4]: '成功',
   [TRANSACTION_STATUS_5]: '失败',
+};
+
+
+export const TRACE_STATUS_1 = 1; // 初始
+export const TRACE_STATUS_2 = 2; // 已支付
+export const TRACE_STATUS_3 = 3; // 处理中
+export const TRACE_STATUS_4 = 4; // 待工单处理
+export const TRACE_STATUS_5 = 5; // 成功
+export const TRACE_STATUS_6 = 6; // 失败
+export const TRACE_STATUS_7 = 7; // 取消
+
+export const TraceStatus = {
+  [TRACE_STATUS_1]: '初始',
+  [TRACE_STATUS_2]: '已支付',
+  [TRACE_STATUS_3]: '处理中',
+  [TRACE_STATUS_4]: '待工单处理',
+  [TRACE_STATUS_5]: '成功',
+  [TRACE_STATUS_6]: '失败',
+  [TRACE_STATUS_7]: '取消',
 };
 
 export const ORDER_STATUS_1 = 1; // 待付款
@@ -228,10 +247,10 @@ export const WaterStatus = {
   [WATER_STATUS_2]: '入库',
 };
 
-//
+// 业务类型
 export const WORK_TYPE_1 = 1;
 export const WORK_TYPE_2 = 2;
 export const WorkTypes = {
-  [WORK_TYPE_1]: '批量',
-  [WORK_TYPE_2]: '直冲',
+  [WORK_TYPE_1]: '批采',
+  [WORK_TYPE_2]: '直充',
 };

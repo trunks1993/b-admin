@@ -28,7 +28,7 @@ export interface UserModelState {
 export interface UserType {
   realname?: string;
   headIcon?: string;
-  userId?: number;
+  userId: number;
 }
 
 interface ModelType {

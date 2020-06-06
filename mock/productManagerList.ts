@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:49:31
- * @LastEditTime: 2020-05-23 10:14:05
+ * @LastEditTime: 2020-06-05 19:28:14
  */
 import { Response, Request } from 'express';
 
@@ -84,7 +84,7 @@ export default {
   },
 
   // 修改状态
-  'POST /goods/modifyGoodsStatus': (req: Request, res: Response) => {
+  'POST /goods/batchModifyGoodsStatus': (req: Request, res: Response) => {
     setTimeout(() => {
       res.send(noDataRes);
     }, 1000);

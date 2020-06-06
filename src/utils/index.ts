@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-05 15:29:43
- * @LastEditTime: 2020-05-26 11:41:50
+ * @LastEditTime: 2020-06-04 19:53:27
  */
 import { parse } from 'querystring';
 import _ from 'lodash';
@@ -100,7 +100,7 @@ export function guid() {
   });
 }
 
-export const getFloat = (number: string, n?: number) => {
+export const getFloat = (number: string | number, n?: number) => {
   let num = parseFloat(number);
   n = n ? n : 0;
   if (n <= 0) {

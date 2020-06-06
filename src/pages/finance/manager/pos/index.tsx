@@ -4,17 +4,21 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/pos';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
-import { ColumnProps } from 'antd/lib/table/interface';
 import {
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_PAGE_NUM,
-  IdentifyTypes,
-  IDENTIFY_TYPE_1,
-  IdentifyStatus,
-  TransactionStatus,
-  TRANSTEMP,
-} from '@/const';
+  Table,
+  Button,
+  Pagination,
+  Modal,
+  message,
+  Checkbox,
+  Select,
+  Form,
+  Col,
+  Row,
+  Radio,
+} from 'antd';
+import { ColumnProps } from 'antd/lib/table/interface';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, TRANSTEMP } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -23,13 +27,26 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
+import GlobalModal from '@/components/GlobalModal';
+import { EditeItemType, modify } from '../services/pos';
 
-const { CstInput, CstSelect } = MapForm;
+const { CstInput, CstSelect, CstRadio, CstInputNumber, CstPassword, CstTextArea } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
 }
+
+const handleEdite = async (fields: EditeItemType) => {
+  const [err, data, msg] = await modify(fields);
+  if (!err) {
+    message.success('操作成功');
+    return true;
+  } else {
+    message.error(msg);
+    return false;
+  }
+};
 
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
@@ -39,11 +56,26 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
+  const [formData, setFormData] = useState<EditeItemType>({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     setSelectedRowKeys([]);
     initList();
   }, [currPage]);
+
+  useEffect(() => {
+    const { merchantId, merchantName, accountNo, amount } = formData;
+    if (modalVisible && merchantId) {
+      form?.setFieldsValue({
+        merchantId,
+        merchantName: `${merchantName}(${merchantId}) `,
+        accountNo,
+        amount_copy: getFloat(amount / TRANSTEMP, 4),
+      });
+    }
+  }, [form]);
 
   /**
    * @name: 列表加载
@@ -119,8 +151,42 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
   };
 
+  /**
+   * @name:
+   * @param {type}
+   */
+  const handleModalVisible = () => {
+    setModalVisible(true);
+    setFormData(_.find(list, item => item.id == selectedRowKeys[0]));
+  };
+
+  /**
+   * @name:
+   * @param {void}
+   */
+  const handleSubmit = () => {
+    form?.validateFields(async (err, value) => {
+      if (!err) {
+        const success = await handleEdite(value);
+        if (success) {
+          setModalVisible(false);
+        }
+      }
+    });
+  };
+
+  const formItemLayout = {
+    labelCol: {
+      span: 6,
+    },
+    wrapperCol: {
+      span: 15,
+      push: 1,
+    },
+  };
+
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>商户账单</div>
       <div className={Styles.filter}>
         <div className={Styles.filterBox}>
@@ -212,7 +278,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           </Checkbox>
         </span>
         <span>
-          <Button loading={confirmLoading} disabled={selectedRowKeys.length === 0}>
+          <Button
+            loading={confirmLoading}
+            disabled={selectedRowKeys.length !== 1}
+            onClick={handleModalVisible}
+          >
             调账
           </Button>
           <Button
@@ -252,6 +322,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         columns={columns}
         pagination={false}
         dataSource={list}
+        scroll={{ x: 1300 }}
         rowKey={record => record.id.toString()}
       />
       <div className="global-pagination">
@@ -266,6 +337,72 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+
+      <GlobalModal
+        modalVisible={modalVisible}
+        title="调账"
+        onCancel={() => setModalVisible(false)}
+        onOk={handleSubmit}
+        confirmLoading={confirmLoading}
+      >
+        <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
+          <CstInput name="merchantId" style={{ display: 'none' }} />
+          <CstInput disabled name="merchantName" label="商户名称" />
+          <CstInput disabled name="accountNo" label="账户编号" />
+          <CstInput disabled name="amount_copy" label="账户余额(元)" />
+          <CstRadio
+            label="调账类型"
+            name="bizType"
+            defaultValue={5}
+            rules={[
+              {
+                required: true,
+                message: '请选择',
+              },
+            ]}
+          >
+            <Radio value={5}>减款</Radio>
+            <Radio value={4}>加款</Radio>
+          </CstRadio>
+          <CstInputNumber
+            label="调账金额(元)"
+            name="amount"
+            size="large"
+            min={0}
+            precision={4}
+            placeholder="请输入调账金额"
+            rules={[
+              {
+                required: true,
+                message: '请输入调账金额',
+              },
+            ]}
+          />
+          <CstPassword
+            label="操作员密码"
+            name="password"
+            placeholder="请输入登录密码"
+            rules={[
+              {
+                required: true,
+                message: '请输入登录密码',
+              },
+            ]}
+          />
+          <CstTextArea
+            label="备注"
+            name="remark"
+            placeholder="请输入备注信息"
+            autoSize={{ minRows: 4, maxRows: 6 }}
+            rules={[
+              {
+                required: true,
+                message: '请输入备注信息',
+              },
+            ]}
+          />
+        </MapForm>
+      </GlobalModal>
     </div>
   );
 };

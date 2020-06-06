@@ -150,7 +150,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         <Button type="link" icon="plus" onClick={() => router.push(`/business/manager/info/-1`)}>
           新增商户
@@ -219,7 +219,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入手机号码"
                 />
               </Col>
-              <Col span={12} push={12}>
+              <Col span={10} offset={8}>
                 <Form.Item>
                   <Button
                     type="primary"

@@ -9,6 +9,7 @@ import {
   StockStatus,
   TRANSTEMP,
   ProductStatusGU,
+  ProductTypes,
 } from '@/const';
 import { TableListData } from '@/pages/data';
 import { Dispatch, AnyAction } from 'redux';
@@ -28,10 +29,11 @@ const { TreeNode } = Tree;
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
+  extraQueryParams?: { [key: string]: any };
 }
 
 const Comp: React.FC<CompProps> = props => {
-  const { dispatch, list, total, loading, myForwardedRef } = props;
+  const { dispatch, list, total, loading, myForwardedRef, extraQueryParams } = props;
   const [treeData, setTreeData] = useState<ListItemType[]>([]);
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(5);
@@ -39,7 +41,6 @@ const Comp: React.FC<CompProps> = props => {
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    // setSelectedRowKeys([]);
     initList();
   }, [currPage]);
 
@@ -78,6 +79,7 @@ const Comp: React.FC<CompProps> = props => {
         currPage,
         pageSize,
         ...data,
+        ...extraQueryParams,
       },
     });
   };
@@ -164,11 +166,23 @@ const Comp: React.FC<CompProps> = props => {
       align: 'center',
       key: 'id',
       render: record => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        // <div style={{ display: 'flex', alignItems: 'center' }}>
+        //   <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+        //   <span>{record.productSub.name}</span>
+        // </div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-          <span>{record.productSub.name}</span>
+          <span style={{ textAlign: 'left' }}>
+            <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
+            <div style={{ marginLeft: '5px' }}>{record.code}</div>
+          </span>
         </div>
       ),
+    },
+    {
+      title: '商品类型',
+      align: 'center',
+      render: record => ProductTypes[record.productTypeCode],
     },
     {
       title: '状态',
@@ -253,7 +267,7 @@ const Comp: React.FC<CompProps> = props => {
           <Pagination
             current={currPage}
             onChange={(currPage: number) => setCurrPage(currPage)}
-            defaultPageSize={DEFAULT_PAGE_SIZE}
+            defaultPageSize={5}
             total={total}
             // showQuickJumper
           />

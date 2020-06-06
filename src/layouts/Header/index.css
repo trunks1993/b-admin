@@ -90,6 +90,7 @@
 .dropBox ul > li {
   cursor: pointer;
   text-align: center;
+  padding: 6px 0;
 }
 
 .dropBox ul > li:hover {

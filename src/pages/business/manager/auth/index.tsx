@@ -175,7 +175,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         {/* <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
           添加用户
@@ -252,7 +252,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             当页全选
           </Checkbox>
         </span>
-        <span>
+        {/* <span>
           <Button
             loading={confirmLoading}
             disabled={selectedRowKeys.length === 0}
@@ -260,7 +260,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           >
             批量删除
           </Button>
-        </span>
+        </span> */}
       </div>
       <Table
         className="global-table"

@@ -7,7 +7,13 @@ import { ListItemType } from '../models/recharge';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, RechargeStatus, TRANSTEMP } from '@/const';
+import {
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_PAGE_NUM,
+  RechargeStatus,
+  TRANSTEMP,
+  RECHARGE_STATUS_2,
+} from '@/const';
 // import { remove, add, modify, EditeItemType, modifyStatus } from '../services/recharge';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -54,7 +60,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -214,9 +220,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       fixed: 'right',
       render: record => (
         <>
-          <Button type="link" onClick={() => handleMakeSure(record)}>
-            确认
-          </Button>
+          {record.status !== RECHARGE_STATUS_2 ? (
+            <Button type="link" onClick={() => handleMakeSure(record)}>
+              确认
+            </Button>
+          ) : null}
           <Button type="link" onClick={() => handleModalVisible(record)}>
             查看回单
           </Button>
@@ -235,7 +243,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>账户充值</div>
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
@@ -276,29 +284,31 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           </Row>
         </MapForm>
       </div>
-      <TabsPanel onChange={handleTabsPanelChange}>
-        <Table
-          className="global-table"
-          loading={loading}
-          columns={columns}
-          pagination={false}
-          dataSource={list}
-          // scroll={{ x: 1300 }}
-          rowKey={record => record.id.toString()}
-        />
-        <div className="global-pagination">
-          <Pagination
-            current={currPage}
-            onChange={(currPage: number) => setCurrPage(currPage)}
-            defaultPageSize={DEFAULT_PAGE_SIZE}
-            total={total}
-            showQuickJumper
+      <div style={{ padding: '0 40px' }}>
+        <TabsPanel onChange={handleTabsPanelChange}>
+          <Table
+            className="global-table"
+            loading={loading}
+            columns={columns}
+            pagination={false}
+            dataSource={list}
+            style={{ marginTop: '30px' }}
+            rowKey={record => record.id.toString()}
           />
-          <span className="global-pagination-data">
-            共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
-          </span>
-        </div>
-      </TabsPanel>
+          <div className="global-pagination">
+            <Pagination
+              current={currPage}
+              onChange={(currPage: number) => setCurrPage(currPage)}
+              defaultPageSize={DEFAULT_PAGE_SIZE}
+              total={total}
+              showQuickJumper
+            />
+            <span className="global-pagination-data">
+              共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
+            </span>
+          </div>
+        </TabsPanel>
+      </div>
       <GlobalModal
         modalVisible={modalVisible}
         title="回单"

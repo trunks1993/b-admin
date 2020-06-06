@@ -1,0 +1,15 @@
+.container {
+  border-radius: 2px;
+  background: #fff;
+  /* margin-top: 10px; */
+}
+
+.title {
+  font-size: 14px;
+  color: #333333;
+  height: 40px;
+  padding: 0 20px;
+  line-height: 40px;
+  background: #f2f2f2;
+  border: 1px solid #e6e6e6;
+}

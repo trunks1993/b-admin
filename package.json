@@ -21,9 +21,11 @@
     "js-md5": "^0.7.3",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
+    "normalizr": "^3.6.0",
     "react": "16.8.6",
     "react-dom": "16.8.6",
     "react-lazyload": "^2.6.7",
+    "react-router-breadcrumbs-hoc": "^3.3.0",
     "slash2": "^2.0.0",
     "umi-request": "^1.2.7"
   },

@@ -37,9 +37,10 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
    */
   const handleInputChange = (value: string, id: number, key: string) => {
     const obj = _.map(editList, item => {
-      if (key === 'facePrice' && item.productSubId === id)
-        item[key] = getFloat(value / TRANSTEMP, 4);
-      else item.productSubId === id && (item[key] = value);
+      // if (key === 'facePrice' && item.productSubId === id)
+      //   item[key] = getFloat(value / TRANSTEMP, 4);
+      // else item.productSubId === id && (item[key] = value);
+      item.productSubId === id && (item[key] = value);
       return item;
     });
     setEditList(obj);
@@ -114,10 +115,11 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                       onClick={() => {
                         const data = {
                           name: item.name,
-                          facePrice: item.facePrice,
+                          facePrice: item.facePrice / TRANSTEMP,
                           shortName: item.shortName,
                           productSubId: item.id,
                         };
+                        console.log(data);
                         setEditList([...editList, data]);
                       }}
                     >

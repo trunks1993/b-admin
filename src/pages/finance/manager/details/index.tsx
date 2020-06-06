@@ -111,7 +111,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   ];
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>账户明细</div>
       <div className={Styles.filter}>
         <div className={Styles.filterBox}>

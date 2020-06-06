@@ -148,6 +148,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         currPage,
         pageSize,
         ...data,
+        productTypeCodes: [101, 102, 103],
       },
     });
   };
@@ -198,7 +199,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
       width: 260,
       key: 'id',
       render: record => (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
             <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
@@ -242,7 +243,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           </Button>
           <Button
             type="link"
-            onClick={() => router.push(`/stock/manager/stockWater?goods=${record.productName}`)}
+            onClick={() => router.push(`/stock/manager/stockWater?goods=${record.productSub.name}`)}
           >
             库存流水
           </Button>
@@ -269,7 +270,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.filter}>
         <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
           <Row>

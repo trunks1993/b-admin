@@ -50,7 +50,7 @@ const handleEdite = async (fields: ModifyItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -172,7 +172,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           dispatchInit(() => setSelectedRowKeys([]));
           message.success('操作成功');
         } else {
-          message.error('操作失败');
+          message.error(msg);
         }
       },
       onCancel() {},
@@ -224,17 +224,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       const price = facePrice - value * TRANSTEMP;
       form?.setFieldsValue({
         price: price / TRANSTEMP,
-        rebate: price / facePrice * 10,
+        rebate: (price / facePrice) * 10,
       });
     }
   };
 
   const columns: ColumnProps<ListItemType>[] = [
-    // {
-    //   title: '商品名称',
-    //   align: 'center',
-    //   dataIndex: 'goodsName',
-    // },
     {
       title: '商品名称',
       align: 'center',
@@ -278,12 +273,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '创建时间',
       align: 'center',
-      render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record =>
+        record.modifyTime && moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '更新时间',
       align: 'center',
-      render: record => moment(record.modifyTime).format('YYYY-MM-DD HH:mm:ss'),
+      render: record =>
+        record.modifyTime && moment(record.modifyTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '操作',
@@ -294,9 +291,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           <Button type="link" onClick={() => handleModalVisible(record)}>
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm([record.id])}>
-            删除
-          </Button>
+          {record.status === PRICE_STATUS_2 && (
+            <Button type="link" onClick={() => showConfirm([record.id])}>
+              删除
+            </Button>
+          )}
         </>
       ),
     },
@@ -333,7 +332,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/price/-1`)}>
           新增商品定价
@@ -463,7 +462,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         columns={columns}
         pagination={false}
         dataSource={list}
-        scroll={{ x: 1300 }}
+        scroll={{ x: 1800 }}
         rowKey={record => record.id.toString()}
       />
       <div className="global-pagination">

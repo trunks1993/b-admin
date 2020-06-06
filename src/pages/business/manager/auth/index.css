@@ -18,3 +18,8 @@
   border-bottom: 1px solid #e6e6e6;
   padding: 20px 0;
 }
+
+.container {
+  background: #fff;
+  height: 100%;
+}

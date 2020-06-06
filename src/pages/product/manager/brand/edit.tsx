@@ -2,49 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 
-import {
-  Table,
-  Button,
-  Pagination,
-  Modal,
-  message,
-  Checkbox,
-  Select,
-  Form,
-  Card,
-  Radio,
-  Input,
-  DatePicker,
-} from 'antd';
+import { Button, message } from 'antd';
 import { add, modify, EditeItemType, getInfo } from '../services/brand';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
 import { queryListSub } from '../services/management';
 import { ListItemSubType } from '../management';
 import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
-import GlobalCheckbox from '@/components/GlobCheckbox';
-import GlobalEditor from '@/components/GlobalEditor';
 import { router } from 'umi';
 import { getCategoryTree } from '../services/group';
 import { loopTree, TreeDataItem2 } from '@/utils';
 
-const {
-  CstInput,
-  CstBlockCheckbox,
-  CstTextArea,
-  CstSelect,
-  CstUpload,
-  CstRadio,
-  CstCheckbox,
-  CstTreeSelect,
-  CstEditor,
-} = MapForm;
-
-const { confirm } = Modal;
+const { CstInput, CstUpload, CstTreeSelect, CstTextArea } = MapForm;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
   dispatch: Dispatch<AnyAction>;
@@ -56,11 +28,8 @@ interface ErrMsgType {
   iconUrl?: string;
 }
 
-const HELP_MSG_PRODUCT_NAME = '填写商品名称，方便快速检索相关产品';
 const HELP_MSG_RESUME = '用一句话描述该品牌，建议60字以内';
-const HELP_MSG_ICONURL =
-  '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片，你可以拖拽图片调整顺序，最多上传15张';
-const HELP_MSG_FACE_PRICE = '默认情况下，官方价为产品面值，在商品详情会以划线形式显示';
+const HELP_MSG_ICONURL = '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片';
 const HELP_MSG_STOCK =
   '库存为 0 时，会放到『已售罄』的商品列表里，保存后买家看到的商品可售库存同步更新';
 
@@ -71,23 +40,18 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
 
 const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
-
+  const [ConfirmLoading, setConfirmLoading] = useState(false);
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
     stock: HELP_MSG_STOCK,
     iconUrl: HELP_MSG_ICONURL,
   });
-  const [options, setOptions] = useState<ListItemSubType[]>([]);
-
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [radioValue, setRadioValue] = useState(1);
   const [treeData, setTreeData] = useState<TreeDataItem2[]>();
   const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
@@ -160,22 +124,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     timeout = setTimeout(fake, 500);
   };
 
-  const handleSearch = (value: string) => {
-    if (value) {
-      fetch(value, data => setOptions(data));
-    } else {
-      setOptions([]);
-    }
-  };
-
-  const radioStyle = {
-    display: 'block',
-    height: '30px',
-    lineHeight: '30px',
-  };
-
   return (
-    <div style={{ height: '100%', position: 'relative', paddingTop: '30px' }}>
+    // <div style={{ height: '100%', position: 'relative', paddingTop: '30px' }}>
+    <div className={Styles.container}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="brandId"
@@ -272,7 +223,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={ConfirmLoading} type="primary" onClick={handleSubmit}>
           保存
         </Button>
         <Button style={{ marginLeft: '20px' }} onClick={() => router.goBack()}>

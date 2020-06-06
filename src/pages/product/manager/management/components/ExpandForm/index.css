@@ -7,10 +7,11 @@
 .name {
   width: 200px;
   display: inline-block;
-  text-align: center;
+  text-align: left;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  padding-left: 35px;
 }
 .brandName {
   width: 150px;

@@ -11,23 +11,15 @@ import Styles from './edit.css';
 import { ListItemType as SuppliersItemType } from '../models/suppliers';
 
 import { router } from 'umi';
-import {
-  PRODUCT_TYPE_1,
-  PRODUCT_TYPE_2,
-  PRODUCT_TYPE_3,
-  PRODUCT_TYPE_4,
-  ProductTypes,
-  DEFAULT_PAGE_NUM,
-  TRANSTEMP,
-} from '@/const';
+import { DEFAULT_PAGE_NUM, TRANSTEMP } from '@/const';
 import { EditeItemType, GoodsItemType, check, add } from '../services/warehousing';
 import { ConnectState } from '@/models/connect';
 import GlobalModal from '@/components/GlobalModal';
-import ProductSelect from './components/ProductSelect';
+import ProductSelect from '@/components/ProductSelect';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { ListItemType } from '@/models/product';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { getFloat } from '@/utils';
+import GlobalCard from '@/components/GlobalCard';
 
 const { CstInput, CstTextArea, CstSelect, CstDatePicker, CstOther, CstInputNumber } = MapForm;
 
@@ -39,23 +31,10 @@ interface CompProps extends RouteComponentProps<{ id: string }> {
   supplierList: SuppliersItemType[];
 }
 
-const handleEdite = async (fields: EditeItemType) => {
-  const [err, data, msg] = await add(fields);
-  if (!err) {
-    message.success('操作成功');
-    return true;
-  } else {
-    message.error('操作失败');
-    return false;
-  }
-};
-
 const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
-  const [pageSize, setPageSize] = useState(5);
-
+  const [panelData, setPanelData] = useState({ noTax: 0, tax: 0 });
   const [uploadDisableList, setUploadDisableList] = useState({});
   const [countMap, setCountMap] = useState({});
   const [goodsForm, setGoodsForm] = useState<GoodsItemType[]>([]);
@@ -78,7 +57,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
   const getSupplierList = () => {
     dispatch({
       type: 'stockManagerSuppliers/fetchList',
-      queryParams: {},
+      queryParams: {
+        status: 0,
+      },
     });
   };
 
@@ -88,7 +69,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
-      console.log('handleSubmit -> value', value);
       if (!error) {
         const paramObj = {};
         const codeMap = {};
@@ -115,14 +95,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
           }
         } catch (error) {}
       }
-
-      // if (error) return;
-      // setConfirmLoading(true);
-      // const isSuccess = await handleEdite(value);
-      // setConfirmLoading(false);
-      // if (isSuccess) {
-      //   setModalVisible(false);
-      // }
     });
   };
 
@@ -131,43 +103,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
    * @param {type}
    */
   const handleInputChange = (value: string, key: string, code: number) => {
-    // const val = parseFloat(value);
-    // const count = parseInt(form?.getFieldValue('count-' + code));
-    // const purchasePrice = parseFloat(form?.getFieldValue('purchasePrice-' + code)) * TRANSTEMP;
-    // const taxRate = parseFloat(form?.getFieldValue('taxRate-' + code)) * 100;
-
-    // let noTax: string | number = '--',
-    //   tax: string | number = '--';
-
-    // if (key === 'purchasePrice') {
-    //   if (count && val) {
-    //     const res = (val * TRANSTEMP * count) / TRANSTEMP;
-    //     tax = noTax = getFloat(res, 4);
-    //     if (taxRate) {
-    //       tax = getFloat((res * (taxRate + TRANSTEMP)) / TRANSTEMP, 4);
-    //     }
-    //   }
-    // } else if (key === 'count') {
-    //   const data = _.clone(uploadDisableList);
-    //   data[code] = !!val;
-    //   setUploadDisableList(data);
-
-    //   if (purchasePrice && val) {
-    //     const res = (purchasePrice * val) / TRANSTEMP;
-    //     tax = noTax = getFloat(res, 4);
-    //     if (taxRate) {
-    //       tax = getFloat((res * (taxRate + TRANSTEMP)) / TRANSTEMP, 4);
-    //     }
-    //   }
-    // } else if (key === 'taxRate') {
-    //   if (purchasePrice && count) {
-    //     const res = (purchasePrice * count) / TRANSTEMP;
-    //     tax = noTax = getFloat(res, 4);
-    //     if (taxRate) {
-    //       tax = getFloat((res * (val * 100 + TRANSTEMP)) / TRANSTEMP, 4);
-    //     }
-    //   }
-    // }
     const val = parseFloat(value);
 
     if (key === 'count') {
@@ -203,6 +138,28 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       ['noTax-' + code]: noTax,
       ['tax-' + code]: tax,
     });
+
+    handleChangePanelData();
+  };
+
+  /**
+   * @name:
+   * @param {type}
+   */
+
+  const handleChangePanelData = () => {
+    const formData = form?.getFieldsValue();
+    const panelData = { noTax: 0, tax: 0 };
+    _.map(formData, (item, key) => {
+      if (key.includes('-')) {
+        const lk = key.split('-')[0];
+        const num = parseFloat(item);
+        const isNaN = Number.isNaN(num);
+        if (lk === 'noTax') panelData.noTax = panelData.noTax.add(isNaN ? 0 : num);
+        else if (lk === 'tax') panelData.tax = panelData.tax.add(isNaN ? 0 : num);
+      }
+    });
+    setPanelData(panelData);
   };
 
   /**
@@ -225,6 +182,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         const newCountMap = _.clone(countMap);
         delete newCountMap[goodsCode];
         setCountMap(newCountMap);
+        handleChangePanelData();
       },
       onCancel() {},
     });
@@ -257,8 +215,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       setCountMap(m);
 
       const count = form?.getFieldValue('count-' + code);
-      if (count == data.count) message.success('商品数量校验成功');
-      else {
+      if (count == data.count) {
+        message.success('商品数量校验成功');
+        form?.setFields({
+          ['count-' + code]: {
+            value: count,
+          },
+        });
+      } else {
         form?.setFields({
           ['count-' + code]: {
             value: count,
@@ -308,7 +272,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       ),
     },
     {
-      title: '入库数量',
+      title: '采购数量',
       align: 'center',
       width: 100,
       render: record => (
@@ -403,7 +367,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
                 data={{
                   userName: 'yunjin_file_upload',
                   password: 'yunjin_upload_password',
-                  domain: 'warehousing',
+                  domain: 'import',
+                  secret: 'Y',
                 }}
                 onChange={e => handleFileChange(e, record.goodsCode)}
               >
@@ -422,12 +387,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <Card
-          size="small"
-          type="inner"
-          title="基本信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="基本信息" bodyStyle={{ padding: '20px' }}>
           <CstSelect
             label="供应商"
             // help={HELP_MSG_PRODUCT_NAME}
@@ -449,12 +409,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
             ))}
           </CstSelect>
           <CstDatePicker
-            label="入库日期"
+            label="采购日期"
             name="importTime"
             rules={[
               {
                 required: true,
-                message: '入库日期不能为空',
+                message: '采购日期不能为空',
               },
             ]}
             showTime={true}
@@ -469,21 +429,50 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
           />
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="商品明细"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
-          <div>
+        </GlobalCard>
+        <GlobalCard title="商品明细" titleStyle={{ marginTop: '10px' }}>
+          <div style={{ padding: '20px 40px' }}>
             <Button type="primary" onClick={() => setModalVisible(true)}>
               选择商品
             </Button>
             <Button style={{ marginLeft: '20px' }}>批量导入</Button>
+            <Button
+              style={{ marginLeft: '10px' }}
+              type="link"
+              onClick={() => {
+                window.open(`${process.env.BASE_FILE_SERVER}/data/static/template/cardimport.xlsx`);
+              }}
+            >
+              下载模板
+            </Button>
           </div>
-          <span style={{ marginTop: '20px', display: 'inline-block' }}>
-            共 1 件商品，合计不含税小计：0.00 元， 含税小计：0.00 元
+          <span
+            style={{
+              padding: '0 40px',
+              display: 'inline-block',
+              fontSize: '12px',
+              color: '#333333',
+            }}
+          >
+            共
+            <span
+              style={{ fontSize: '14px', fontWeight: 'bold', color: '#1A61DC', margin: '0 5px' }}
+            >
+              {goodsForm.length}
+            </span>
+            件商品，合计不含税小计:
+            <span
+              style={{ fontSize: '14px', fontWeight: 'bold', color: '#1A61DC', margin: '0 5px' }}
+            >
+              {getFloat(panelData.noTax, 4)}
+            </span>
+            元，含税小计:
+            <span
+              style={{ fontSize: '14px', fontWeight: 'bold', color: '#1A61DC', margin: '0 5px' }}
+            >
+              {getFloat(panelData.tax, 4)}
+            </span>
+            元
           </span>
           <Table
             className="global-table"
@@ -499,7 +488,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
               defaultPageSize={pageSize}
               total={goodsForm.length}
               // showQuickJumper
-            />
+            /> 
             <span className="global-pagination-data">
               共 {goodsForm.length} 条 ,每页 {pageSize} 条
             </span>
@@ -512,7 +501,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
               取消
             </Button>
           </div>
-        </Card>
+        </GlobalCard>
       </MapForm>
 
       <GlobalModal
@@ -529,9 +518,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         }}
         title="选择商品"
         confirmLoading={confirmLoading}
-        width={800}
+        width={1000}
       >
-        <ProductSelect ref={ref} />
+        <ProductSelect ref={ref} extraQueryParams={{ productTypeCodes: [101, 102, 103] }} />
       </GlobalModal>
     </div>
   );

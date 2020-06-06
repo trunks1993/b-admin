@@ -29,9 +29,7 @@ import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
-import { getInfo } from '@/pages/business/manager/services/application';
 import { getFloat } from '@/utils';
 
 const { confirm } = Modal;
@@ -49,7 +47,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -298,9 +296,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => setModalVisible(true)}>
+        <Button
+          type="link"
+          icon="plus"
+          onClick={() => {
+            setModalVisible(true);
+            setFormData({});
+          }}
+        >
           新增供应商
         </Button>
       </div>

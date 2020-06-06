@@ -168,3 +168,71 @@ input[type='number'] {
   width: 60px;
   height: 60px;
 }
+
+/* tabs */
+:global(.global-tabs .ant-tabs-bar) {
+  margin: 0;
+  position: relative;
+  top: 1px;
+}
+
+:global(.global-tabs .ant-tabs-content) {
+  border: 1px solid #e5e5e5;
+  padding-bottom: 40px;
+  border-radius: 0 0 4px 4px;
+}
+
+:global(.global-tabs .ant-tabs-tab) {
+  border-radius: 0 !important;
+  margin-right: 0 !important;
+  min-width: 110px;
+  text-align: center;
+  color: #cccccc;
+  font-size: 12px;
+  height: 34px !important;
+  line-height: 34px !important;
+}
+
+:global(.global-tabs .ant-tabs-tab:first-child) {
+  border-radius: 4px 0 0 0 !important;
+}
+
+:global(.global-tabs .ant-tabs-tab:last-child) {
+  border-radius: 0 4px 0 0 !important;
+}
+
+:global(.global-tabs .ant-tabs-tab:not(:last-child)) {
+  border-right: none !important;
+}
+
+:global(.global-tabs .ant-tabs-tab):hover {
+  color: #333333 !important;
+}
+
+:global(.global-tabs .ant-tabs-nav-container) {
+  height: 34px !important;
+}
+
+:global(.global-tabs .ant-tabs-tab-active) {
+  color: #333333 !important;
+}
+
+/* global-popover */
+:global(.ant-popover-inner-content) {
+  padding: 0 !important;
+}
+
+/* inputnumber */
+:global(.ant-input-number-lg) {
+  width: 100% !important;
+  height: 40px !important;
+  line-height: inherit !important;
+}
+
+:global(.ant-input-number-handler-wrap) {
+  display: none;
+}
+
+:global(a.active) {
+  border: none;
+}

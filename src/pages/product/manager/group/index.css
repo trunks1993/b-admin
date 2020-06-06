@@ -9,3 +9,9 @@
   font-size: 14px;
   color: #1a61dc;
 }
+
+.container {
+  background: #fff;
+  min-height: 100%;
+  padding-bottom: 20px;
+}

@@ -144,10 +144,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '产品名称',
-      align: 'center',
+      align: 'left',
       key: 'name',
       width: 200,
-      ellipsis: true,
+      // ellipsis: true,
       render: record => {
         const code = record.code.toString();
         const hasLoaded = expandedRows.find(item => item.code === code && !item.loading);
@@ -222,7 +222,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   ];
 
   return (
-    <div>
+    <div className={Styles.container}>
       <div className={Styles.toolbar}>
         <Button
           type="link"
@@ -241,7 +241,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         rowKey={record => record.code.toString()}
         expandedRowRender={record => {
           const { list, addFormList } =
-            expandedRows.find(item => item.code === record.code.toString()) || {};
+          expandedRows.find(item => item.code === record.code.toString()) || {};
+          console.log("list", list)
           return (
             <ExpandForm
               reload={loadSubList.bind(null, record.code)}

@@ -16,6 +16,7 @@ import { router } from 'umi';
 import { guid, getFloat } from '@/utils';
 import { TRANSTEMP } from '@/const';
 import { Editor } from '@tinymce/tinymce-react';
+import GlobalCard from '@/components/GlobalCard';
 
 const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstOther } = MapForm;
 
@@ -43,7 +44,7 @@ const handleEdite = async (fields: EditeItemType) => {
     message.success('操作成功');
     return true;
   } else {
-    message.error('操作失败');
+    message.error(msg);
     return false;
   }
 };
@@ -145,12 +146,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           defaultValue={match.params.id === '-1' ? '' : match.params.id}
           style={{ display: 'none' }}
         />
-        <Card
-          size="small"
-          type="inner"
-          title="基本信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        <GlobalCard title="基本信息" bodyStyle={{ padding: '20px 0' }}>
           <CstInput
             label="产品名称"
             placeholder="请输入产品名称"
@@ -243,13 +239,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               </Select.Option>
             ))}
           </CstSelect>
-        </Card>
-        <Card
-          size="small"
-          type="inner"
-          title="其他信息"
-          style={{ width: '100%', marginBottom: '10px' }}
-        >
+        </GlobalCard>
+        <GlobalCard title="其他信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
           <CstProductSubPanel
             label="产品规格"
             name="productSubs"
@@ -271,7 +262,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             name="introduction"
             autoSize={{ minRows: 4, maxRows: 5 }}
           ></CstTextArea>
-        </Card>
+        </GlobalCard>
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>

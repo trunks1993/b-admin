@@ -12,6 +12,7 @@ import doing from '@/assets/images/global/doing.png';
 import lock from '@/assets/images/global/lock.png';
 import msg from '@/assets/images/global/msg.png';
 import errow from '@/assets/images/global/errow.png';
+import { router } from 'umi';
 
 const { BASE_FILE_SERVER } = process.env;
 
@@ -27,7 +28,9 @@ const DropMenu: React.FC = () => (
     {dispatch => (
       <div className={Styles.dropBox}>
         <ul>
-          <li onClick={() => dispatch({ type: 'login/logout' })}>退出</li>
+          <li onClick={() => router.push('/changeUser')}>修改资料</li>
+          <li onClick={() => router.push('/changePassword')}>修改密码</li>
+          <li onClick={() => dispatch({ type: 'login/logout' })}>退出系统</li>
         </ul>
       </div>
     )}
@@ -42,7 +45,7 @@ const Title: React.FC = () => (
 );
 
 const Name: React.FC<HeaderProps> = ({ user, loading }) => (
-  <Popover placement="bottom" content={<DropMenu />} trigger="hover">
+  <Popover placement="bottom" className="global-popover" content={<DropMenu />} trigger="hover">
     <span className={Styles.nameBox}>
       <img className={Styles.headIcon} src={(BASE_FILE_SERVER || '') + user.headIcon} />
       <span className={Styles.headIconTitle}>{user.realname}</span>

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-22 23:36:27
+ * @LastEditTime: 2020-06-06 17:53:16
  */
 // 商品
 export const product = [
@@ -130,7 +130,6 @@ export const stock = [
     Routes: ['src/AuthRouter'],
   },
 ];
-
 // 订单
 export const order = [
   {

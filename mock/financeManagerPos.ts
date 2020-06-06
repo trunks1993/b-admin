@@ -2,7 +2,7 @@ import { Response, Request } from 'express';
 
 /*
  * @Date: 2020-05-07 16:32:46
- * @LastEditTime: 2020-05-19 23:40:42
+ * @LastEditTime: 2020-06-04 20:22:45
  */
 const data = Array(20)
   .fill('')
@@ -18,6 +18,13 @@ const data = Array(20)
     createTime: '2020-05-18T01:45:28.000+0000',
     modifyTime: '2020-05-18T01:45:28.000+0000',
   }));
+
+const noDataRes = {
+  result: {},
+  code: '0',
+  success: true,
+  resultMsg: null,
+};
 
 export default {
   // 获取列表
@@ -37,5 +44,12 @@ export default {
         resultMsg: null,
       });
     }, 0);
+  },
+
+  // 修改
+  'POST /merchant/adjustBalance': (req: Request, res: Response) => {
+    setTimeout(() => {
+      res.send(noDataRes);
+    }, 1000);
   },
 };
