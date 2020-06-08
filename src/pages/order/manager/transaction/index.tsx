@@ -69,9 +69,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '订单号/外部订单号',
       align: 'center',
+      width: 200,
       render: record => (
         <span>
-          <div>{record.orderId}</div>
+          <div style={{whiteSpace: 'nowrap'}}>{record.orderId}/</div>
           <div>{record.customerOrderNo}</div>
         </span>
       ),

@@ -119,7 +119,6 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
                           shortName: item.shortName,
                           productSubId: item.id,
                         };
-                        console.log(data);
                         setEditList([...editList, data]);
                       }}
                     >
@@ -169,6 +168,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
               <li key={item.uuid} className={Styles.item}>
                 <span className={Styles.name}>
                   <input
+                    style={{ width: '100%' }}
                     defaultValue={item.name}
                     onChange={e => handleAddInputChange(e.target.value, index, 'name')}
                   />

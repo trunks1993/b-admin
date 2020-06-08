@@ -25,7 +25,7 @@ class BlockCheckbox extends React.Component<BlockCheckboxProps> {
           {_.map(options, (item, key) => {
             return (
               <li
-                className={classnames(Styles.block, { active: value == item.value })}
+                className={classnames(Styles.block, { [Styles.active]: value == item.value })}
                 key={item.value}
                 onClick={() => {
                   if(disabled) return;

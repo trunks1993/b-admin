@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:38
- * @LastEditTime: 2020-05-18 19:37:00
+ * @LastEditTime: 2020-06-08 14:00:10
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -68,10 +68,10 @@ export async function remove(appId: number): Promise<any> {
 }
 
 /** 详情
- * @name:
- * @param {type}
+ * @name:详情
+ * @param {string}
  */
-export async function getInfo(appId: number): Promise<any> {
+export async function getInfo(appId: string): Promise<any> {
   return request('/application/getApplication', {
     method: 'POST',
     data: {

@@ -117,7 +117,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   const getSupplierList = () => {
     dispatch({
       type: 'stockManagerSuppliers/fetchList',
-      queryParams: {},
+      queryParams: {
+        status: 0,
+      },
     });
   };
 
@@ -333,7 +335,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
             <Col span={8} push={1}>
               <CstCheckbox name="hasStock" title="仅显示有库存" keyMap={['Y', 'N']} />
             </Col>
-            <Col span={8} push={2}>
+            <Col span={8}>
               <Form.Item>
                 <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                   筛选

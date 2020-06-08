@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:27
- * @LastEditTime: 2020-05-22 12:44:25
+ * @LastEditTime: 2020-06-08 13:42:19
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -37,9 +37,9 @@ export async function queryList(data: QueryParamsType): Promise<any> {
 
 /**
  * @name: 获取详情
- * @param {number} id
+ * @param {string} id
  */
-export async function getInfo(id: number): Promise<any> {
+export async function getInfo(id: string): Promise<any> {
   return request('/merchant/getIdentifyWorkorder', {
     method: 'POST',
     data: {

@@ -29,6 +29,7 @@ import moment from 'moment';
 import { getFloat } from '@/utils';
 import GlobalModal from '@/components/GlobalModal';
 import { EditeItemType, modify } from '../services/pos';
+import md5 from 'js-md5';
 
 const { CstInput, CstSelect, CstRadio, CstInputNumber, CstPassword, CstTextArea } = MapForm;
 
@@ -166,6 +167,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const handleSubmit = () => {
     form?.validateFields(async (err, value) => {
+      value.password = md5(value.password);
       if (!err) {
         const success = await handleEdite(value);
         if (success) {

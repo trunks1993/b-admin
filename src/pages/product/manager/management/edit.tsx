@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 
-import { message, Select, Card, Button } from 'antd';
+import { message, Select, Button } from 'antd';
 import { add, modify, EditeItemType, getInfo } from '../services/management';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
 import { queryList } from '../services/brand';
@@ -15,14 +14,15 @@ import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import { router } from 'umi';
 import { guid, getFloat } from '@/utils';
 import { TRANSTEMP } from '@/const';
-import { Editor } from '@tinymce/tinymce-react';
 import GlobalCard from '@/components/GlobalCard';
+import { ConnectState } from '@/models/connect';
 
-const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel, CstOther } = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstUpload, CstProductSubPanel } = MapForm;
 
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
+  id: string;
 }
 
 interface ErrMsgType {
@@ -30,7 +30,6 @@ interface ErrMsgType {
   iconUrl?: string;
 }
 
-const HELP_MSG_PRODUCT_NAME = '填写商品名称，方便快速检索相关产品';
 const HELP_MSG_RESUME = '在商品详情页标题下面展示卖点信息，建议60字以内';
 const HELP_MSG_ICONURL =
   '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片，你可以拖拽图片调整顺序，最多上传15张';
@@ -49,9 +48,8 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
     stock: HELP_MSG_STOCK,
@@ -61,11 +59,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [tinymceData, setTinymceData] = useState();
 
   useEffect(() => {
-    setTinymceData('');
-    if (match.params.id !== '-1' && form) getGoodsInfo();
+    if (id && form) getGoodsInfo();
   }, [form]);
 
   useEffect(() => {
@@ -75,10 +71,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const ref = React.createRef();
 
   const getGoodsInfo = async () => {
-    const [err, data, msg] = await getInfo(parseInt(match.params.id));
+    const [err, data, msg] = await getInfo(id);
     if (!err && data) {
       const { brandCode, iconUrl, introduction, name, resume, productSubList } = data;
-      setTinymceData(introduction);
       form?.setFieldsValue({
         iconUrl,
         brandCode,
@@ -91,6 +86,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           return item;
         }),
       });
+    } else {
+      message.error(msg);
     }
   };
 
@@ -100,13 +97,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
-      console.log('handleSubmit -> value', value);
       if (error) return;
       setConfirmLoading(true);
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
       if (isSuccess) {
-        setModalVisible(false);
         router.goBack();
       }
     });
@@ -143,7 +138,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="productId"
-          defaultValue={match.params.id === '-1' ? '' : match.params.id}
+          defaultValue={id}
           style={{ display: 'none' }}
         />
         <GlobalCard title="基本信息" bodyStyle={{ padding: '20px 0' }}>
@@ -240,7 +235,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             ))}
           </CstSelect>
         </GlobalCard>
-        <GlobalCard title="其他信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="其他信息"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           <CstProductSubPanel
             label="产品规格"
             name="productSubs"
@@ -266,7 +265,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={confirmLoading} type="primary" onClick={handleSubmit}>
           保存
         </Button>
         <Button style={{ marginLeft: '20px' }} onClick={() => router.goBack()}>
@@ -277,4 +276,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   );
 };
 
-export default connect()(Comp);
+export default connect(({ routing }: ConnectState) => ({
+  id: routing.location.query.id,
+}))(Comp);

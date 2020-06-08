@@ -2,32 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 
-import {
-  Table,
-  Button,
-  Pagination,
-  Modal,
-  message,
-  Checkbox,
-  Select,
-  Form,
-  Card,
-  Radio,
-  Input,
-  DatePicker,
-} from 'antd';
+import { Button, message, Select, Radio } from 'antd';
 import { add, modify, EditeItemType, getInfo } from '../services/list';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
 import { queryListSub } from '../services/management';
 import { ListItemSubType } from '../management';
 import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
-import GlobalCheckbox from '@/components/GlobCheckbox';
-import GlobalEditor from '@/components/GlobalEditor';
 import { router } from 'umi';
 import {
   PRODUCT_TYPE_1,
@@ -38,8 +21,8 @@ import {
   TRANSTEMP,
 } from '@/const';
 import { getFloat } from '@/utils';
-import { patternName, patternPrice } from '@/rules';
 import GlobalCard from '@/components/GlobalCard';
+import { ConnectState } from '@/models/connect';
 
 const {
   CstInput,
@@ -50,20 +33,13 @@ const {
   CstRadio,
   CstCheckbox,
   CstDatePicker,
-  CstEditor,
   CstInputNumber,
 } = MapForm;
 
-const { confirm } = Modal;
-
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
-}
-
-interface ErrMsgType {
-  stock?: string;
-  iconUrl?: string;
+  id: string;
 }
 
 const HELP_MSG_PRODUCT_NAME = '填写商品名称，方便快速检索相关产品';
@@ -86,9 +62,8 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
 
   const [msgProductName, setMsgProductName] = useState(HELP_MSG_PRODUCT_NAME);
   const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
@@ -99,10 +74,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
 
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [radioValue, setRadioValue] = useState(1);
-  const [tinymceData, setTinymceData] = useState();
+  const [productType, setProductType] = useState(PRODUCT_TYPE_1);
 
   useEffect(() => {
-    if (match.params.id !== '-1' && form) getGoodsInfo();
+    if (id && form) getGoodsInfo();
   }, [form]);
 
   useEffect(() => {
@@ -110,33 +85,35 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   }, []);
 
   const getGoodsInfo = async () => {
-    const [err, data, msg] = await getInfo(match.params.id);
+    const [err, data, msg] = await getInfo(id);
     if (!err) {
       const {
-        productName,
+        productSubName,
         resume,
         iconUrl,
         productSubCode,
         price,
         facePrice,
         stockType,
-        stock,
+        displayStock,
         undisplayStock,
         usageIllustration,
         upTime,
         upType,
+        productTypeCode,
       } = data;
       setRadioValue(upType);
-      setTinymceData(usageIllustration);
+      setProductType(productTypeCode)
       form?.setFieldsValue({
-        productName,
+        productTypeCode,
+        productSubName,
         resume,
         iconUrl,
         productSubCode,
         price: getFloat(price / TRANSTEMP, 4),
         facePrice: getFloat(facePrice / TRANSTEMP, 4),
         stockType,
-        stock,
+        displayStock,
         undisplayStock,
         usageIllustration,
         upTime,
@@ -201,24 +178,25 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <CstInput
-          name="goodsId"
-          defaultValue={match.params.id === '-1' ? '' : match.params.id}
-          style={{ display: 'none' }}
-        />
+        <CstInput name="goodsId" defaultValue={id} style={{ display: 'none' }} />
         <GlobalCard title="商品类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox
             defaultValue={PRODUCT_TYPE_1}
             options={blockCheckboxOptions}
             name="productTypeCode"
+            onChange={e => setProductType(e)}
           />
         </GlobalCard>
-        <GlobalCard title="基本信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="基本信息"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           <CstInput
             label="商品名称"
             help={msgProductName}
             placeholder="请输入商品名称"
-            name="productName"
+            name="productSubName"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
             rules={[
@@ -318,7 +296,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             ))}
           </CstSelect>
         </GlobalCard>
-        <GlobalCard title="价格/库存" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="价格/库存"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           <CstInputNumber
             label="价格"
             placeholder="请输入"
@@ -344,55 +326,64 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             help={HELP_MSG_FACE_PRICE}
             disabled={true}
           />
-          <CstRadio
-            label="库存扣减方式"
-            name="stockType"
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 6 }}
-            defaultValue={1}
-          >
-            <Radio style={radioStyle} value={1}>
-              拍下减库存
-              <span style={{ color: '#CCCCCC' }}>
-                （买家提交订单，扣减库存数量，可能存在恶意占用库存风险）
-              </span>
-            </Radio>
-            <Radio style={radioStyle} value={2}>
-              付款减库存
-              <span style={{ color: '#CCCCCC' }}>
-                （买家支付成功，扣减库存数量，可能存在超卖风险）
-              </span>
-            </Radio>
-          </CstRadio>
-          <CstInputNumber
-            label="库存"
-            placeholder="请输入"
-            size="large"
-            min={0}
-            precision={0}
-            name="stock"
-            help={
-              <>
-                <CstCheckbox
-                  title="商品详情不显示剩余件数"
-                  name="undisplayStock"
-                  keyMap={['Y', 'N']}
-                  className="minHeightFormItem"
-                />
-                <div>{msgStock}</div>
-              </>
-            }
-            rules={[
-              {
-                required: true,
-                message: '商品库存不能为空',
-              },
-            ]}
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 6 }}
-          />
+
+          {productType != PRODUCT_TYPE_4 && (
+            <>
+              <CstRadio
+                label="库存扣减方式"
+                name="stockType"
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 6 }}
+                defaultValue={1}
+              >
+                <Radio style={radioStyle} value={1}>
+                  拍下减库存
+                  <span style={{ color: '#CCCCCC' }}>
+                    （买家提交订单，扣减库存数量，可能存在恶意占用库存风险）
+                  </span>
+                </Radio>
+                <Radio style={radioStyle} value={2}>
+                  付款减库存
+                  <span style={{ color: '#CCCCCC' }}>
+                    （买家支付成功，扣减库存数量，可能存在超卖风险）
+                  </span>
+                </Radio>
+              </CstRadio>
+              <CstInputNumber
+                label="库存"
+                placeholder="请输入"
+                size="large"
+                min={0}
+                precision={0}
+                name="displayStock"
+                help={
+                  <>
+                    <CstCheckbox
+                      title="商品详情不显示剩余件数"
+                      name="undisplayStock"
+                      keyMap={['Y', 'N']}
+                      className="minHeightFormItem"
+                    />
+                    <div>{msgStock}</div>
+                  </>
+                }
+                rules={[
+                  {
+                    required: true,
+                    message: '商品库存不能为空',
+                  },
+                ]}
+                labelCol={{ span: 4 }}
+                wrapperCol={{ span: 6 }}
+              />
+            </>
+          )}
         </GlobalCard>
-        <GlobalCard title="其他信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="其他信息"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           <CstRadio
             label="上架时间"
             name="upType"
@@ -435,7 +426,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
-        <Button type="primary" onClick={handleSubmit}>
+        <Button loading={confirmLoading} type="primary" onClick={handleSubmit}>
           保存
         </Button>
         <Button style={{ marginLeft: '20px' }} onClick={() => router.goBack()}>
@@ -446,4 +437,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   );
 };
 
-export default connect()(Comp);
+export default connect(({ routing }: ConnectState) => ({
+  id: routing.location.query.id,
+}))(Comp);

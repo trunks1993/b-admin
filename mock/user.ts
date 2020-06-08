@@ -148,15 +148,6 @@ export default {
                   isLeaf: 'N',
                   uri: '/sys/manager',
                   children: [
-                    // {
-                    //   code: 411,
-                    //   parentCode: 41,
-                    //   name: '基础数据',
-                    //   level: 3,
-                    //   isLeaf: 'Y',
-                    //   uri: '/sys/manager/base',
-                    //   children: null,
-                    // },
                     {
                       code: 412,
                       parentCode: 41,
@@ -175,15 +166,6 @@ export default {
                       uri: '/sys/manager/role',
                       children: null,
                     },
-                    // {
-                    //   code: 414,
-                    //   parentCode: 41,
-                    //   name: '操作记录',
-                    //   level: 3,
-                    //   isLeaf: 'Y',
-                    //   uri: '/sys/manager/log',
-                    //   children: null,
-                    // },
                   ],
                 },
               ],

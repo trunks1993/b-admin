@@ -176,7 +176,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         <>
           <Button
             type="link"
-            onClick={() => router.push(`/business/manager/application/${record.id}`)}
+            onClick={() => router.push(`/business/manager/application/edit?id=${record.id}`)}
           >
             配置
           </Button>

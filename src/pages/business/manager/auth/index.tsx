@@ -117,7 +117,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       render: record => (
         <>
           {record.status === IDENTIFY_STATUS_1 ? (
-            <Button type="link" onClick={() => router.push(`/business/manager/auth/${record.id}`)}>
+            <Button type="link" onClick={() => router.push(`/business/manager/auth/edit?id=${record.id}`)}>
               审批
             </Button>
           ) : null}

@@ -364,7 +364,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             <span style={{ color: '#333333', marginLeft: '10px' }}>
               充值成功
               <span style={{ color: '#1A61DC', fontWeight: 'bold', margin: '0 5px' }}>
-                {_.filter(traceList, item => item.status === TRACE_STATUS_5).length}
+                {_.map(traceList, item => item.status === TRACE_STATUS_5 && item.amount).reduce((total, pre) => total + pre, 0)}
               </span>
               件
             </span>

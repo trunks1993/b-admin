@@ -15,9 +15,8 @@ import { FormComponentProps } from 'antd/es/form';
 import { listToTree } from '@/utils';
 import { ListItemType as RoleItemType } from '../models/role';
 import _ from 'lodash';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { changePassword, EditeItemType } from '@/services/user';
-import { router } from 'umi';
+import md5 from 'js-md5';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -41,14 +40,9 @@ const handleEdite = async (fields: EditeItemType) => {
 
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-  const [formData, setFormData] = useState<EditeUserItemType>({});
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
 
-  const [confirmLoading, setConfirmLoading] = useState(false);
 
   useEffect(() => {}, [currPage]);
 
@@ -57,8 +51,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
    * @param {type}
    */
   const handleSubmit = () => {
-    form?.validateFields(async (err, value) => {
+    form?.validateFields(async (err, value: EditeItemType) => {
       if (!err) {
+        value.newPassword = md5(value.newPassword);
+        value.oldPassword = md5(value.oldPassword);
         try {
           const success = await handleEdite(value);
           if (success) form.resetFields();

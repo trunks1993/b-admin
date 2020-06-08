@@ -11,11 +11,10 @@ import { queryList as queryMerchantList } from '@/pages/business/manager/service
 import { ListItemType as MerchantItemType } from '@/pages/business/manager/models/info';
 
 import { router } from 'umi';
-import { ProductTypes, DEFAULT_PAGE_NUM, TRANSTEMP } from '@/const';
+import { ProductTypes, TRANSTEMP } from '@/const';
 import GlobalModal from '@/components/GlobalModal';
 import ProductSelect from '@/components/ProductSelect';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { PriceItemType, EditeItemType, add } from '../services/price';
 import { getFloat } from '@/utils';
 import GlobalCard from '@/components/GlobalCard';
@@ -36,12 +35,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [goodsForm, setGoodsForm] = useState<PriceItemType[]>([]);
   const [merchantList, setMerchantList] = useState<MerchantItemType[]>([]);
 
-  const [confirmLoading, setConfirmLoading] = useState(false);
-
-  useEffect(() => {
-    // if (match.params.id !== '-1' && form) getGoodsInfo();
-  }, [form]);
-
   useEffect(() => {
     getMerchantList();
   }, []);
@@ -54,6 +47,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const getMerchantList = async () => {
     const [err, data, msg] = await queryMerchantList({});
     if (!err) setMerchantList(data.list);
+    else message.error(msg);
   };
 
   /**
@@ -62,7 +56,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
-      console.log('handleSubmit -> value', value);
       if (!error) {
         const paramObj = {};
         const codeMap = {};
@@ -97,7 +90,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const handleInputChange = (value: number, key: string, code: number) => {
     const { facePrice } = goodsForm.find(item => item.goodsCode === code);
     if (key === 'rebate') {
-      const price = (value * 100 * facePrice) / 1000;
+      const price = (value * TRANSTEMP * facePrice) / TRANSTEMP / 10;
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
         ['decMoney-' + code]: (facePrice - price) / TRANSTEMP,
@@ -183,7 +176,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
                 message: '请输入',
               },
             ]}
-            onChange={e => handleInputChange(e, 'rebate', record.goodsCode)}
+            onBlur={e => handleInputChange(e.target.value, 'rebate', record.goodsCode)}
           />
           <span>折</span>
         </div>
@@ -207,7 +200,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               message: '请输入',
             },
           ]}
-          onChange={e => handleInputChange(e, 'decMoney', record.goodsCode)}
+          onBlur={e => handleInputChange(e.target.value, 'decMoney', record.goodsCode)}
         />
       ),
     },
@@ -229,7 +222,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               message: '请输入',
             },
           ]}
-          onChange={e => handleInputChange(e, 'price', record.goodsCode)}
+          onBlur={e => handleInputChange(e.target.value, 'price', record.goodsCode)}
         />
       ),
     },
@@ -336,7 +329,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
           setGoodsForm(goodsForm);
         }}
         title="选择商品"
-        confirmLoading={confirmLoading}
         width={1000}
       >
         <ProductSelect ref={ref} />

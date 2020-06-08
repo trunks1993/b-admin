@@ -4,7 +4,7 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/group';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox } from 'antd';
+import { Table, Button, Pagination, Modal, message } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
 import { remove, EditeItemType, add, modify, getInfo } from '../services/brand';
@@ -16,7 +16,7 @@ import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import router from 'umi/router';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstUpload } = MapForm;
+const { CstInput, CstUpload } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -131,7 +131,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/product/manager/brand/${record.id}`)}>
+          <Button type="link" onClick={() => router.push(`/product/manager/brand/edit?id=${record.id}`)}>
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.id)}>
@@ -172,7 +172,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/brand/-1`)}>
+        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/brand/edit`)}>
           新增品牌
         </Button>
       </div>

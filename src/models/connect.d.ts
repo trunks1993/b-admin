@@ -1,7 +1,8 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-05-21 16:55:07
- */ 
+ * @LastEditTime: 2020-06-08 13:25:47
+ */
+
 import { AnyAction } from 'redux';
 import { RouterTypes, Route } from 'umi';
 import { LoginModelState } from './login';
@@ -20,7 +21,7 @@ export interface Loading {
   };
 }
 
-export interface LocationType {}
+// export interface LocationType {}
 
 interface RoutingType {
   location: LocationType;
@@ -30,7 +31,7 @@ export interface LocationType {
   pathname: string;
   search: string;
   hash: string;
-  query: string;
+  query: { [key: string]: string };
   key: string;
 }
 

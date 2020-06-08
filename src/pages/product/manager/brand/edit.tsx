@@ -6,7 +6,6 @@ import { Button, message } from 'antd';
 import { add, modify, EditeItemType, getInfo } from '../services/brand';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { RouteComponentProps } from 'dva/router';
 import MapForm from '@/components/MapFormComponent';
 import Styles from './edit.css';
 import { queryListSub } from '../services/management';
@@ -15,12 +14,14 @@ import { FILE_ERROR_SIZE, FILE_ERROR_TYPE } from '@/components/GlobalUpload';
 import { router } from 'umi';
 import { getCategoryTree } from '../services/group';
 import { loopTree, TreeDataItem2 } from '@/utils';
+import { ConnectState } from '@/models/connect';
 
 const { CstInput, CstUpload, CstTreeSelect, CstTextArea } = MapForm;
 
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   loading: boolean;
+  id: string;
 }
 
 interface ErrMsgType {
@@ -45,7 +46,7 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [ConfirmLoading, setConfirmLoading] = useState(false);
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
@@ -56,7 +57,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [msgResume, setMsgResume] = useState(HELP_MSG_RESUME);
 
   useEffect(() => {
-    if (match.params.id !== '-1' && form) getBrandInfo();
+    if (id && form) getBrandInfo();
   }, [form]);
 
   useEffect(() => {
@@ -82,7 +83,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
    * @param {type}
    */
   const getBrandInfo = async () => {
-    const [err, data, msg] = await getInfo(match.params.id);
+    const [err, data, msg] = await getInfo(id);
     if (!err) {
       const { categoryCodes, resume, iconUrl, name } = data;
       form?.setFieldsValue({
@@ -130,7 +131,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="brandId"
-          defaultValue={match.params.id === '-1' ? '' : match.params.id}
+          defaultValue={id}
           style={{ display: 'none' }}
         />
         <CstInput
@@ -234,4 +235,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   );
 };
 
-export default connect()(Comp);
+export default connect(({ routing }: ConnectState) => ({
+  id: routing.location.query.id,
+}))(Comp);

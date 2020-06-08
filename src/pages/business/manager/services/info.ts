@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-05-22 12:50:34
+ * @LastEditTime: 2020-06-08 13:39:22
  */
 
 import request from '@/utils/request';
@@ -84,9 +84,9 @@ export async function modifyStatus(data: ModifyStatusParamType): Promise<any> {
 
 /**
  * @name: 获取详情
- * @param {number} merchantId
+ * @param {string} merchantId
  */
-export async function getInfo(merchantId: number): Promise<any> {
+export async function getInfo(merchantId: string): Promise<any> {
   return request('/merchant/getMerchant', {
     method: 'POST',
     data: {

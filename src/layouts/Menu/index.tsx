@@ -43,8 +43,15 @@ const LeafMenuItem: React.FC<MenuItemProps> = ({ item, itemClick, activeMenu }) 
   </li>
 );
 
-const Menu: React.FC<MenuProps> = ({ menus, activeMenu, dispatch, level1MenuMap, activeLeafMenu, location, level3MenuMap }) => {
-
+const Menu: React.FC<MenuProps> = ({
+  menus,
+  activeMenu,
+  dispatch,
+  level1MenuMap,
+  activeLeafMenu,
+  location,
+  level3MenuMap,
+}) => {
   React.useEffect(() => {
     //   const currentLeaf = level3MenuMap[location.pathname];
     //   console.log("currentLeaf", level3MenuMap[location.pathname])
@@ -56,7 +63,6 @@ const Menu: React.FC<MenuProps> = ({ menus, activeMenu, dispatch, level1MenuMap,
     //     type: 'user/getActiveLeafMenuItem',
     //     code: level3MenuMap[location.pathname].code,
     //   });
-      
   }, []);
 
   const handleMenuItemClick = (code: number) => {
@@ -67,11 +73,7 @@ const Menu: React.FC<MenuProps> = ({ menus, activeMenu, dispatch, level1MenuMap,
   };
 
   const handleLeafMenuItemClick = (code: number, url?: string) => {
-    dispatch({
-      type: 'user/getActiveLeafMenuItem',
-      code,
-      callback: () => url && router.push(url)
-    });
+    url && router.push(url);
   };
 
   return (

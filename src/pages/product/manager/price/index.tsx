@@ -32,7 +32,6 @@ import {
 } from '../services/price';
 import { ListItemType as BrandItemType } from '@/pages/product/manager/models/brand';
 import { queryList as queryBrandList } from '@/pages/product/manager/services/brand';
-import LazyLoad from 'react-lazyload';
 import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
 import { getFloat } from '@/utils';
@@ -239,8 +238,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
-            <span style={{ marginLeft: '5px' }}>{record.goodsName}</span>
-            <span style={{ marginLeft: '5px' }}>{record.goodsCode}</span>
+            <div style={{ marginLeft: '5px' }}>{record.goodsName}</div>
+            <div style={{ marginLeft: '5px' }}>{record.goodsCode}</div>
           </span>
         </div>
       ),
@@ -334,7 +333,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/price/-1`)}>
+        <Button type="link" icon="plus" onClick={() => router.push(`/product/manager/price/edit`)}>
           新增商品定价
         </Button>
       </div>

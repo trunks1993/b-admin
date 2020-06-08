@@ -74,6 +74,35 @@ const Model: ModelType = {
     *getMenu({ callback }, { call, put }) {
       let [err, data, msg] = yield call(getMenuByToken);
       if (!err) {
+        data.menuData.unshift({
+          code: 999,
+          parentCode: 1,
+          name: '菜单',
+          level: 1,
+          isLeaf: 'N',
+          uri: '/menu',
+          children: [
+            {
+              code: 9991,
+              parentCode: 999,
+              name: '快捷菜单',
+              level: 2,
+              isLeaf: 'N',
+              uri: '/menu/fast',
+              children: [
+                {
+                  code: 99911,
+                  parentCode: 9991,
+                  name: '系统首页',
+                  level: 3,
+                  isLeaf: 'Y',
+                  uri: '/dashboard',
+                  children: null,
+                },
+              ],
+            },
+          ],
+        });
         yield put({
           type: 'setMenu',
           payload: data.menuData,

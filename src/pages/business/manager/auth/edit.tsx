@@ -22,9 +22,10 @@ import GlobalCard from '@/components/GlobalCard';
 
 const { CstInput, CstBlockCheckbox, CstTextArea, CstSelect, CstUpload } = MapForm;
 
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   user: UserType;
+  id: string;
 }
 
 interface ErrMsgType {
@@ -47,7 +48,7 @@ const handleEdite = async (fields: VerifyType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
   const [helpMsg, setHelpMsg] = useState<ErrMsgType>({
@@ -60,53 +61,54 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
-    if (match.params.id !== '-1' && form) getGoodsInfo();
+    if (id && form) getGoodsInfo();
   }, [form]);
 
-  // useEffect(() => {
-  //   handleSearch('');
-  // }, []);
-
   const getGoodsInfo = async () => {
-    const [err, data, msg] = await getInfo(match.params.id);
-
-    if (!err) {
-      const { telephone, identifyType, remark } = data;
-      setIdentifyType(identifyType);
-      let formData = {};
-      if (identifyType === IDENTIFY_TYPE_1) {
-        const { realName, idCard, idCardBack, idCardFront, idCardType = 1 } = JSON.parse(data.data);
-        formData = {
-          identifyType,
-          telephone,
-          idCard,
-          idCardType,
-          idCardBack,
-          idCardFront,
-          remark,
-          realName,
-        };
+    try {
+      const [err, data, msg] = await getInfo(id);
+      if (!err) {
+        const { telephone, identifyType, remark } = data;
+        setIdentifyType(identifyType);
+        let formData = {};
+        if (identifyType === IDENTIFY_TYPE_1) {
+          const { realName, idCard, idCardBack, idCardFront, idCardType = 1 } = JSON.parse(
+            data.data,
+          );
+          formData = {
+            identifyType,
+            telephone,
+            idCard,
+            idCardType,
+            idCardBack,
+            idCardFront,
+            remark,
+            realName,
+          };
+        } else {
+          const {
+            contactName,
+            contactTelephone,
+            businessName,
+            creditCode,
+            identityPhoto,
+          } = JSON.parse(data.data);
+          formData = {
+            identifyType,
+            telephone,
+            contactTelephone,
+            businessName,
+            creditCode,
+            identityPhoto,
+            remark,
+            contactName,
+          };
+        }
+        form?.setFieldsValue(formData);
       } else {
-        const {
-          contactName,
-          contactTelephone,
-          businessName,
-          creditCode,
-          identityPhoto,
-        } = JSON.parse(data.data);
-        formData = {
-          identifyType,
-          telephone,
-          contactTelephone,
-          businessName,
-          creditCode,
-          identityPhoto,
-          remark,
-          contactName,
-        };
+        message.error(msg);
       }
-      form?.setFieldsValue(formData);
-    }
+    } catch (error) {}
   };
 
   /**
@@ -147,11 +149,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <CstInput name="id" defaultValue={match.params.id} style={{ display: 'none' }} />
+        <CstInput name="id" defaultValue={id} style={{ display: 'none' }} />
         <GlobalCard title="认证类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox disabled={true} options={blockCheckboxOptions} name="identifyType" />
         </GlobalCard>
-        <GlobalCard title="认证信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="认证信息"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           {identifyType === IDENTIFY_TYPE_1 ? (
             <>
               <CstInput
@@ -246,7 +252,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
             </>
           )}
         </GlobalCard>
-        <GlobalCard title="其它信息" titleStyle={{ marginTop: '10px' }} bodyStyle={{ padding: '20px 0' }}>
+        <GlobalCard
+          title="其它信息"
+          titleStyle={{ marginTop: '10px' }}
+          bodyStyle={{ padding: '20px 0' }}
+        >
           <CstInput
             disabled
             label="联系人姓名"
@@ -273,13 +283,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
       </MapForm>
       <div className={Styles.btnBlock}></div>
       <div className={Styles.btn}>
-        <Button loading={confirmLoading} type="primary" onClick={() => handleSubmit('PASS')}>
+        <Button disabled={!id} loading={confirmLoading} type="primary" onClick={() => handleSubmit('PASS')}>
           审批通过
         </Button>
         <Button
           loading={confirmLoading}
           style={{ marginLeft: '20px' }}
           onClick={() => setModalVisible(true)}
+          disabled={!id}
         >
           审批否决
         </Button>
@@ -293,7 +304,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
         width={400}
       >
         <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
-          <CstInput name="id" defaultValue={match.params.id} style={{ display: 'none' }} />
+          <CstInput name="id" defaultValue={id} style={{ display: 'none' }} />
           <div style={{ padding: '15px 25px' }}>审批否决，需要填写否决原因</div>
           <CstTextArea
             placeholder="请填写否决原因"
@@ -312,4 +323,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, match }) => {
   );
 };
 
-export default Comp;
+export default connect(({ routing }:ConnectState) => ({
+  id: routing.location.query.id,
+}))(Comp);

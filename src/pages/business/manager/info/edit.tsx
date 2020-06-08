@@ -33,16 +33,10 @@ const {
   CstDatePicker,
 } = MapForm;
 
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   user: UserType;
-}
-
-interface ErrMsgType {
-  idCardFront?: string;
-  idCardBack?: string;
-  businessName?: string;
-  identityPhoto?: string;
+  id: string;
 }
 
 const HELP_MSG_IDCARDFRONT = '人像面照片';
@@ -63,7 +57,7 @@ const handleEdite = async (fields: EditeItemType) => {
   }
 };
 
-const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
+const Comp: React.FC<CompProps> = ({ dispatch, user, id }) => {
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
   const [msgIdCardBack, setMsgIdCardBack] = useState(HELP_MSG_IDCARDBACK);
@@ -75,11 +69,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
   const [identifyType, setIdentifyType] = useState(1);
 
   useEffect(() => {
-    if (match.params.id !== '-1' && form) initInfo();
+    if (id && form) initInfo();
   }, [form]);
 
   const initInfo = async () => {
-    const [err, data, msg] = await getInfo(match.params.id);
+    const [err, data, msg] = await getInfo(id);
     if (!err) {
       const {
         merchantType,
@@ -151,12 +145,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
         <CstInput
           name="merchantId"
-          defaultValue={match.params.id === '-1' ? '' : match.params.id}
+          defaultValue={id}
           style={{ display: 'none' }}
         />
         <GlobalCard title="选择主体类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
           <CstBlockCheckbox
-            disabled={match.params.id !== '-1'}
+            disabled={!!id}
             defaultValue={IDENTIFY_TYPE_1}
             options={blockCheckboxOptions}
             name="identifyType"
@@ -580,6 +574,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, match }) => {
   );
 };
 
-export default connect(({ user }: ConnectState) => ({
+export default connect(({ user, routing }: ConnectState) => ({
   user: user.user,
+  id: routing.location.query.id,
 }))(Comp);

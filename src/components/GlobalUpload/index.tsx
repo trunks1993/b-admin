@@ -4,6 +4,7 @@ import { Upload, Icon } from 'antd';
 // import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile, UploadChangeParam } from 'antd/lib/upload/interface';
 import Styles from './index.css';
+import GlobalModal from '../GlobalModal';
 
 export const FILE_ERROR_TYPE = '0';
 export const FILE_ERROR_SIZE = '1';
@@ -25,10 +26,12 @@ interface GlobalUpLoadProps {
 }
 interface GlobalUpLoadStates {
   loading: boolean;
+  modalVisible: boolean;
 }
 class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates> {
   state = {
     loading: false,
+    modalVisible: false,
   };
 
   /**
@@ -66,7 +69,7 @@ class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates
 
   render() {
     const { value, action, method, data, disabled } = this.props;
-    const { loading } = this.state;
+    const { loading, modalVisible } = this.state;
     const uploadButton = (
       <div>
         <Icon type={loading ? 'loading' : 'plus'} />
@@ -103,8 +106,22 @@ class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates
             )}
           </Upload>
         ) : (
-          <img width="60px" height="60px" src={process.env.BASE_FILE_SERVER + value} />
+          <img
+            width="60px"
+            height="60px"
+            src={process.env.BASE_FILE_SERVER + value}
+            onClick={() => this.setState({ modalVisible: true })}
+          />
         )}
+
+        <GlobalModal
+          modalVisible={modalVisible}
+          title="回单"
+          onCancel={() => this.setState({ modalVisible: false })}
+          onOk={() => this.setState({ modalVisible: false })}
+        >
+          <img width="100%" src={process.env.BASE_FILE_SERVER + value} />
+        </GlobalModal>
       </>
     );
   }

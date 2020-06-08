@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:38
- * @LastEditTime: 2020-05-16 15:58:44
+ * @LastEditTime: 2020-06-08 13:23:09
  */
 import request from '@/utils/request';
 import { BaseQueryType } from '@/services';
@@ -71,7 +71,7 @@ export async function remove(brandId: number): Promise<any> {
  * @name: 获取详情
  * @param {number} brandId
  */
-export async function getInfo(brandId: number): Promise<any> {
+export async function getInfo(brandId: string): Promise<any> {
   return request('/brand/getBrand', {
     method: 'POST',
     data: {

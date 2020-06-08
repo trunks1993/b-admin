@@ -13,6 +13,7 @@ import { Form, Button } from 'antd';
 import user from '@/assets/images/login/user.png';
 import pwd from '@/assets/images/login/pwd.png';
 import icon from '@/assets/images/login/icon.png';
+import md5 from 'js-md5';
 
 const { CstInput, CstPassword, CstOther } = MapForm;
 interface LoginProps extends FormComponentProps {
@@ -33,6 +34,7 @@ const FormBox: React.FC<{ dispatch: Dispatch; loading: boolean }> = ({ dispatch,
   const handleSubmit = () => {
     form?.validateFields((err: any, value: LoginParamsType) => {
       if (!err) {
+        value.password = md5(value.password);
         dispatch({
           type: 'login/login',
           payload: value,

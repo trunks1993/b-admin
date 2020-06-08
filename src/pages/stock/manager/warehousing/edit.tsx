@@ -182,7 +182,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
         const newCountMap = _.clone(countMap);
         delete newCountMap[goodsCode];
         setCountMap(newCountMap);
-        handleChangePanelData();
+        setTimeout(() => {
+          handleChangePanelData();
+        });
       },
       onCancel() {},
     });

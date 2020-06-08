@@ -40,6 +40,7 @@ export interface FormItemProps extends GetFieldDecoratorOptions {
   wrapperCol?: { span: number };
   className?: string;
   style?: React.CSSProperties;
+  [key: string]: unknown;
 }
 
 interface FormItemState {}

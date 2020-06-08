@@ -229,7 +229,7 @@ const Comp: React.FC<CompProps> = props => {
                 <CstCheckbox
                   name="hasStock"
                   title="仅显示有库存"
-                  keyMap={['Y', 'N']}
+                  keyMap={['Y', undefined]}
                   onChange={fetch}
                 />
               </Col>

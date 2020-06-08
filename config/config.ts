@@ -35,16 +35,23 @@ const config: IConfig = {
     {
       path: '/',
       component: '../layouts',
+      // Routes: ['src/AuthRouter'],
       routes: [
         {
           path: '/dashboard',
           component: './dashboard',
           Routes: ['src/AuthRouter'],
         },
-        { path: '/changeUser', component: './sys/setting/changeUser', Routes: ['src/AuthRouter'] },
+        {
+          path: '/changeUser',
+          component: './sys/setting/changeUser',
+          from: '/dashboard',
+          Routes: ['src/AuthRouter'],
+        },
         {
           path: '/changePassword',
           component: './sys/setting/changePassword',
+          from: '/dashboard',
           Routes: ['src/AuthRouter'],
         },
         ...product,
@@ -54,14 +61,14 @@ const config: IConfig = {
         ...order,
         ...finance,
         {
+          path: '/auth',
+          component: './auth',
+        },
+        {
           path: '*',
           component: './404',
         },
       ],
-    },
-    {
-      path: '*',
-      component: './404',
     },
   ],
   plugins: [
@@ -78,7 +85,7 @@ const config: IConfig = {
           default: 'zh-CN', // default zh-CN
         },
         dynamicImport: { webpackChunkName: true },
-        title: '星营销',
+        title: '星权益运营系统',
         dll: true,
         routes: {
           exclude: [

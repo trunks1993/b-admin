@@ -209,7 +209,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           </Button>
           <Button
             type="link"
-            onClick={() => router.push(`/product/manager/management/${record.id}`)}
+            onClick={() => router.push(`/product/manager/management/edit?id=${record.id}`)}
           >
             编辑
           </Button>
@@ -227,7 +227,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         <Button
           type="link"
           icon="plus"
-          onClick={() => router.push(`/product/manager/management/-1`)}
+          onClick={() => router.push(`/product/manager/management/edit`)}
         >
           新增产品
         </Button>
@@ -242,7 +242,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         expandedRowRender={record => {
           const { list, addFormList } =
           expandedRows.find(item => item.code === record.code.toString()) || {};
-          console.log("list", list)
           return (
             <ExpandForm
               reload={loadSubList.bind(null, record.code)}

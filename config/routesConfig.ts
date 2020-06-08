@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-06 17:53:16
+ * @LastEditTime: 2020-06-08 14:08:25
  */
 // 商品
 export const product = [
@@ -10,8 +10,9 @@ export const product = [
     Routes: ['src/AuthRouter'],
   },
   {
-    path: '/product/manager/list/:id',
+    path: '/product/manager/list/edit',
     component: './product/manager/list/edit',
+    from: '/product/manager/list',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -25,8 +26,9 @@ export const product = [
     Routes: ['src/AuthRouter'],
   },
   {
-    path: '/product/manager/management/:id',
+    path: '/product/manager/management/edit',
     component: './product/manager/management/edit',
+    from: '/product/manager/management',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -35,8 +37,9 @@ export const product = [
     Routes: ['src/AuthRouter'],
   },
   {
-    path: '/product/manager/price/:id',
+    path: '/product/manager/price/edit',
     component: './product/manager/price/edit',
+    from: '/product/manager/price',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -45,8 +48,9 @@ export const product = [
     Routes: ['src/AuthRouter'],
   },
   {
-    path: '/product/manager/brand/:id',
+    path: '/product/manager/brand/edit',
     component: './product/manager/brand/edit',
+    from: '/product/manager/brand',
     Routes: ['src/AuthRouter'],
   },
 ];
@@ -60,6 +64,7 @@ export const business = [
   {
     path: '/business/manager/info/:id',
     component: './business/manager/info/edit',
+    from: '/business/manager/info',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -68,8 +73,9 @@ export const business = [
     Routes: ['src/AuthRouter'],
   },
   {
-    path: '/business/manager/auth/:id',
+    path: '/business/manager/auth/edit',
     component: './business/manager/auth/edit',
+    from: '/business/manager/auth',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -79,8 +85,9 @@ export const business = [
   },
 
   {
-    path: '/business/manager/application/:id',
+    path: '/business/manager/application/edit',
     component: './business/manager/application/edit',
+    from: '/business/manager/application',
     Routes: ['src/AuthRouter'],
   },
 
@@ -117,11 +124,13 @@ export const stock = [
   {
     path: '/stock/manager/warehousing/detail/:id',
     component: './stock/manager/warehousing/detail',
+    from: '/stock/manager/warehousing',
     Routes: ['src/AuthRouter'],
   },
   {
     path: '/stock/manager/warehousing/edit',
     component: './stock/manager/warehousing/edit',
+    from: '/stock/manager/warehousing',
     Routes: ['src/AuthRouter'],
   },
   {
@@ -145,6 +154,7 @@ export const order = [
   {
     path: '/order/manager/purchase/:id',
     component: './order/manager/purchase/edit',
+    from: '/order/manager/purchase',
     Routes: ['src/AuthRouter'],
   },
 ];

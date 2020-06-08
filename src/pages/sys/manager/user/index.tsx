@@ -16,6 +16,7 @@ import { listToTree } from '@/utils';
 import { ListItemType as RoleItemType } from '../models/role';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import md5 from 'js-md5';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
@@ -204,6 +205,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeUserItemType) => {
+      value.password = md5(value.password);
       if (error) return;
       setConfirmLoading(true);
       try {

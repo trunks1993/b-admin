@@ -14,6 +14,7 @@ import {
   IdentifyStatus,
   SupplierStatus,
   TRANSTEMP,
+  SUPPLIER_STATUS_1,
 } from '@/const';
 import {
   remove,
@@ -269,9 +270,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           <Button type="link" onClick={() => handleModalVisible(record)}>
             编辑
           </Button>
-          <Button type="link" onClick={() => showConfirm(record.id)}>
-            删除
-          </Button>
+          {record.status !== SUPPLIER_STATUS_1 && (
+            <Button type="link" onClick={() => showConfirm(record.id)}>
+              删除
+            </Button>
+          )}
         </>
       ),
     },
@@ -470,10 +473,24 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 required: true,
                 message: '主要联系人电话不能为空',
               },
+              {
+                pattern: /^((13[0-9])|(14[0-9])|(15[0-9])|(17[0-9])|(18[0-9]))\d{8}$/,
+                message: '手机格式有误',
+              },
             ]}
           />
           <CstInput name="minorContactName" label="次要联系人" placeholder="请输入次要联系人" />
-          <CstInput name="minorTelephone" label="次要联系电话" placeholder="请输入次要联系电话" />
+          <CstInput
+            name="minorTelephone"
+            label="次要联系电话"
+            placeholder="请输入次要联系电话"
+            rules={[
+              {
+                pattern: /^((13[0-9])|(14[0-9])|(15[0-9])|(17[0-9])|(18[0-9]))\d{8}$/,
+                message: '手机格式有误',
+              },
+            ]}
+          />
         </MapForm>
       </GlobalModal>
       <GlobalModal

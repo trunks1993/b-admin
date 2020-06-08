@@ -6,13 +6,7 @@ import { ListItemType } from '../models/info';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import {
-  DEFAULT_PAGE_SIZE,
-  DEFAULT_PAGE_NUM,
-  IdentifyTypes,
-  IdentifyStatus,
-  MerchantStatus,
-} from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, IdentifyTypes, MerchantStatus } from '@/const';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
@@ -118,7 +112,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/business/manager/info/${record.merchantId}`)}>
+          <Button
+            type="link"
+            onClick={() => router.push(`/business/manager/info/edit?id=${record.merchantId}`)}
+          >
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.merchantId)}>
@@ -152,7 +149,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="link" icon="plus" onClick={() => router.push(`/business/manager/info/-1`)}>
+        <Button type="link" icon="plus" onClick={() => router.push(`/business/manager/info/edit`)}>
           新增商户
         </Button>
       </div>
@@ -221,11 +218,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               </Col>
               <Col span={10} offset={8}>
                 <Form.Item>
-                  <Button
-                    type="primary"
-                    icon="search"
-                    onClick={() => dispatchInit()}
-                  >
+                  <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                     筛选
                   </Button>
                   <Button

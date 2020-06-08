@@ -1,8 +1,9 @@
 /*
  * @Date: 2020-05-06 20:21:36
- * @LastEditTime: 2020-05-19 10:28:26
+ * @LastEditTime: 2020-06-08 10:57:45
  */ 
 export default {
+  '/menu': require('@/assets/images/global/menu-icon-menu.png'),
   '/sys': require('@/assets/images/global/menu-icon-setting.png'),
   '/product': require('@/assets/images/global/menu-icon-product.png'),
   '/business': require('@/assets/images/global/menu-icon-business.png'),

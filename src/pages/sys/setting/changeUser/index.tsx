@@ -1,27 +1,20 @@
-import React, { useEffect, useState, ChangeEvent, ChangeEventHandler } from 'react';
+import React, { useEffect } from 'react';
 import { ConnectState, UserType } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/user';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
-import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, UserStatuMap } from '@/const';
-// import { remove, getInfo, EditeUserItemType, add, modify, modifyStatus } from '../services/user';
+import { Button, message, Form } from 'antd';
+
 import Styles from './index.css';
-import GlobalModal from '@/components/GlobalModal';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
-import { listToTree } from '@/utils';
-import { ListItemType as RoleItemType } from '../models/role';
 import _ from 'lodash';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { changePassword, EditeItemType, changeUser } from '@/services/user';
+import { EditeItemType, changeUser } from '@/services/user';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { getInfo } from '../../manager/services/user';
 
-const { confirm } = Modal;
-const { CstInput, CstTextArea, CstSelect, CstUpload } = MapForm;
+const { CstInput, CstTextArea, CstUpload } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -46,7 +39,7 @@ const Comp: React.FC<CompProps> = ({ user }) => {
     try {
       if (user.userId) getUser();
     } catch (error) {}
-  }, [user]);
+  }, [form]);
 
   const getUser = async () => {
     const [err, data, msg] = await getInfo(user.userId);

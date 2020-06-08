@@ -230,7 +230,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       fixed: 'right',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/product/manager/list/${record.id}`)}>
+          <Button type="link" onClick={() => router.push(`/product/manager/list/edit?id=${record.id}`)}>
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.id)}>
@@ -240,23 +240,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       ),
     },
   ];
-
-  /**
-   * @name: 表单提交
-   * @param {type}
-   */
-  const handleSubmit = () => {
-    form?.validateFields(async (error, value: EditeItemType) => {
-      if (error) return;
-      setConfirmLoading(true);
-      const isSuccess = await handleEdite(value);
-      setConfirmLoading(false);
-      if (isSuccess) {
-        dispatchInit();
-        setModalVisible(false);
-      }
-    });
-  };
 
   /**
    * @name: 批量修改表单数据状态
@@ -336,7 +319,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
-        <Button type="primary" onClick={() => router.push(`/product/manager/list/-1`)}>
+        <Button type="primary" onClick={() => router.push(`/product/manager/list/edit`)}>
           发布商品
         </Button>
       </div>

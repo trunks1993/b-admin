@@ -5,8 +5,8 @@ interface GlobalModalProps {
   modalVisible: boolean;
   onCancel?: () => void;
   onOk?: () => void;
-  title: string;
-  confirmLoading: boolean;
+  title: string | React.ReactNode;
+  confirmLoading?: boolean;
   width?: number;
   cancelText?: string | React.ReactNode;
   cancelButtonProps?: any

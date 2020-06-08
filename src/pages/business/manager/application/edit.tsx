@@ -12,11 +12,13 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import { getInfo, EditeItemType, modify, add } from '../services/application';
 import { router } from 'umi';
 import { patternUrl } from '@/rules';
+import { ConnectState } from '@/models/connect';
 const { CstInput } = MapForm;
 const { TabPane } = Tabs;
 
-interface CompProps extends RouteComponentProps<{ id: string }> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
+  id: string;
 }
 
 const handleEdite = async (fields: EditeItemType) => {
@@ -50,7 +52,7 @@ const HELP_MSG_NOLOGINRUL = (
 );
 
 const Comp: React.FC<CompProps> = props => {
-  const { match } = props;
+  const { id } = props;
   const [activeKey, setActiveKey] = useState('1');
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
@@ -61,10 +63,10 @@ const Comp: React.FC<CompProps> = props => {
 
   useEffect(() => {
     if (activeKey == '1') initInfo();
-  }, [form, activeKey]);
+  }, [form]);
 
   const initInfo = async () => {
-    const [err, data, msg] = await getInfo(parseInt(match.params.id));
+    const [err, data, msg] = await getInfo(id);
     if (!err) {
       const { virtualRecharge, nologinUrl, callbackUrl } = data;
       form?.setFieldsValue({
@@ -99,32 +101,9 @@ const Comp: React.FC<CompProps> = props => {
     });
   };
 
-  const columns: ColumnProps<any>[] = [
-    {
-      title: '时间',
-      dataIndex: 'name',
-      align: 'center',
-    },
-    {
-      title: '异常原因',
-      dataIndex: 'remark',
-      align: 'center',
-    },
-    {
-      title: '平台请求URL',
-      dataIndex: 'userNumber',
-      align: 'center',
-    },
-    {
-      title: '开发者响应',
-      dataIndex: 'userNumber',
-      align: 'center',
-    },
-  ];
-
   return (
     <div className={Styles.container}>
-      <Tabs onChange={handleTabsPanelChange} type="card">
+      <Tabs className="global-tabs" onChange={handleTabsPanelChange} type="card">
         <TabPane tab="接口配置" key="1">
           <div style={{ padding: '0 30px' }}>
             <span className={Styles.info}>
@@ -132,7 +111,7 @@ const Comp: React.FC<CompProps> = props => {
               为了实时监控由于您的服务器异常产生的
             </span>
             <MapForm className="global-form global-edit-form" onCreate={setForm}>
-              <CstInput name="appId" defaultValue={match.params.id} style={{ display: 'none' }} />
+              <CstInput name="appId" defaultValue={id} style={{ display: 'none' }} />
               <CstInput
                 label="免登录接口:"
                 defaultValue="http://"
@@ -261,19 +240,13 @@ const Comp: React.FC<CompProps> = props => {
                 </Col>
               </Row>
             </MapForm>
-
-            {/* <Table
-              className="global-table"
-              loading={loading}
-              columns={columns}
-              pagination={false}
-              dataSource={[]}
-              rowKey={record => record.userId.toString()}
-            />  */}
           </div>
         </TabPane>
       </Tabs>
     </div>
   );
 };
-export default connect()(Comp);
+
+export default connect(({ routing }: ConnectState) => ({
+  id: routing.location.query.id,
+}))(Comp);

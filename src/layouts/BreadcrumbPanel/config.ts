@@ -1,12 +1,14 @@
 /*
  * @Date: 2020-06-06 17:39:55
- * @LastEditTime: 2020-06-06 18:03:33
+ * @LastEditTime: 2020-06-08 11:07:12
  */
 // export  blackUrl = []
 export const routes = [
-  { path: '/', title: '首页' },
+  // { path: '/', title: '首页' },
   { path: '/changeUser', title: '修改资料' },
   { path: '/changePassword', title: '修改密码' },
+
+  { path: '/dashboard', title: '首页' },
 
   { path: '/business', title: '商户' },
   { path: '/business/manager', title: '商户管理' },
