@@ -205,7 +205,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
    */
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeUserItemType) => {
-      value.password = md5(value.password);
+      value.password && (value.password = md5(value.password));
       if (error) return;
       setConfirmLoading(true);
       try {

@@ -47,7 +47,7 @@ const Title: React.FC = () => (
 const Name: React.FC<HeaderProps> = ({ user, loading }) => (
   <Popover placement="bottom" className="global-popover" content={<DropMenu />} trigger="hover">
     <span className={Styles.nameBox}>
-      <img className={Styles.headIcon} src={(BASE_FILE_SERVER || '') + user.headIcon} />
+      <img className={Styles.headIcon} src={user.headIcon ? (BASE_FILE_SERVER || '') + user.headIcon : require('@/assets/images/global/no-img.png')} />
       <span className={Styles.headIconTitle}>{user.realname}</span>
       <img className={Styles.errow} src={errow} />
     </span>

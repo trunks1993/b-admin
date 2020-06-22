@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-01 20:58:54
+ * @LastEditTime: 2020-06-10 10:47:36
  */
 
 import request from '@/utils/request';
@@ -8,6 +8,12 @@ import request from '@/utils/request';
 export interface EditeItemType {
   oldPassword: string;
   newPassword: string;
+}
+
+export interface EditUserItemType {
+  aliasName: string;
+  remark?: string;
+  headIcon?: string;
 }
 
 export async function getMenuByToken(): Promise<any> {
@@ -22,9 +28,10 @@ export async function getUserInfo(): Promise<any> {
   });
 }
 
-export async function changeUser(): Promise<any> {
-  return request('/sys/getLoginInfo', {
+export async function changeUser(data: EditUserItemType): Promise<any> {
+  return request('/sys/modifyUserInfo', {
     method: 'POST',
+    data,
   });
 }
 

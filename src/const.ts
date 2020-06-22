@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-05 19:10:42
+ * @LastEditTime: 2020-06-09 10:58:08
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -123,6 +123,13 @@ export const TransactionStatus = {
   [TRANSACTION_STATUS_5]: '失败',
 };
 
+export const TRANSACTION_TYPE_1 = 1;
+export const TRANSACTION_TYPE_2 = 2;
+
+export const TransactionTypes = {
+  [TRANSACTION_TYPE_1]: '批采',
+  [TRANSACTION_TYPE_2]: '直充',
+};
 
 export const TRACE_STATUS_1 = 1; // 初始
 export const TRACE_STATUS_2 = 2; // 已支付

@@ -76,7 +76,7 @@ const ExpandForm: React.FC<ExpandFormProps> = props => {
             <li key={item.id} className={Styles.item}>
               <span className={Styles.name}>
                 {index === -1 ? (
-                  item.name
+                  <span title={item.name}>{item.name}</span>
                 ) : (
                   <input
                     defaultValue={item.name}

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-06-06 17:39:55
- * @LastEditTime: 2020-06-08 11:07:12
+ * @LastEditTime: 2020-06-17 16:53:06
  */
 // export  blackUrl = []
 export const routes = [
@@ -46,4 +46,5 @@ export const routes = [
   { path: '/sys/manager', title: '系统管理' },
   { path: '/sys/manager/user', title: '用户管理' },
   { path: '/sys/manager/role', title: '角色管理' },
+  { path: '/sys/manager/log', title: '操作记录' },
 ];

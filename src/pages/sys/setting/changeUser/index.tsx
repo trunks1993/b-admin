@@ -2,26 +2,24 @@ import React, { useEffect } from 'react';
 import { ConnectState, UserType } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
-import { ListItemType } from '../models/user';
-import { TableListData } from '@/pages/data';
 import { Button, message, Form } from 'antd';
 
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
-import { EditeItemType, changeUser } from '@/services/user';
+import { EditUserItemType, changeUser } from '@/services/user';
 import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { getInfo } from '../../manager/services/user';
 
 const { CstInput, CstTextArea, CstUpload } = MapForm;
 
-interface CompProps extends TableListData<ListItemType> {
+interface CompProps {
   dispatch: Dispatch<AnyAction>;
   user: UserType;
 }
 
-const handleEdite = async (fields: EditeItemType) => {
+const handleEdite = async (fields: EditUserItemType) => {
   const [err, data, msg] = await changeUser(fields);
   if (!err) {
     message.success('操作成功');
@@ -39,7 +37,7 @@ const Comp: React.FC<CompProps> = ({ user }) => {
     try {
       if (user.userId) getUser();
     } catch (error) {}
-  }, [form]);
+  }, [form, user]);
 
   const getUser = async () => {
     const [err, data, msg] = await getInfo(user.userId);

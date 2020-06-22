@@ -238,7 +238,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
-            <div style={{ marginLeft: '5px' }}>{record.goodsName}</div>
+            <div style={{ marginLeft: '5px', whiteSpace: 'nowrap' }}>{record.goodsName}</div>
             <div style={{ marginLeft: '5px' }}>{record.goodsCode}</div>
           </span>
         </div>
@@ -370,7 +370,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
                   name="status"
-                  label="账户状态"
+                  label="状态"
                   placeholder="全部"
                 >
                   {_.map(PriceStatus, (item, key) => (

@@ -116,7 +116,7 @@ class GlobalUpLoad extends React.Component<GlobalUpLoadProps, GlobalUpLoadStates
 
         <GlobalModal
           modalVisible={modalVisible}
-          title="回单"
+          title="图片预览"
           onCancel={() => this.setState({ modalVisible: false })}
           onOk={() => this.setState({ modalVisible: false })}
         >

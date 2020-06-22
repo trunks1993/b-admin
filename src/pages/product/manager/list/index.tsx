@@ -207,7 +207,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     {
       title: '库存',
       align: 'center',
-      dataIndex: 'displayStock',
+      dataIndex: 'stock',
     },
     {
       title: '销量',

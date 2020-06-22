@@ -44,8 +44,7 @@ interface CompProps {
 
 const HELP_MSG_PRODUCT_NAME = '填写商品名称，方便快速检索相关产品';
 const HELP_MSG_RESUME = '在商品详情页标题下面展示卖点信息，建议60字以内';
-const HELP_MSG_ICONURL =
-  '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片，你可以拖拽图片调整顺序，最多上传15张';
+const HELP_MSG_ICONURL = '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片';
 const HELP_MSG_FACE_PRICE = '默认情况下，官方价为产品面值，在商品详情会以划线形式显示';
 const HELP_MSG_STOCK =
   '库存为 0 时，会放到『已售罄』的商品列表里，保存后买家看到的商品可售库存同步更新';
@@ -95,7 +94,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         price,
         facePrice,
         stockType,
-        displayStock,
+        stock,
+        singleBuyLimit,
         undisplayStock,
         usageIllustration,
         upTime,
@@ -103,7 +103,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         productTypeCode,
       } = data;
       setRadioValue(upType);
-      setProductType(productTypeCode)
+      setProductType(productTypeCode);
       form?.setFieldsValue({
         productTypeCode,
         productSubName,
@@ -113,7 +113,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         price: getFloat(price / TRANSTEMP, 4),
         facePrice: getFloat(facePrice / TRANSTEMP, 4),
         stockType,
-        displayStock,
+        stock,
+        singleBuyLimit,
         undisplayStock,
         usageIllustration,
         upTime,
@@ -327,57 +328,73 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             disabled={true}
           />
 
-          {productType != PRODUCT_TYPE_4 && (
-            <>
-              <CstRadio
-                label="库存扣减方式"
-                name="stockType"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 6 }}
-                defaultValue={1}
-              >
-                <Radio style={radioStyle} value={1}>
-                  拍下减库存
-                  <span style={{ color: '#CCCCCC' }}>
-                    （买家提交订单，扣减库存数量，可能存在恶意占用库存风险）
-                  </span>
-                </Radio>
-                <Radio style={radioStyle} value={2}>
-                  付款减库存
-                  <span style={{ color: '#CCCCCC' }}>
-                    （买家支付成功，扣减库存数量，可能存在超卖风险）
-                  </span>
-                </Radio>
-              </CstRadio>
-              <CstInputNumber
-                label="库存"
-                placeholder="请输入"
-                size="large"
-                min={0}
-                precision={0}
-                name="displayStock"
-                help={
-                  <>
-                    <CstCheckbox
-                      title="商品详情不显示剩余件数"
-                      name="undisplayStock"
-                      keyMap={['Y', 'N']}
-                      className="minHeightFormItem"
-                    />
-                    <div>{msgStock}</div>
-                  </>
-                }
-                rules={[
-                  {
-                    required: true,
-                    message: '商品库存不能为空',
+          <CstRadio
+            label="库存扣减方式"
+            name="stockType"
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 6 }}
+            defaultValue={1}
+          >
+            <Radio style={radioStyle} value={1}>
+              拍下减库存
+              <span style={{ color: '#CCCCCC' }}>
+                （买家提交订单，扣减库存数量，可能存在恶意占用库存风险）
+              </span>
+            </Radio>
+            <Radio style={radioStyle} value={2}>
+              付款减库存
+              <span style={{ color: '#CCCCCC' }}>
+                （买家支付成功，扣减库存数量，可能存在超卖风险）
+              </span>
+            </Radio>
+          </CstRadio>
+          <span style={{ position: 'relative' }}>
+            <CstInputNumber
+              label="库存"
+              placeholder="请输入"
+              size="large"
+              min={0}
+              precision={0}
+              name="stock"
+              help={
+                <>
+                  <CstCheckbox
+                    title="商品详情不显示剩余件数"
+                    name="undisplayStock"
+                    keyMap={['Y', 'N']}
+                    className="minHeightFormItem"
+                  />
+                  <div>{msgStock}</div>
+                </>
+              }
+              // rules={[
+              //   {
+              //     required: true,
+              //     message: '商品库存不能为空',
+              //   },
+              // ]}
+              rules={[
+                {
+                  required: true,
+                  message: '商品库存不能为空',
+                },
+                {
+                  validator: (rule, value, callback) => {
+                    if (value != 0 && !value) {
+                      setMsgStock('商品库存不能为空');
+                      callback(new Error());
+                    } else {
+                      setMsgStock(HELP_MSG_STOCK);
+                      callback();
+                    }
                   },
-                ]}
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 6 }}
-              />
-            </>
-          )}
+                },
+              ]}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 6 }}
+            />
+            <span style={{ position: 'absolute', left: '415px', top: '8px' }}>件</span>
+          </span>
         </GlobalCard>
         <GlobalCard
           title="其他信息"
@@ -415,6 +432,26 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
               暂不售卖，放入仓库
             </Radio>
           </CstRadio>
+          <span style={{ position: 'relative' }}>
+            <CstInputNumber
+              label="限制单次采购"
+              placeholder="请输入"
+              size="large"
+              min={0}
+              precision={0}
+              name="singleBuyLimit"
+              rules={[
+                {
+                  required: true,
+                  message: '限制单次采购不能为空',
+                },
+              ]}
+              labelCol={{ span: 4 }}
+              wrapperCol={{ span: 6 }}
+            />
+            <span style={{ position: 'absolute', left: '415px', top: '8px' }}>件</span>
+          </span>
+
           <CstTextArea
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}

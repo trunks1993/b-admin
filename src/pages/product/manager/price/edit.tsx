@@ -107,7 +107,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const price = facePrice - value * TRANSTEMP;
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
-        ['rebate-' + code]: price / facePrice,
+        ['rebate-' + code]: price / facePrice * 10,
       });
     }
   };

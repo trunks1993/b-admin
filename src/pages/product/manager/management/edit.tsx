@@ -32,7 +32,7 @@ interface ErrMsgType {
 
 const HELP_MSG_RESUME = '在商品详情页标题下面展示卖点信息，建议60字以内';
 const HELP_MSG_ICONURL =
-  '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片，你可以拖拽图片调整顺序，最多上传15张';
+  '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片';
 const HELP_MSG_STOCK =
   '库存为 0 时，会放到『已售罄』的商品列表里，保存后买家看到的商品可售库存同步更新';
 

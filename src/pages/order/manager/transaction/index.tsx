@@ -14,6 +14,7 @@ import {
   IdentifyStatus,
   TransactionStatus,
   TRANSTEMP,
+  TransactionTypes,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -78,8 +79,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       ),
     },
     {
+      title: '交易类型',
+      align: 'center',
+      width: 100,
+      render: record => TransactionTypes[record.bizType],
+    },
+    {
       title: '状态',
       align: 'center',
+      width: 100,
       render: record => TransactionStatus[record.status],
     },
     {
@@ -95,7 +103,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '商品',
       align: 'center',
-      dataIndex: 'goodsName',
+      // dataIndex: 'goodsName',
+      render: record => `${record.goodsName}(${record.goodsCode})`
     },
     {
       title: '请求时间',
@@ -111,6 +120,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '耗时',
       align: 'center',
+      width: 100,
       render: record => {
         const time = moment(record.completeTime).valueOf() - moment(record.createTime).valueOf();
         return record.completeTime ? time / 1000 + 's' : '';
@@ -172,11 +182,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
-                  name="status"
-                  label="订单状态"
-                  placeholder="请选择状态"
+                  name="bizType"
+                  label="交易类型"
+                  placeholder="全部"
                 >
-                  {_.map(TransactionStatus, (item, key) => (
+                  {_.map(TransactionTypes, (item, key) => (
                     <Select.Option key={key} value={key}>
                       {item}
                     </Select.Option>
@@ -289,7 +299,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         pagination={false}
         dataSource={list}
         rowKey={record => record.orderId.toString()}
-        scroll={{ x: 1300 }}
+        scroll={{ x: 1800 }}
       />
       <div className="global-pagination">
         <Pagination
