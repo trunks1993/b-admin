@@ -236,3 +236,23 @@ input[type='number'] {
 :global(a.active) {
   border: none;
 }
+:global(.ant-descriptions-row td){
+  font-size: 12px !important;
+}
+:global(.kehufilter .ant-descriptions-item-label){
+  width: 120px !important;
+  height: 40px !important;
+  background-color: #F2F2F2 !important;
+  font-size: 12px !important;
+  padding: 16px 20px !important;
+  border-left: 1px dashed #E6E6E6 !important;
+}
+:global(.ant-descriptions-item-label){
+  font-size: 12px !important;
+}
+:global(.ant-descriptions-item-content){
+  font-size: 12px !important;
+}
+:global(.ant-timeline-item-tail){
+  border-left: 2px dashed #E6E6E6 !important;
+}

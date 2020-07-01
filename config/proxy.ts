@@ -27,6 +27,7 @@ export default {
   test: {
     '/baseApi': {
       target: 'http://101.132.39.136:9002',
+      // target: 'http://192.168.28.18:9002',
       changeOrigin: true,
       pathRewrite: { '^/baseApi': '' },
     },

@@ -261,3 +261,41 @@ export const WorkTypes = {
   [WORK_TYPE_1]: '批采',
   [WORK_TYPE_2]: '直充',
 };
+
+// 库存预警
+export const STOCK_TYPE_1 = 1; // 件
+export const STOCK_TYPE_2 = 2; // 天
+
+export const StockType = {
+  [STOCK_TYPE_1]: '固定预警',
+  [STOCK_TYPE_2]: '动态预警',
+};
+
+//客服回访
+export const UN_VISIT_1 = 1;
+export const UN_VISIT_2 = 2;
+export const UN_VISIT_3 = 3;
+
+export const KEFU_VISIT = {
+  [UN_VISIT_1]: '未回访',
+  [UN_VISIT_2]: '已回访',
+  [UN_VISIT_3]: '已转化',
+};
+
+// 线索来源
+export const PRIMARY_SOURCE_1 = 'PC端官网';
+export const PRIMARY_SOURCE_2 = '公众号';
+
+export const SOURCE = {
+  [PRIMARY_SOURCE_1]:[PRIMARY_SOURCE_1],
+  [PRIMARY_SOURCE_2]:[PRIMARY_SOURCE_2],
+}
+
+/** 回访方式 */
+export const WAY_RETURN_1 = '电话';
+export const WAY_RETURN_2 = '在线客服';
+
+export const WAY_RETURN_ALL = {
+  [WAY_RETURN_1]:[WAY_RETURN_1],
+  [WAY_RETURN_2]:[WAY_RETURN_2],
+}
