@@ -125,9 +125,9 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                 /** 单选 */
                 [err, data, msg] = await setStockList(params);
             }
-            setModalVisible(false);
-            initList();
             if (!err) {
+              setModalVisible(false);
+              initList();
               return true;
             } else {
               message.error(msg);
@@ -177,14 +177,12 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
     /** 预警开关修改状态 */
     const showDeleteConfirm = (record:any)=> {
         Modal.confirm({
-          title: '关闭提示',
+          title: '提示',
           content: '您确认关闭该商品的库存预警吗?',
           okText: '确定',
           cancelText: '取消',
           onOk:()=> {
             return setFormCodeList(record.goodsInventoryForewarn);
-          },
-          onCancel() {
           },
         });
     }
@@ -272,25 +270,32 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
 
     /** 预警库存预警总开关 */
     const modifyBut = (e:boolean) => {
-        Modal.confirm({
-          title: '关闭提示',
-          content: '您确认关闭该库存预警总开关吗?',
-          okText: '确定',
-          cancelText: '取消',
-          onOk:  async() => {
-            const params = { value : e ? 'ON' : 'OFF' }
-            const [err, data, msg] = await setButtonType(params);
-            if (!err) {
-                setButType(e)
-                return true;
-            } else {
-                message.error(msg);
-                return false;
-            }
-          },
-          onCancel() {
-          },
-        });
+        if(!e){
+            Modal.confirm({
+                title: '提示',
+                content: '您确认关闭库存预警总开关吗?',
+                okText: '确定',
+                cancelText: '取消',
+                onOk:  async() => {
+                    modifyAllBut(e);
+                },
+            });
+        }else{
+            modifyAllBut(e);
+        }
+    }
+
+    /** 库存预警总开关修改状态 */
+    const modifyAllBut = async (e:boolean) => {
+        const params = { value : e ? 'ON' : 'OFF' }
+        const [err, , msg] = await setButtonType(params);
+        if (!err) {
+            setButType(e)
+            return true;
+        } else {
+            message.error(msg);
+            return false;
+        }
     }
 
     /**
@@ -393,7 +398,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                 rowKey={record => record.code.toString()}
             />
             <Row>
-                <Col span={8}>
+                <Col span={5}>
                     <div style={{ padding: '22px' }}>
                         <span>
                             <Checkbox
@@ -409,7 +414,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                         </span>
                     </div>
                 </Col>
-                <Col span={16}>
+                <Col span={19}>
                     <div className="global-pagination">
                         <Pagination
                             current={currPage}
@@ -435,7 +440,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             >
                 <MapForm className="global-form" onCreate={setForm}>
                     <div style={{ width:400,margin:'0 auto' }}>
-                    <CstRadio  name="setType" >
+                    <CstRadio  name="setType" defaultValue={1} >
                         <Radio value={1} style={{ color:'rgba(0, 0, 0, 0.85)', fontSize:16}}>固定预警 </Radio>
                         <Row style={{ marginTop:20 }}>
                             <Col span={12}>

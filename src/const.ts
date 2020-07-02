@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-09 10:58:08
+ * @LastEditTime: 2020-07-02 14:39:57
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -278,6 +278,11 @@ export const UN_VISIT_3 = 3;
 
 export const KEFU_VISIT = {
   [UN_VISIT_1]: '未回访',
+  [UN_VISIT_2]: '已回访',
+  [UN_VISIT_3]: '已转化',
+};
+
+export const addKEFU_VISIT = {
   [UN_VISIT_2]: '已回访',
   [UN_VISIT_3]: '已转化',
 };

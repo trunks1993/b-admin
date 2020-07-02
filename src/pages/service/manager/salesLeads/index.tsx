@@ -10,9 +10,9 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import _ from 'lodash';
 
 import { ListItemType } from '@/models/product';
-import { Icon, Row, Col, Select, Form, Button, Table, Checkbox, Pagination, message } from 'antd';
+import { Icon, Row, Col, Select, Form, Button, Table, Checkbox, Pagination, message, Modal } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
-import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, KEFU_VISIT, SOURCE, WAY_RETURN_ALL } from '@/const';
+import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, KEFU_VISIT, SOURCE, WAY_RETURN_ALL, addKEFU_VISIT } from '@/const';
 import GlobalModal from '@/components/GlobalModal';
 import moment from 'moment';
 
@@ -24,9 +24,10 @@ const { CstInput, CstSelect, CstTextArea, CstDatePicker } = MapForm;
 interface ServiceProps extends TableListData<ListItemType>{
     dispatch: Dispatch<AnyAction>;
     loading: boolean;
+    realname: string;
 }
 
-const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
+const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realname }) => {
     const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
     const [addFormList, setAddFormList] = React.useState<FormComponentProps['form'] | null>(null);
     const [addForm, setAddForm] = React.useState<FormComponentProps['form'] | null>(null);
@@ -160,13 +161,13 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
             fixed: 'right',
             render: record => (
                 <>
-                    <Button type="link" onClick={()=>{setModalVisible(true);setCode(record.code)}} style={{ width:40, color:'#1A61DC' }}>
+                    <Button type="link" onClick={()=>{setModalVisible(true);setCode(record.code)}} style={{ width:40, color:'#1A61DC', padding:0 }}>
                         添加
                     </Button>
-                    <Button type="link" onClick={()=> router.push(`/service/manager/salesLeads/edit?id=${record.code}`)} style={{ width:40, color: '#999999' }}>
+                    <Button type="link" onClick={()=> router.push(`/service/manager/salesLeads/edit?id=${record.code}`)} style={{ width:40, color: '#999999', padding:0 }}>
                         查看
                     </Button>
-                    <Button type="link" onClick={()=>{setCluesCode(record.code);}} style={{ width:40, color:'#999999' }}>
+                    <Button type="link" onClick={()=>{setCluesCode(record.code);}} style={{ width:40, color:'#999999', padding:0 }}>
                         删除
                     </Button>
                 </>
@@ -194,18 +195,26 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
 
     /** 删除回访记录 */
     const deleteList = async() =>{
-        const cluesCodes = [];
-        cluesCodes.push(cluesCode);
-        const params = {cluesCodes}
-        const [err, data, msg] = await deleteSoldClues(params); 
-        initList();
-        if (!err) {
-            message.success('操作成功');
-            return true;
-        } else {
-            message.error(msg);
-            return false;
-        }
+        Modal.confirm({
+            title: '提示',
+            content: '是否删除',
+            okText: '确定',
+            cancelText: '取消',
+            onOk:  async() => {
+                const cluesCodes = [];
+                cluesCodes.push(cluesCode);
+                const params = {cluesCodes}
+                const [err, data, msg] = await deleteSoldClues(params); 
+                initList();
+                if (!err) {
+                    message.success('操作成功');
+                    return true;
+                } else {
+                    message.error(msg);
+                    return false;
+                }
+            },
+        });
     }
 
     /** 添加线索 */
@@ -228,8 +237,8 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
 
     return ( 
         <div className={Styles.container}>
-            <div className={Styles.toolbar} onClick={()=>setSouceVisible(true)}>
-                <div><Icon type="plus" />添加线索</div>
+            <div className={Styles.toolbar}>
+                <div onClick={()=>setSouceVisible(true)}><Icon type="plus" />添加线索</div>
             </div>
             <div className={Styles.filter}>
                 <div className={Styles.filterBox}>
@@ -335,7 +344,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                         wrapperCol={{ span: 12 }}
                         name="status"
                         label="回访状态"
-                        placeholder="全部"
+                        defaultValue={'2'}
                         rules={[
                             {
                                 required: true,
@@ -343,10 +352,10 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                             },
                         ]}
                     >
-                        {_.map(KEFU_VISIT, (item,key) => (
-                            <Select.Option key={key} value={key}>
-                                {item}
-                            </Select.Option>
+                        {_.map(addKEFU_VISIT, (item,key) => (
+                                <Select.Option key={key} value={key}>
+                                    {item}
+                                </Select.Option>
                         ))}
                     </CstSelect>
                     <CstInput
@@ -355,6 +364,8 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                         name="returnVisitPerson"
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 12 }}
+                        defaultValue={realname}
+                        disabled={true}
                         rules={[
                             {
                                 required: true,
@@ -369,7 +380,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                         name='returnVisitTime'
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 12 }}
-                        // suffixIcon={}
+                        defaultValue={moment(new Date()).format('YYYY-MM-DD HH:mm:ss')}
                         rules={[
                             {
                                 required: true,
@@ -400,7 +411,6 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                         label="回访内容"
                         placeholder="请输入内容"
                         name="context"
-                        style={{paddingBottom:60}}
                         autoSize={{ minRows: 4, maxRows: 5 }}
                         labelCol={{ span: 6 }}
                         wrapperCol={{ span: 12 }}
@@ -459,6 +469,10 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                                 required: true,
                                 message: '手机号码不能为空',
                             },
+                            {
+                                pattern: /^[0-9]*$/,
+                                message: '手机格式有误',
+                            },
                         ]}
                     />
                     <CstInput
@@ -472,6 +486,10 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                                 required: true,
                                 message: '邮箱不能为空',
                             },
+                            {
+                                pattern: /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/,
+                                message: '邮箱格式有误',
+                            },
                         ]}
                     />
                     <CstSelect
@@ -480,6 +498,12 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
                         name="clueSource"
                         label="线索来源"
                         placeholder="全部"
+                        rules={[
+                            {
+                                required: true,
+                                message: '邮箱不能为空',
+                            },
+                        ]}
                     >
                         {_.map(SOURCE, (item, key) => (
                             <Select.Option key={key} value={key}>
@@ -493,8 +517,9 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading }) => {
     )
 };
 
-export default connect(({ serviceInfo, loading }: ConnectState) => ({
+export default connect(({ serviceInfo, user,  loading }: ConnectState) => ({
     list: serviceInfo.list,
     total: serviceInfo.total,
     loading: loading.effects['serviceInfo/fetchList'],
+    realname: user.user.realname,
   }))(service);
