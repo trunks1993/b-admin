@@ -148,7 +148,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, id }) => {
           defaultValue={id}
           style={{ display: 'none' }}
         />
-        <GlobalCard title="选择主体类型" bodyStyle={{ padding: '20px 0 1px 0' }}>
+        <GlobalCard title="选择主体类型" bodyStyle={{ padding: '20px 0 1px 0' }}> 
           <CstBlockCheckbox
             disabled={!!id}
             defaultValue={IDENTIFY_TYPE_1}
@@ -557,7 +557,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, id }) => {
           />
         </GlobalCard>
       </MapForm>
-      <div className={Styles.btnBlock}></div>
+      <div className={Styles.btnBlock}/>
       <div className={Styles.btn}>
         <Button loading={confirmLoading} type="primary" onClick={handleSubmit}>
           保存

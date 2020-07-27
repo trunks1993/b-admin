@@ -36,7 +36,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
     const [modalVisible, setModalVisible] = useState(false);
     const [CloseModalRemind, setCloseModalRemind] = useState(false);
     const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
-    const [code, setCode] = useState<string | number>('');
+    const [code, setCode] = useState<string | []>('');
     const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
     const [butType, setButType] = useState<boolean>(true);
     const [FormCode, setFormCode] = useState<EditeItemType>({});
@@ -118,13 +118,16 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             if (error) return;
             const params = {...value, goodsCode: code , goodsCodes: selectedRowKeys};
             let [err, data, msg] = '';
-            if(code === ''){
+            if(typeof code === 'object'){
+                console.log(1);
                 /** 全选 */
                 [err, data, msg] = await setStockLists(params);
             }else{
+                console.log(2);
                 /** 单选 */
                 [err, data, msg] = await setStockList(params);
             }
+            setCode('');
             if (!err) {
               setModalVisible(false);
               initList();
@@ -244,7 +247,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             align: 'center',
             render: record => (
             <>
-                <Button type="link" onClick={()=>{editList(record)}}>
+                <Button type="link" onClick={()=>{setCode('');editList(record)}}>
                     编辑
                 </Button>
                 {
@@ -265,6 +268,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
         hideDefaultSelections: true,
         onChange: (selectedRowKeys: string[] | number[], selectedRows: ListItemType[]) => {
           setSelectedRowKeys(selectedRowKeys);
+          setCode(selectedRowKeys);
         },
     };
 

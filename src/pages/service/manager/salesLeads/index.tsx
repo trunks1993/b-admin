@@ -47,11 +47,6 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
         initList();
     }, [currPage]);
 
-    useEffect(() => {
-        if(!cluesCode) return;
-        deleteList();
-    }, [cluesCode]);
-
     /**
      * @name 触发列表加载effect
      * @param {type}
@@ -167,7 +162,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
                     <Button type="link" onClick={()=> router.push(`/service/manager/salesLeads/edit?id=${record.code}`)} style={{ width:40, color: '#999999', padding:0 }}>
                         查看
                     </Button>
-                    <Button type="link" onClick={()=>{setCluesCode(record.code);}} style={{ width:40, color:'#999999', padding:0 }}>
+                    <Button type="link" onClick={()=>{setCluesCode(record.code);deleteList();}} style={{ width:40, color:'#999999', padding:0 }}>
                         删除
                     </Button>
                 </>
@@ -209,9 +204,6 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
                 if (!err) {
                     message.success('操作成功');
                     return true;
-                } else {
-                    message.error(msg);
-                    return false;
                 }
             },
         });
@@ -321,6 +313,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
             <div className="global-pagination">
                 <Pagination
                     current={currPage}
+                    
                     onChange={(currPage: number) => setCurrPage(currPage)}
                     defaultPageSize={DEFAULT_PAGE_SIZE}
                     total={total}
@@ -384,7 +377,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
                         rules={[
                             {
                                 required: true,
-                                message: '回访人员不能为空',
+                                message: '回访时间不能为空',
                             },
                         ]}
                     />
@@ -397,7 +390,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
                         rules={[
                             {
                                 required: true,
-                                message: '回访人员不能为空',
+                                message: '回访方式不能为空',
                             },
                         ]}
                     >
@@ -501,7 +494,7 @@ const service: React.FC<ServiceProps>=({ dispatch, list, total, loading, realnam
                         rules={[
                             {
                                 required: true,
-                                message: '邮箱不能为空',
+                                message: '线索来源不能为空',
                             },
                         ]}
                     >
