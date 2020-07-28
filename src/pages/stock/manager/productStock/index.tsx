@@ -204,7 +204,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
-            <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
+            <div style={{ marginLeft: '5px' }}>{record?.productSub?.name}</div>
             <div style={{ marginLeft: '5px' }}>{record.code}</div>
           </span>
         </div>
@@ -367,7 +367,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条

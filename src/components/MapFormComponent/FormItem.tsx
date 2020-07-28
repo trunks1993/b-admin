@@ -1,4 +1,4 @@
-import { Form, Input, Select, DatePicker, Upload, Cascader, Radio, InputNumber } from 'antd';
+import { Form, Input, Select, Switch, Upload, Cascader, Radio, InputNumber, DatePicker } from 'antd';
 import React, { Component } from 'react';
 import { FormComponentProps } from 'antd/es/form';
 import { GetFieldDecoratorOptions } from 'antd/es/form/Form';
@@ -99,7 +99,6 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
     // get getFieldDecorator props
     const options = this.getFormItemOptions(this.props);
     const otherProps = restProps || {};
-
     const Map = {
       CstInput: getFieldDecorator(name, options)(<Input autoComplete="off" {...otherProps} />),
       CstTextArea: getFieldDecorator(name, options)(<TextArea {...otherProps} />),
@@ -136,6 +135,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
         options,
       )(<Cascader getPopupContainer={triggerNode => triggerNode.parentNode} {...otherProps} />),
       CstInputNumber: getFieldDecorator(name, options)(<InputNumber {...otherProps} />),
+      CstSwitch: getFieldDecorator(name,options)(<Switch {...otherProps} />),
     };
 
     if (wrapperCol && labelCol)

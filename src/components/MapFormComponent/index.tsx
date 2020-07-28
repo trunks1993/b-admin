@@ -40,6 +40,7 @@ class MapForm extends Component<MapFormProps, MapFormState> {
   public static CstProductSubPanel: React.FunctionComponent<FormItemProps>;
   public static CstCascader: React.FunctionComponent<FormItemProps>;
   public static CstInputNumber: React.FunctionComponent<FormItemProps>;
+  public static CstSwitch: React.FunctionComponent<FormItemProps>;
 
   static defaultProps = {
     className: '',

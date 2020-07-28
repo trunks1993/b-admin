@@ -70,7 +70,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
     {
       title: '操作模块',
-      dataIndex: 'moudle',
+      dataIndex: 'moudleName',
     //   width: 150,
       align: 'center',
     },
@@ -138,7 +138,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={pageSize}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {pageSize} 条

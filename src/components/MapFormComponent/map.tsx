@@ -19,4 +19,5 @@ export default {
   CstProductSubPanel: {},
   CstCascader: {},
   CstInputNumber: {},
+  CstSwitch: {},
 };

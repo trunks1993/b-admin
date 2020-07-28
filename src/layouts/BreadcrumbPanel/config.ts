@@ -40,6 +40,7 @@ export const routes = [
   { path: '/stock/manager/productStock', title: '商品库存' },
   { path: '/stock/manager/suppliers', title: '供应商管理' },
   { path: '/stock/manager/stockWater', title: '库存流水' },
+  { path: '/stock/manager/earlyWarn', title: '库存预警' },
   { path: '/stock/manager/warehousing', title: '商品采购' },
 
   { path: '/sys', title: '系统' },
@@ -47,4 +48,8 @@ export const routes = [
   { path: '/sys/manager/user', title: '用户管理' },
   { path: '/sys/manager/role', title: '角色管理' },
   { path: '/sys/manager/log', title: '操作记录' },
+
+  { path: '/service', title: '客服' },
+  { path: '/stock/manager', title: '客户服务' },
+  { path: '/service/manager/salesLeads', title: '销售线索' },
 ];

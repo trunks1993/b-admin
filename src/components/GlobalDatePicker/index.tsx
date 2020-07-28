@@ -16,6 +16,7 @@ class GlobalDatePicker extends React.Component<{
     return (
       <DatePicker
         {...this.props}
+        style={{width:'100%'}}
         value={value ? moment(value) : null}
         onChange={this.handleDateChange}
       />

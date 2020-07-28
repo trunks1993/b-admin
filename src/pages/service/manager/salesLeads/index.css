@@ -1,0 +1,60 @@
+.container {
+    background: #fff;
+    min-height: 100%;
+    padding-bottom: 20px;
+}
+.toolbar {
+    display: flex;
+    padding-left: 25px;
+    align-items: center;
+}
+.toolbar div{
+    width:100px;
+    height:14px;
+    font-size:14px;
+    margin: 18px 0px;
+    font-weight:400;
+    color:rgba(25,97,219,1);
+    cursor:pointer;
+}
+.filter {
+    border-top: 1px solid #e6e6e6;
+    padding: 0 25px;
+}
+.filterBox {
+    padding: 20px 0;
+    border-bottom: 1px solid #e6e6e6;
+}
+.salesExtra {
+    display: inline-block;
+    margin-right: 24px;
+    
+}
+.salesExtra > a {
+    margin-left: 24px;
+    color: #666666;
+}
+.salesExtra > a:hover {
+    color: #1a61dc;
+}
+.salesExtra > .currentDate {
+    color: #1a61dc;
+}
+.desc{
+    padding: 25px;
+}
+.descTitle{
+    margin-bottom: 20px;
+    font-size:16px;
+    font-weight:400;
+    color:rgba(51,51,51,1);
+    line-height: 1.5;
+}
+.descBox{
+    width:100%;
+    background:rgba(26,97,220,0.05);
+    border:1px solid rgba(208,232,255,1);
+}
+.context{
+    padding: 20px;
+}

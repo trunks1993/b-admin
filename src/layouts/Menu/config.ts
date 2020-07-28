@@ -10,4 +10,5 @@ export default {
   '/order': require('@/assets/images/global/menu-icon-order.png'),
   '/stock': require('@/assets/images/global/menu-icon-stock.png'),
   '/finance': require('@/assets/images/global/menu-icon-finance.png'),
+  '/service': require('@/assets/images/global/menu-icon-service.png'),
 };

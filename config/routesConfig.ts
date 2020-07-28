@@ -112,6 +112,11 @@ export const stock = [
     Routes: ['src/AuthRouter'],
   },
   {
+    path: '/stock/manager/earlyWarn',
+    component: './stock/manager/earlyWarn',
+    Routes: ['src/AuthRouter'],
+  },
+  {
     path: '/stock/manager/suppliers',
     component: './stock/manager/suppliers',
     Routes: ['src/AuthRouter'],
@@ -169,6 +174,20 @@ export const finance = [
   {
     path: '/finance/manager/recharge',
     component: './finance/manager/recharge',
+    Routes: ['src/AuthRouter'],
+  },
+];
+//客服
+export const service = [
+  {
+    path: '/service/manager/salesLeads',
+    component: './service/manager/salesLeads',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/service/manager/salesLeads/edit',
+    component: './service/manager/salesLeads/edit',
+    from: '/service/manager/salesLeads',
     Routes: ['src/AuthRouter'],
   },
 ];
