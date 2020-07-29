@@ -453,6 +453,14 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                                     wrapperCol={{ span: 12 }}
                                     name="lowerLimit"
                                     label="库存下限"
+                                    rules={[
+                                        {
+                                          transform: (value) =>
+                                            value % 1 === 0 ? parseInt(value) : false,
+                                          type: 'number',
+                                          message: '请输入正确的库存下限',
+                                        },
+                                    ]}
                                 />
                             </Col>
                             <Col span={12}> 
@@ -461,6 +469,14 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                                     wrapperCol={{ span: 12 }}
                                     name="upLimit"
                                     label="库存上限"
+                                    rules={[
+                                        {
+                                          transform: (value) =>
+                                            value % 1 === 0 ? parseInt(value) : false,
+                                          type: 'number',
+                                          message: '请输入正确的库存上限',
+                                        },
+                                    ]}
                                 />
                             </Col>
                         </Row>
@@ -472,6 +488,14 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                                     labelCol={{ span: 17 }}
                                     wrapperCol={{ span: 6 }}
                                     label="库存下限: 最少可售" 
+                                    rules={[
+                                        {
+                                          transform: (value) =>
+                                            value % 1 === 0 ? parseInt(value) : false,
+                                          type: 'number',
+                                          message: '请输入正确的库存下限',
+                                        },
+                                    ]}
                                 />
                             </Col>
                             <Col span={10} style={{ color:'rgba(0, 0, 0, 0.85)', fontSize:16, marginTop: 7 }}>天 * 近15天日均销量</Col>
@@ -483,6 +507,14 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                                     labelCol={{ span: 17 }}
                                     wrapperCol={{ span: 6 }}
                                     label="库存上限: 最多可售"
+                                    rules={[
+                                        {
+                                          transform: (value) =>
+                                            value % 1 === 0 ? parseInt(value) : false,
+                                          type: 'number',
+                                          message: '请输入正确的库存上限',
+                                        },
+                                    ]}
                                 />
                             </Col> 
                             <Col span={10} style={{color:'rgba(0, 0, 0, 0.85)', fontSize:16,marginTop: 7 }}>天 * 近15天日均销量</Col>
