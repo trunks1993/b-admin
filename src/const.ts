@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-07-02 14:39:57
+ * @LastEditTime: 2020-08-05 16:38:20
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -129,6 +129,14 @@ export const TRANSACTION_TYPE_2 = 2;
 export const TransactionTypes = {
   [TRANSACTION_TYPE_1]: '批采',
   [TRANSACTION_TYPE_2]: '直充',
+};
+
+export const TRANSACTION_ABNORMAL_1 = 'N';
+export const TRANSACTION_ABNORMAL_2 = 'Y';
+
+export const TransactionAbnormal = {
+  [TRANSACTION_ABNORMAL_1]: '正常',
+  [TRANSACTION_ABNORMAL_2]: '异常',
 };
 
 export const TRACE_STATUS_1 = 1; // 初始
@@ -292,15 +300,15 @@ export const PRIMARY_SOURCE_1 = 'PC端官网';
 export const PRIMARY_SOURCE_2 = '公众号';
 
 export const SOURCE = {
-  [PRIMARY_SOURCE_1]:[PRIMARY_SOURCE_1],
-  [PRIMARY_SOURCE_2]:[PRIMARY_SOURCE_2],
-}
+  [PRIMARY_SOURCE_1]: [PRIMARY_SOURCE_1],
+  [PRIMARY_SOURCE_2]: [PRIMARY_SOURCE_2],
+};
 
 /** 回访方式 */
 export const WAY_RETURN_1 = '电话';
 export const WAY_RETURN_2 = '在线客服';
 
 export const WAY_RETURN_ALL = {
-  [WAY_RETURN_1]:[WAY_RETURN_1],
-  [WAY_RETURN_2]:[WAY_RETURN_2],
-}
+  [WAY_RETURN_1]: [WAY_RETURN_1],
+  [WAY_RETURN_2]: [WAY_RETURN_2],
+};

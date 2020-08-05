@@ -6,12 +6,12 @@ import { ListItemType } from '../models/transaction';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
+import GlobalModal from '@/components/GlobalModal';
+import { setToSuccess, setToFailed, reroute } from '../services/transaction';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
-  IdentifyTypes,
-  IDENTIFY_TYPE_1,
-  IdentifyStatus,
+  TransactionAbnormal,
   TransactionStatus,
   TRANSTEMP,
   TransactionTypes,
@@ -25,7 +25,14 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
 
-const { CstInput, CstSelect } = MapForm;
+const { CstInput, CstSelect, CstTextArea } = MapForm;
+const transaction_set_all = {
+  1: '置成功',
+  2: '置失败',
+  3: '重新分流',
+  4: '再次充值',
+};
+
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -36,8 +43,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [transactionType, setTransactionType] = useState(1);
+  const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
+
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
+  const [selectedRow, setSelectedRow] = useState<ListItemType[]>([]);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -45,6 +58,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     setSelectedRowKeys([]);
     initList();
   }, [currPage]);
+
+  useEffect(() => {
+    if (_.isEmpty(form)) return;
+    form?.setFieldsValue({ ids: selectedRow[0].id })
+  }, [form]);
 
   /**
    * @name: 列表加载
@@ -61,6 +79,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     });
   };
 
+
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '商户信息',
@@ -73,7 +92,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       width: 200,
       render: record => (
         <span>
-          <div style={{whiteSpace: 'nowrap'}}>{record.orderId}/</div>
+          <div style={{ whiteSpace: 'nowrap' }}>{record.orderId}/</div>
           <div>{record.customerOrderNo}</div>
         </span>
       ),
@@ -149,9 +168,78 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     selectedRowKeys,
     hideDefaultSelections: true,
     onChange: (selectedRowKeys: string[] | number[], selectedRows: ListItemType[]) => {
+      setSelectedRow(selectedRows)
       setSelectedRowKeys(selectedRowKeys);
     },
   };
+
+  /**
+     * @name: 修改订单状态
+     */
+  const toTransactionType = (type: number) => {
+    if (selectedRowKeys.length !== 1) return message.error('只能单选!')
+    if (selectedRow[0]?.status === 4 || selectedRow[0]?.status === 5) return message.error('订单已完成,无法修改!')
+    if (selectedRow[0]?.isAbnormal !== 'Y') return message.error('订单没有异常!')
+    setTransactionType(type);
+    if (type === 3) {
+      const obj = { ids: [selectedRowKeys.toString()] };
+      Map[type](obj);
+      initList();
+      return;
+    }
+    setModalVisible(true);
+  }
+
+  /**
+   * @name: 修改订单状态
+   */
+  const setTransactionStatus = () => {
+    const data = form?.getFieldsValue();
+    const obj = { ids: [data?.ids.toString()], remark: data?.remark };
+    Map[transactionType](obj)
+    initList();
+  }
+
+  const Map = {
+    [1]: async (val: any) => {
+      try {
+        const [err, data, msg] = await setToSuccess(val);
+
+        if (!err) {
+          message.success(data?.length ? data[0].message : "操作成功");
+          setSelectedRowKeys([]);
+          setSelectedRow([]);
+        }
+        else message.error(data?.length ? data[0].message : msg);
+        setModalVisible(false);
+      } catch (error) { }
+    },
+    [2]: async (val: any) => {
+      try {
+        const [err, data, msg] = await setToFailed(val);
+
+        if (!err) {
+          message.success(data?.length ? data[0].message : '操作成功');
+          setSelectedRowKeys([]);
+          setSelectedRow([]);
+        }
+        else message.error(data?.length ? data[0].message : msg);
+        setModalVisible(false);
+      } catch (error) { }
+    },
+    [3]: async (val: any) => {
+      try {
+        const [err, data, msg] = await reroute(val);
+
+        if (!err) {
+          message.success(data?.length ? data[0].message : '操作成功');
+          setSelectedRowKeys([]);
+          setSelectedRow([]);
+        }
+        else message.error(data?.length ? data[0].message : msg);
+      } catch (error) { }
+    }
+  }
 
   return (
     <div className={Styles.container}>
@@ -225,6 +313,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入充值账号"
                 />
               </Col>
+              <Col span={7}>
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="isAbnormal"
+                  label="异常订单"
+                  placeholder="全部"
+                >
+                  {_.map(TransactionAbnormal, (item, key) => (
+                    <Select.Option key={key} value={key}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
               <Col span={7} push={2}>
                 <Form.Item>
                   <Button
@@ -258,36 +361,35 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           </Checkbox>
         </span>
         <span>
-          <Button loading={confirmLoading} disabled={selectedRowKeys.length === 0}>
-            置成功
+          <Button
+            loading={confirmLoading}
+            disabled={selectedRowKeys.length === 0}
+            onClick={() => toTransactionType(1)}
+          >
+            {transaction_set_all[1]}
           </Button>
           <Button
             style={{ marginLeft: '10px' }}
             loading={confirmLoading}
             disabled={selectedRowKeys.length === 0}
+            onClick={() => toTransactionType(2)}
           >
-            置失败
+            {transaction_set_all[2]}
           </Button>
           <Button
             style={{ marginLeft: '10px' }}
             loading={confirmLoading}
             disabled={selectedRowKeys.length === 0}
+            onClick={() => toTransactionType(3)}
           >
-            置异常
+            {transaction_set_all[3]}
           </Button>
           <Button
             style={{ marginLeft: '10px' }}
             loading={confirmLoading}
-            disabled={selectedRowKeys.length === 0}
+            disabled={true}
           >
-            分流至
-          </Button>
-          <Button
-            style={{ marginLeft: '10px' }}
-            loading={confirmLoading}
-            disabled={selectedRowKeys.length === 0}
-          >
-            再次充值
+            {transaction_set_all[4]}
           </Button>
         </span>
       </div>
@@ -307,12 +409,68 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <GlobalModal
+        modalVisible={modalVisible}
+        title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>{transaction_set_all[transactionType]}</div>}
+        confirmLoading={confirmLoading}
+        onOk={() => setTransactionStatus()}
+        onCancel={() => setModalVisible(false)}
+        width={560}
+      >
+        <MapForm className="filter-form" layout="horizontal" onCreate={setForm}>
+          <CstInput
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="ids"
+            label="订单号"
+            style={{ display: 'none' }}
+          />
+          <CstInput
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="orderId"
+            label="订单号"
+            placeholder={selectedRow[0]?.orderId.toString()}
+            disabled={true}
+          />
+          <CstInput
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="orderId"
+            label="商品"
+            placeholder={selectedRow[0]?.goodsName + selectedRow[0]?.goodsCode}
+            disabled={true}
+          />
+          <CstInput
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="orderId"
+            label="充值金额(元)"
+            placeholder={getFloat(selectedRow[0]?.totalPay / TRANSTEMP, 4).toString()}
+            disabled={true}
+          />
+          <CstInput
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="orderId"
+            label="当前状态"
+            placeholder={TransactionStatus[selectedRow[0]?.status]}
+            disabled={true}
+          />
+          <CstTextArea
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 14 }}
+            name="remark"
+            label='备注'
+          />
+        </MapForm>
+      </GlobalModal>
     </div>
   );
 };
