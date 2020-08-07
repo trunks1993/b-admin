@@ -27,6 +27,7 @@ import { ConnectState } from '@/models/connect';
 const {
   CstInput,
   CstBlockCheckbox,
+  CstEditor,
   CstTextArea,
   CstSelect,
   CstUpload,
@@ -452,16 +453,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             <span style={{ position: 'absolute', left: '415px', top: '8px' }}>件</span>
           </span>
 
-          <CstTextArea
+          {/* <CstTextArea
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
             name="usageIllustration"
             autoSize={{ minRows: 4, maxRows: 5 }}
-          ></CstTextArea>
+          ></CstTextArea> */}
+          <CstEditor
+            labelCol={{ span: 4 }}
+            wrapperCol={{ span: 15 }}
+            name="usageIllustration"
+            label="使用须知"
+          />
         </GlobalCard>
       </MapForm>
-      <div className={Styles.btnBlock}></div>
+      <div className={Styles.btnBlock} />
       <div className={Styles.btn}>
         <Button loading={confirmLoading} type="primary" onClick={handleSubmit}>
           保存
