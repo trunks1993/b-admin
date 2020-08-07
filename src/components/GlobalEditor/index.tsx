@@ -1,65 +1,44 @@
-import React from 'react';
+import React, { ForwardRefRenderFunction, useState } from 'react';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 interface GlobalEditorProps {
   value?: string;
   onChange?: (e: string) => void;
 }
-class GlobalEditor extends React.Component<GlobalEditorProps> {
-  state = {
-    hasInit: false,
-    hasChange: false,
+
+const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props => {
+  const { value, onChange } = props;
+
+  // const [value, setValue] = useState('');
+
+  // const modules = {
+  //   toolbar: [
+  //     ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+  //     ['blockquote', 'code-block'],
+  //     ['link', 'image'],
+
+  //     [{ header: 1 }, { header: 2 }], // custom button values
+  //     [{ list: 'ordered' }, { list: 'bullet' }],
+  //     [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+  //     [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+  //     [{ direction: 'rtl' }], // text direction
+
+  //     // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+  //     // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+  //     [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+  //     [{ font: [] }],
+  //     [{ align: [] }],
+
+  //     ['clean'], // remove formatting button
+  //   ],
+  // };
+  const handleOnChange = (e: string) => {
+    onChange && onChange(e);
   };
 
-  handleEditorChange = (content: string) => {
-    const { onChange } = this.props;
-    onChange && onChange(content);
-  };
+  return <ReactQuill theme="snow" value={value || ''} onChange={handleOnChange} />;
+};
 
-  initTinymce() {
-    const { tinymceId, menubar, height, toolbar, content, getContent } = this.props;
-    const _this = this;
-    window.tinymce.init({
-      language: 'zh_CN',
-      selector: `#${tinymceId}`,
-      height: height,
-      body_class: 'panel-body ',
-      object_resizing: false,
-      menubar: menubar,
-      end_container_on_empty_block: true,
-      powerpaste_word_import: 'clean',
-      code_dialog_width: 1000,
-      advlist_bullet_styles: 'square',
-      advlist_number_styles: 'default',
-      imagetools_cors_hosts: ['www.tinymce.com', 'codepen.io'],
-      default_link_target: '_blank',
-      link_title: false,
-      nonbreaking_force_tab: true, // inserting nonbreaking space &nbsp; need Nonbreaking Space Plugin
-      init_instance_callback: editor => {
-        if (content) {
-          editor.setContent(content);
-        }
-        _this.setState({
-          hasInit: true,
-        });
-        editor.on('NodeChange Change KeyUp SetContent', () => {
-          _this.setState({
-            hasChange: true,
-          });
-        });
-      },
-      setup(editor) {
-        editor.on('FullscreenStateChanged', e => {
-          _this.setState({
-            fullscreen: e.state,
-          });
-        });
-      },
-    });
-  }
-
-  render() {
-    return <div></div>;
-  }
-}
-
-export default GlobalEditor;
+export default React.forwardRef(GlobalEditor);
