@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-08-05 16:38:20
+ * @LastEditTime: 2020-08-06 17:09:39
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -131,12 +131,12 @@ export const TransactionTypes = {
   [TRANSACTION_TYPE_2]: '直充',
 };
 
-export const TRANSACTION_ABNORMAL_1 = 'N';
+export const TRANSACTION_ABNORMAL_1 = '';
 export const TRANSACTION_ABNORMAL_2 = 'Y';
 
 export const TransactionAbnormal = {
-  [TRANSACTION_ABNORMAL_1]: '正常',
-  [TRANSACTION_ABNORMAL_2]: '异常',
+  [TRANSACTION_ABNORMAL_1]: '查询全部订单',
+  [TRANSACTION_ABNORMAL_2]: '查询异常订单',
 };
 
 export const TRACE_STATUS_1 = 1; // 初始

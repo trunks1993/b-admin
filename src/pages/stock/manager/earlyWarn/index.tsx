@@ -1,5 +1,5 @@
-import React, { useEffect,useState } from 'react';
-import Styles from './index.css'; 
+import React, { useEffect, useState } from 'react';
+import Styles from './index.css';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { TableListData } from '@/pages/data';
@@ -21,14 +21,14 @@ import GlobalModal from '@/components/GlobalModal';
 import { queryList as queryGroupList } from '@/pages/product/manager/services/group';
 
 
-import { EditeItemType, setStockList, setStockRule, setButtonType, getButtonType, setStockLists} from '../services/earlyWarn';
+import { EditeItemType, setStockList, setStockRule, setButtonType, getButtonType, setStockLists } from '../services/earlyWarn';
 const { CstInput, CstSelect, CstSwitch, CstRadio } = MapForm;
-interface WarnProps extends TableListData<ListItemType>{
+interface WarnProps extends TableListData<ListItemType> {
     dispatch: Dispatch<AnyAction>;
     loading: boolean;
 }
 
-const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
+const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
     const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
     const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
@@ -54,16 +54,16 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
         setSelectedRowKeys([]);
     }, [currPage]);
 
-    useEffect(()=>{
-        if(FormCode){
+    useEffect(() => {
+        if (FormCode) {
             const { setType, lowerLimit, upLimit, leastDay, mostDay } = FormCode;
-            if(FormCode !=='' && setType == 1){
+            if (FormCode !== '' && setType == 1) {
                 form?.setFieldsValue({
                     setType,
                     lowerLimit,
                     upLimit
                 });
-            }else if(FormCode !=='' && setType == 2){
+            } else if (FormCode !== '' && setType == 2) {
                 form?.setFieldsValue({
                     setType,
                     leastDay,
@@ -73,11 +73,11 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
         }
     }, [form])
 
-    useEffect(()=>{
-        if(formCodeList?.forewarnCode){
-            setStockRoles(); 
+    useEffect(() => {
+        if (formCodeList?.forewarnCode) {
+            setStockRoles();
         }
-    },[formCodeList])
+    }, [formCodeList])
 
     /**
      * @name: 获取商品分组
@@ -91,7 +91,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
      * @name 触发列表加载effect
      * @param {type}
      */
-    const dispatchInit = (callback?:()=> void) => {
+    const dispatchInit = (callback?: () => void) => {
         callback && callback();
         currPage === 1 ? initList() : setCurrPage(1);
     }
@@ -116,25 +116,25 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
     const setWarnVal = () => {
         form?.validateFields(async (error, value: EditeItemType) => {
             if (error) return;
-            const params = {...value, goodsCode: code , goodsCodes: selectedRowKeys};
+            const params = { ...value, goodsCode: code, goodsCodes: selectedRowKeys };
             let [err, data, msg] = '';
-            if(typeof code === 'object'){
+            if (typeof code === 'object') {
                 console.log(1);
                 /** 全选 */
                 [err, data, msg] = await setStockLists(params);
-            }else{
+            } else {
                 console.log(2);
                 /** 单选 */
                 [err, data, msg] = await setStockList(params);
             }
             setCode('');
             if (!err) {
-              setModalVisible(false);
-              initList();
-              return true;
+                setModalVisible(false);
+                initList();
+                return true;
             } else {
-              message.error(msg);
-              return false;
+                message.error(msg);
+                return false;
             }
         });
     }
@@ -143,7 +143,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
      * @name 批量设置库存规则
      */
     const setStockRoles = async () => {
-        const params = { forewarnCode:formCodeList?.forewarnCode, status:formCodeList?.status == '1' ? '2':'1'}
+        const params = { forewarnCode: formCodeList?.forewarnCode, status: formCodeList?.status == '1' ? '2' : '1' }
         const [err, , msg] = await setStockRule(params);
         initList();
         if (!err) {
@@ -171,22 +171,22 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
     };
 
     /** 编辑按钮 */
-    const editList = (record:any) =>{
+    const editList = (record: any) => {
         setCode(record.code);
         setFormCode(record.goodsInventoryForewarn);
         setModalVisible(true);
     }
-    
+
     /** 预警开关修改状态 */
-    const showDeleteConfirm = (record:any)=> {
+    const showDeleteConfirm = (record: any) => {
         Modal.confirm({
-          title: '提示',
-          content: '您确认关闭该商品的库存预警吗?',
-          okText: '确定',
-          cancelText: '取消',
-          onOk:()=> {
-            return setFormCodeList(record.goodsInventoryForewarn);
-          },
+            title: '提示',
+            content: '您确认关闭该商品的库存预警吗?',
+            okText: '确定',
+            cancelText: '取消',
+            onOk: () => {
+                return setFormCodeList(record.goodsInventoryForewarn);
+            },
         });
     }
 
@@ -198,13 +198,13 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             width: 260,
             key: 'id',
             render: record => (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
-                <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-                <span style={{ textAlign: 'left' }}>
-                <div style={{ marginLeft: '5px' }}>{record?.productSub?.name}</div>
-                <div style={{ marginLeft: '5px' }}>{record.code}</div>
-                </span>
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
+                    <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
+                    <span style={{ textAlign: 'left' }}>
+                        <div style={{ marginLeft: '5px' }}>{record?.productSub?.name}</div>
+                        <div style={{ marginLeft: '5px' }}>{record.code}</div>
+                    </span>
+                </div>
             ),
         },
         {
@@ -226,7 +226,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             title: '库存下限(件/天)',
             align: 'center',
             render: record => {
-                if(record?.goodsInventoryForewarn?.setType == 2){
+                if (record?.goodsInventoryForewarn?.setType == 2) {
                     return record?.goodsInventoryForewarn?.leastDay
                 }
                 return record?.goodsInventoryForewarn?.lowerLimit
@@ -236,7 +236,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             title: '库存上限(件/天)',
             align: 'center',
             render: record => {
-                if(record?.goodsInventoryForewarn?.setType == 2){
+                if (record?.goodsInventoryForewarn?.setType == 2) {
                     return record?.goodsInventoryForewarn?.mostDay
                 }
                 return record?.goodsInventoryForewarn?.upLimit
@@ -246,18 +246,18 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
             title: '操作',
             align: 'center',
             render: record => (
-            <>
-                <Button type="link" onClick={()=>{setCode('');editList(record)}}>
-                    编辑
+                <>
+                    <Button type="link" onClick={() => { setCode(''); editList(record) }}>
+                        编辑
                 </Button>
-                {
-                    record?.goodsInventoryForewarn?.status == 1 ?(
-                        <Switch checked={true} checkedChildren="开" onClick={()=>{ showDeleteConfirm(record)}} />
-                    ):(
-                        <Switch checked={false} unCheckedChildren="关" onClick={()=>{setFormCodeList(record.goodsInventoryForewarn);}} />
-                    )
-                }
-            </>
+                    {
+                        record?.goodsInventoryForewarn?.status == 1 ? (
+                            <Switch checked={true} checkedChildren="开" onClick={() => { showDeleteConfirm(record) }} />
+                        ) : (
+                                <Switch checked={false} unCheckedChildren="关" onClick={() => { setFormCodeList(record.goodsInventoryForewarn); }} />
+                            )
+                    }
+                </>
             ),
         },
     ];
@@ -267,31 +267,31 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
         selectedRowKeys,
         hideDefaultSelections: true,
         onChange: (selectedRowKeys: string[] | number[], selectedRows: ListItemType[]) => {
-          setSelectedRowKeys(selectedRowKeys);
-          setCode(selectedRowKeys);
+            setSelectedRowKeys(selectedRowKeys);
+            setCode(selectedRowKeys);
         },
     };
 
     /** 预警库存预警总开关 */
-    const modifyBut = (e:boolean) => {
-        if(!e){
+    const modifyBut = (e: boolean) => {
+        if (!e) {
             Modal.confirm({
                 title: '提示',
                 content: '您确认关闭库存预警总开关吗?',
                 okText: '确定',
                 cancelText: '取消',
-                onOk:  async() => {
+                onOk: async () => {
                     modifyAllBut(e);
                 },
             });
-        }else{
+        } else {
             modifyAllBut(e);
         }
     }
 
     /** 库存预警总开关修改状态 */
-    const modifyAllBut = async (e:boolean) => {
-        const params = { value : e ? 'ON' : 'OFF' }
+    const modifyAllBut = async (e: boolean) => {
+        const params = { value: e ? 'ON' : 'OFF' }
         const [err, , msg] = await setButtonType(params);
         if (!err) {
             setButType(e)
@@ -310,10 +310,10 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
         const checked = e.target.checked;
         const keys = _.map(list, item => item.code.toString());
         const selections =
-        (selectedRowKeys.length > 0 || checked) && selectedRowKeys.length !== keys.length ? keys : [];
+            (selectedRowKeys.length > 0 || checked) && selectedRowKeys.length !== keys.length ? keys : [];
         setSelectedRowKeys(selections);
     };
-    
+
     return (
         <div className={Styles.container}>
             <div className={Styles.toolbar}>
@@ -363,7 +363,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                                 </CstSelect>
                             </Col>
                             <Col span={5} offset={1}>
-                                <CstSwitch 
+                                <CstSwitch
                                     labelCol={{ span: 10 }}
                                     wrapperCol={{ span: 14 }}
                                     name="but"
@@ -412,7 +412,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                             >
                                 当页全选
                             </Checkbox>
-                            <span className={Styles.batchSet} onClick={()=>setModalVisible(true)}>
+                            <span className={Styles.batchSet} onClick={() => { setModalVisible(true) }}>
                                 批量设置
                             </span>
                         </span>
@@ -428,7 +428,7 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                             showQuickJumper={true}
                         />
                         <span className="global-pagination-data">
-                        共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
+                            共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
                         </span>
                     </div>
                 </Col>
@@ -437,89 +437,57 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                 modalVisible={modalVisible}
                 title='设置预警值'
                 onCancel={() => {
-                    setModalVisible(false);
+                    setModalVisible(false); setCode(''); setFormCode({});
                 }}
                 onOk={setWarnVal}
                 confirmLoading={loading}
             >
                 <MapForm className="global-form" onCreate={setForm}>
-                    <div style={{ width:400,margin:'0 auto' }}>
-                    <CstRadio  name="setType" defaultValue={1} >
-                        <Radio value={1} style={{ color:'rgba(0, 0, 0, 0.85)', fontSize:16}}>固定预警 </Radio>
-                        <Row style={{ marginTop:20 }}>
-                            <Col span={12}>
-                                <CstInput
-                                    labelCol={{ span: 12 }}
-                                    wrapperCol={{ span: 12 }}
-                                    name="lowerLimit"
-                                    label="库存下限"
-                                    rules={[
-                                        {
-                                          transform: (value) =>
-                                            value % 1 === 0 ? parseInt(value) : false,
-                                          type: 'number',
-                                          message: '请输入正确的库存下限',
-                                        },
-                                    ]}
-                                />
-                            </Col>
-                            <Col span={12}> 
-                                <CstInput
-                                    labelCol={{ span: 12 }}
-                                    wrapperCol={{ span: 12 }}
-                                    name="upLimit"
-                                    label="库存上限"
-                                    rules={[
-                                        {
-                                          transform: (value) =>
-                                            value % 1 === 0 ? parseInt(value) : false,
-                                          type: 'number',
-                                          message: '请输入正确的库存上限',
-                                        },
-                                    ]}
-                                />
-                            </Col>
-                        </Row>
-                        <Radio value={2} style={{ color:'rgba(0, 0, 0, 0.85)', fontSize:16 }}>动态预警 </Radio>
-                        <Row style={{ marginTop:20 }}>
-                            <Col span={14}>
-                                <CstInput 
-                                    name="leastDay"
-                                    labelCol={{ span: 17 }}
-                                    wrapperCol={{ span: 6 }}
-                                    label="库存下限: 最少可售" 
-                                    rules={[
-                                        {
-                                          transform: (value) =>
-                                            value % 1 === 0 ? parseInt(value) : false,
-                                          type: 'number',
-                                          message: '请输入正确的库存下限',
-                                        },
-                                    ]}
-                                />
-                            </Col>
-                            <Col span={10} style={{ color:'rgba(0, 0, 0, 0.85)', fontSize:16, marginTop: 7 }}>天 * 近15天日均销量</Col>
-                        </Row>
-                        <Row>
-                            <Col span={14}>
-                                <CstInput 
-                                    name="mostDay"
-                                    labelCol={{ span: 17 }}
-                                    wrapperCol={{ span: 6 }}
-                                    label="库存上限: 最多可售"
-                                    rules={[
-                                        {
-                                          transform: (value) =>
-                                            value % 1 === 0 ? parseInt(value) : false,
-                                          type: 'number',
-                                          message: '请输入正确的库存上限',
-                                        },
-                                    ]}
-                                />
-                            </Col> 
-                            <Col span={10} style={{color:'rgba(0, 0, 0, 0.85)', fontSize:16,marginTop: 7 }}>天 * 近15天日均销量</Col>
-                        </Row>
-                    </CstRadio>
+                    <div style={{ width: 400, margin: '0 auto' }}>
+                        <CstRadio name="setType" defaultValue={1} >
+                            <Radio value={1} style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: 16 }}>固定预警 </Radio>
+                            <Row style={{ marginTop: 20 }}>
+                                <Col span={12}>
+                                    <CstInput
+                                        labelCol={{ span: 12 }}
+                                        wrapperCol={{ span: 12 }}
+                                        name="lowerLimit"
+                                        label="库存下限"
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <CstInput
+                                        labelCol={{ span: 12 }}
+                                        wrapperCol={{ span: 12 }}
+                                        name="upLimit"
+                                        label="库存上限"
+                                    />
+                                </Col>
+                            </Row>
+                            <Radio value={2} style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: 16 }}>动态预警 </Radio>
+                            <Row style={{ marginTop: 20 }}>
+                                <Col span={14}>
+                                    <CstInput
+                                        name="leastDay"
+                                        labelCol={{ span: 17 }}
+                                        wrapperCol={{ span: 6 }}
+                                        label="库存下限: 最少可售"
+                                    />
+                                </Col>
+                                <Col span={10} style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: 16, marginTop: 7 }}>天 * 近15天日均销量</Col>
+                            </Row>
+                            <Row>
+                                <Col span={14}>
+                                    <CstInput
+                                        name="mostDay"
+                                        labelCol={{ span: 17 }}
+                                        wrapperCol={{ span: 6 }}
+                                        label="库存上限: 最多可售"
+                                    />
+                                </Col>
+                                <Col span={10} style={{ color: 'rgba(0, 0, 0, 0.85)', fontSize: 16, marginTop: 7 }}>天 * 近15天日均销量</Col>
+                            </Row>
+                        </CstRadio>
                     </div>
                 </MapForm>
             </GlobalModal>
@@ -530,12 +498,12 @@ const earlyWarn: React.FC<WarnProps>=({ dispatch, list, total, loading }) =>{
                 onCancel={() => {
                     setCloseModalRemind(false);
                 }}
-                onOk={()=>{console.log(FormCode);setFormCodeList(FormCode);setCloseModalRemind(false);}}
+                onOk={() => { setFormCodeList(FormCode); setCloseModalRemind(false); }}
                 confirmLoading={loading}
             >
                 <div>您确认关闭该商品的库存预警吗?</div>
             </GlobalModal>
-        </div>
+        </div >
     )
 };
 
@@ -543,4 +511,4 @@ export default connect(({ stockEarlyWarn, loading }: ConnectState) => ({
     list: stockEarlyWarn.list,
     total: stockEarlyWarn.total,
     loading: loading.effects['stockEarlyWarn/fetchList'],
-  }))(earlyWarn)
+}))(earlyWarn)

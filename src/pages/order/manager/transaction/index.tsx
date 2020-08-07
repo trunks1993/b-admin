@@ -25,7 +25,7 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
 
-const { CstInput, CstSelect, CstTextArea } = MapForm;
+const { CstInput, CstSelect, CstTextArea, CstCheckbox } = MapForm;
 const transaction_set_all = {
   1: '置成功',
   2: '置失败',
@@ -69,12 +69,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
+    const isAbnormal = data?.isAbnormals ? 'Y' : undefined
     dispatch({
       type: 'orderManagerTransaction/fetchList',
       queryParams: {
         currPage,
         pageSize,
         ...data,
+        isAbnormal,
       },
     });
   };
@@ -113,6 +115,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '充值账号',
       align: 'center',
       dataIndex: 'rechargeAccount',
+    },
+    {
+      title: '异常订单',
+      align: 'center',
+      render: (record) => {
+        if (record.isAbnormal === 'Y') return <div>是</div>
+        else return <div>否</div>
+      }
     },
     {
       title: '充值金额(元)',
@@ -177,12 +187,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
      * @name: 修改订单状态
      */
   const toTransactionType = (type: number) => {
-    if (selectedRowKeys.length !== 1) return message.error('只能单选!')
+    if (selectedRowKeys.length !== 1) return message.error('只能选择一条数据进行操作!')
     if (selectedRow[0]?.status === 4 || selectedRow[0]?.status === 5) return message.error('订单已完成,无法修改!')
     if (selectedRow[0]?.isAbnormal !== 'Y') return message.error('订单没有异常!')
     setTransactionType(type);
     if (type === 3) {
-      const obj = { ids: [selectedRowKeys.toString()] };
+      console.log(selectedRow)
+      const obj = { ids: [selectedRow[0]?.id.toString()] };
       Map[type](obj);
       initList();
       return;
@@ -194,10 +205,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @name: 修改订单状态
    */
   const setTransactionStatus = () => {
-    const data = form?.getFieldsValue();
-    const obj = { ids: [data?.ids.toString()], remark: data?.remark };
-    Map[transactionType](obj)
-    initList();
+    form?.validateFields(async (err, value) => {
+      if (!err) {
+        const obj = { ids: [value?.ids.toString()], remark: value?.remark };
+        Map[transactionType](obj)
+        initList();
+      }
+    });
+
   }
 
   const Map = {
@@ -313,22 +328,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入充值账号"
                 />
               </Col>
-              <Col span={7}>
-                <CstSelect
-                  labelCol={{ span: 8 }}
-                  wrapperCol={{ span: 16 }}
-                  name="isAbnormal"
+              <Col span={4}>
+                <CstCheckbox
+                  labelCol={{ span: 14 }}
+                  wrapperCol={{ span: 10 }}
+                  name="isAbnormals"
                   label="异常订单"
-                  placeholder="全部"
-                >
-                  {_.map(TransactionAbnormal, (item, key) => (
-                    <Select.Option key={key} value={key}>
-                      {item}
-                    </Select.Option>
-                  ))}
-                </CstSelect>
+                />
               </Col>
-              <Col span={7} push={2}>
+              <Col span={5} >
                 <Form.Item>
                   <Button
                     type="primary"
@@ -468,6 +476,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             wrapperCol={{ span: 14 }}
             name="remark"
             label='备注'
+            rules={[
+              {
+                required: true,
+                message: '请填写备注',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>
