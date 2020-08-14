@@ -256,3 +256,10 @@ input[type='number'] {
 :global(.ant-timeline-item-tail){
   border-left: 2px dashed #E6E6E6 !important;
 }
+:global(.ql-editor){
+  min-height: 200px;
+}
+:global(.ql-snow .ql-picker-options .ql-picker-item){
+  padding-bottom: 10px !important;
+  padding-top: 10px !important;
+}

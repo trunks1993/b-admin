@@ -117,7 +117,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         stock,
         singleBuyLimit,
         undisplayStock,
-        usageIllustration,
+        usageIllustrations:usageIllustration,
         upTime,
         upType,
       });
@@ -131,6 +131,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
       if (error) return;
+      value.usageIllustration = sessionStorage.getItem('editor')
       setConfirmLoading(true);
       const isSuccess = await handleEdite(value);
       setConfirmLoading(false);
@@ -457,13 +458,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
-            name="usageIllustration"
+            name="usageIllustrations"
             autoSize={{ minRows: 4, maxRows: 5 }}
           ></CstTextArea> */}
           <CstEditor
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
-            name="usageIllustration"
+            name="usageIllustrations"
             label="使用须知"
           />
         </GlobalCard>

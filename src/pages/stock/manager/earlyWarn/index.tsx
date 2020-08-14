@@ -118,19 +118,18 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             if (error) return;
             const params = { ...value, goodsCode: code, goodsCodes: selectedRowKeys };
             let [err, data, msg] = '';
-            if (typeof code === 'object') {
-                console.log(1);
+            if (selectedRowKeys instanceof Array && _.isEmpty(code) && !_.isEmpty(selectedRowKeys)) {
                 /** 全选 */
                 [err, data, msg] = await setStockLists(params);
             } else {
-                console.log(2);
                 /** 单选 */
                 [err, data, msg] = await setStockList(params);
             }
-            setCode('');
             if (!err) {
                 setModalVisible(false);
                 initList();
+                setSelectedRowKeys([]);
+                setCode('');
                 return true;
             } else {
                 message.error(msg);
@@ -247,7 +246,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             align: 'center',
             render: record => (
                 <>
-                    <Button type="link" onClick={() => { setCode(''); editList(record) }}>
+                    <Button type="link" onClick={() => { editList(record) }}>
                         编辑
                 </Button>
                     {
@@ -267,8 +266,8 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
         selectedRowKeys,
         hideDefaultSelections: true,
         onChange: (selectedRowKeys: string[] | number[], selectedRows: ListItemType[]) => {
+
             setSelectedRowKeys(selectedRowKeys);
-            setCode(selectedRowKeys);
         },
     };
 
@@ -412,9 +411,9 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
                             >
                                 当页全选
                             </Checkbox>
-                            <span className={Styles.batchSet} onClick={() => { setModalVisible(true) }}>
+                            <Button type='link' disabled={selectedRowKeys.length <= 0} className={Styles.batchSet} onClick={() => { setModalVisible(true) }}>
                                 批量设置
-                            </span>
+                            </Button>
                         </span>
                     </div>
                 </Col>
