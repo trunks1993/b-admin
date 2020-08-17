@@ -1,6 +1,11 @@
-import React, { ForwardRefRenderFunction, useState } from 'react';
-import ReactQuill from 'react-quill';
+import React, { ForwardRefRenderFunction, useState, useEffect } from 'react';
 import 'react-quill/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import ImageUploader from "quill-image-uploader/src/quill.imageUploader";
+Quill.register("modules/imageUploader", ImageUploader);
+import axios from 'axios'
+import Quill from "quill";
 
 interface GlobalEditorProps {
   value?: string;
@@ -8,37 +13,59 @@ interface GlobalEditorProps {
 }
 
 const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props => {
+
   const { value, onChange } = props;
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+      ['blockquote', 'code-block'],
+      ['link', 'image'],
 
-  // const [value, setValue] = useState('');
+      [{ direction: 'rtl' }], // text direction
 
-  // const modules = {
-  //   toolbar: [
-  //     ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-  //     ['blockquote', 'code-block'],
-  //     ['link', 'image'],
 
-  //     [{ header: 1 }, { header: 2 }], // custom button values
-  //     [{ list: 'ordered' }, { list: 'bullet' }],
-  //     [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-  //     [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-  //     [{ direction: 'rtl' }], // text direction
+      [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+      [{ font: [] }],
+      [{ align: [] }],
 
-  //     // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-  //     // [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      ['clean'], // remove formatting button
+    ],
+    imageUploader: {
+      upload: async (file: any) => {
+        let param = new FormData();
+        param.append("file", file);
+        param.append("userName", 'yunjin_file_upload');
+        param.append("password", 'yunjin_upload_password');
+        param.append("domain", 'editor');
+        param.append("secret", 'Y');
+        let config = {
+          headers: { "Content-Type": "multipart/form-data" },
+        };
+        return await new Promise(pr => {
+          axios.post("/file/upload", param, config).then((res) => {
+            setTimeout(() => { pr(process.env.BASE_FILE_SERVER + res?.data?.result?.fileList[0]?.url) }, 1000)
+          });
+        })
 
-  //     [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-  //     [{ font: [] }],
-  //     [{ align: [] }],
-
-  //     ['clean'], // remove formatting button
-  //   ],
-  // };
-  const handleOnChange = (e: string) => {
-    onChange && onChange(e);
+      },
+    },
   };
 
-  return <ReactQuill theme="snow" value={value || ''} onChange={handleOnChange} />;
+  const handleChange = (e) => {
+    // onChange && onChange(e);
+    sessionStorage.setItem('editor', e)
+  }
+
+  return (
+    <ReactQuill theme="snow" className="ql-editor" value={value || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
+  );
 };
 
-export default React.forwardRef(GlobalEditor);
+export default GlobalEditor;
