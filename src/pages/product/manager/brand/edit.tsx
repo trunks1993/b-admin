@@ -148,7 +148,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         />
         <CstTextArea
           label="描述"
-          placeholder="请输入商品描述"
+          placeholder="请输入品牌描述"
           name="resume"
           autoSize={{ minRows: 4, maxRows: 5 }}
           labelCol={{ span: 4 }}
