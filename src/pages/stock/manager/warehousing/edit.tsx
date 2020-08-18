@@ -20,6 +20,7 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { getFloat } from '@/utils';
 import GlobalCard from '@/components/GlobalCard';
+import moment from 'moment';
 
 const { CstInput, CstTextArea, CstSelect, CstDatePicker, CstOther, CstInputNumber } = MapForm;
 
@@ -326,7 +327,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       align: 'center',
       render: record => (
         <CstInput
-          disabled
+          disabled={true}
           className="dynamic-inpui-2"
           defaultValue="--"
           name={'noTax-' + record.goodsCode}
@@ -338,7 +339,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
       align: 'center',
       render: record => (
         <CstInput
-          disabled
+          disabled={true}
           className="dynamic-inpui-2"
           defaultValue="--"
           name={'tax-' + record.goodsCode}
@@ -419,6 +420,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
                 message: '采购日期不能为空',
               },
             ]}
+            defaultValue={moment()}
             showTime={true}
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
