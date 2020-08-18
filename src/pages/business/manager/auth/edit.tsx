@@ -161,14 +161,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
           {identifyType === IDENTIFY_TYPE_1 ? (
             <>
               <CstInput
-                disabled
+                disabled={true}
                 label="认证手机号"
                 name="telephone"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstSelect
-                disabled
+                disabled={true}
                 label="证件类型"
                 name="idCardType"
                 labelCol={{ span: 4 }}
@@ -183,7 +183,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
               <Row>
                 <Col span={12} push={2}>
                   <CstUpload
-                    disabled
+                    disabled={true}
                     name="idCardFront"
                     help={helpMsg.idCardFront}
                     label="身份证照片"
@@ -193,7 +193,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
                 </Col>
                 <Col span={4} pull={5}>
                   <CstUpload
-                    disabled
+                    disabled={true}
                     name="idCardBack"
                     help={helpMsg.idCardBack}
                     labelCol={{ span: 4 }}
@@ -202,7 +202,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
                 </Col>
               </Row>
               <CstInput
-                disabled
+                disabled={true}
                 label="身份证姓名"
                 placeholder="请输入商品名称"
                 name="realName"
@@ -210,7 +210,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
-                disabled
+                disabled={true}
                 label="身份证号码"
                 placeholder="请输入商品名称"
                 name="idCard"
@@ -221,14 +221,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
           ) : (
             <>
               <CstInput
-                disabled
+                disabled={true}
                 label="认证手机号"
-                name="contactTelephone"
+                name="telephone"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
-                disabled
+                disabled={true}
                 label="企业名称"
                 placeholder="请输入商品名称"
                 name="businessName"
@@ -236,14 +236,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
                 wrapperCol={{ span: 8 }}
               />
               <CstInput
-                disabled
+                disabled={true}
                 label="统一社会信用代码"
                 name="creditCode"
                 labelCol={{ span: 4 }}
                 wrapperCol={{ span: 8 }}
               />
               <CstUpload
-                disabled
+                disabled={true}
                 label="营业执照照片"
                 name="identityPhoto"
                 labelCol={{ span: 4 }}
@@ -258,21 +258,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
           bodyStyle={{ padding: '20px 0' }}
         >
           <CstInput
-            disabled
+            disabled={true}
             label="联系人姓名"
             name={identifyType === IDENTIFY_TYPE_1 ? 'realName' : 'contactName'}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
           <CstInput
-            disabled
+            disabled={true}
             label="联系人手机"
-            name="telephone"
+            name="contactTelephone"
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
           />
           <CstTextArea
-            disabled
+            disabled={true}
             label="备注"
             name="remark"
             autoSize={{ minRows: 4, maxRows: 5 }}
@@ -281,7 +281,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
           />
         </GlobalCard>
       </MapForm>
-      <div className={Styles.btnBlock}></div>
+      <div className={Styles.btnBlock} />
       <div className={Styles.btn}>
         <Button disabled={!id} loading={confirmLoading} type="primary" onClick={() => handleSubmit('PASS')}>
           审批通过
