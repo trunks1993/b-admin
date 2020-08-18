@@ -246,7 +246,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
@@ -328,6 +328,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             label="一句话介绍"
             placeholder="最多输入50个字"
             autoSize={{ minRows: 4, maxRows: 6 }}
+            rules={[
+              {
+                max: 50,
+                message: '最多输入50个字',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>
