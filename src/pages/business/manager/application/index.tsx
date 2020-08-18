@@ -16,7 +16,6 @@ import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { router } from 'umi';
 import { queryList as queryMerchantList } from '@/pages/business/manager/services/info';
 import { ListItemType as MerchantItemType } from '@/pages/business/manager/models/info';
-import LazyLoad from 'react-lazyload';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload, CstSelect } = MapForm;
@@ -256,7 +255,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       <GlobalModal
         modalVisible={modalVisible}
         title={formData.id ? '编辑应用' : '新增应用'}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          setHelpMsg({ ...helpMsg, iconUrl: HELP_MSG_ICONURL });
+        }}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
       >
