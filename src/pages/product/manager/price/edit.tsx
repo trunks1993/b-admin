@@ -45,9 +45,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
    * @name: 获取商户列表
    */
   const getMerchantList = async () => {
-    const [err, data, msg] = await queryMerchantList({});
-    if (!err) setMerchantList(data.list);
-    else message.error(msg);
+    try {
+      const [err, data, msg] = await queryMerchantList({});
+      if (!err) setMerchantList(data.list);
+      else message.error(msg);
+    } catch (error) {}
   };
 
   /**
@@ -107,7 +109,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const price = facePrice - value * TRANSTEMP;
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
-        ['rebate-' + code]: price / facePrice * 10,
+        ['rebate-' + code]: (price / facePrice) * 10,
       });
     }
   };
@@ -268,7 +270,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
               </CstSelect>
             </Col>
             <Col span={12}>
-              <CstCheckbox name="isEffect" keyMap={['Y', 'N']} title="设置后立即生效"></CstCheckbox>
+              <CstCheckbox name="isEffect" keyMap={['Y', 'N']} title="设置后立即生效" />
             </Col>
           </Row>
         </GlobalCard>
