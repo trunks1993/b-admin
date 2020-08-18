@@ -230,7 +230,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       fixed: 'right',
       render: record => (
         <>
-          <Button type="link" onClick={() => router.push(`/product/manager/list/edit?id=${record.id}`)}>
+          <Button
+            type="link"
+            onClick={() => router.push(`/product/manager/list/edit?id=${record.id}`)}
+          >
             编辑
           </Button>
           <Button type="link" onClick={() => showConfirm(record.id)}>
@@ -373,7 +376,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
                 </Button>
                 <Button
                   icon="undo"
-                  onClick={() => filterForm?.resetFields()}
+                  onClick={() => {
+                    const status = filterForm?.getFieldValue('status');
+                    filterForm?.resetFields();
+                    filterForm?.setFieldsValue({ status });
+                  }}
                   style={{ marginLeft: '10px' }}
                 >
                   重置
@@ -445,7 +452,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
               onChange={(currPage: number) => setCurrPage(currPage)}
               defaultPageSize={DEFAULT_PAGE_SIZE}
               total={total}
-              showQuickJumper
+              showQuickJumper={true}
             />
             <span className="global-pagination-data">
               共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
