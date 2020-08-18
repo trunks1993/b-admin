@@ -12,15 +12,12 @@ interface GlobalEditorProps {
   onChange?: (e: string) => void;
 }
 
-const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props => {
+const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = (props) => {
 
-  const { value, onChange } = props;
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, 4, 5, 6, false] }],
       [
-        { list: "ordered" },
-        { list: "bullet" },
         { indent: "-1" },
         { indent: "+1" },
       ],
@@ -34,7 +31,6 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
       [{ font: [] }],
       [{ align: [] }],
-
       ['clean'], // remove formatting button
     ],
     imageUploader: {
@@ -58,13 +54,8 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
     },
   };
 
-  const handleChange = (e) => {
-    // onChange && onChange(e);
-    sessionStorage.setItem('editor', e)
-  }
-
   return (
-    <ReactQuill theme="snow" className="ql-editor" value={value || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
+    <ReactQuill theme="snow" className="ql-editor" value={sessionStorage.getItem('editor') || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { sessionStorage.setItem('editor', e) }} />
   );
 };
 
