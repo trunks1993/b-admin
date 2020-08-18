@@ -232,7 +232,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     wrapperCol={{ span: 16 }}
                     name="customerOrderNo"
                     label="外部订单号"
-                    placeholder="请输入充值账号"
+                    placeholder="请输入外部订单号"
                   />
                 </Col>
                 <Col span={7} push={2}>
@@ -322,7 +322,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     </>
                   ) : (
                     <>
-                      <Col span={15}></Col>
+                      <Col span={15} />
                     </>
                   )}
                 </span>
@@ -337,7 +337,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
