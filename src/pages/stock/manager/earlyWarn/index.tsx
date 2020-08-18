@@ -31,6 +31,7 @@ interface WarnProps extends TableListData<ListItemType> {
 const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
     const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
     const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+    const [kucun, setKucun] = useState(1);
     const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
     const [categoryList, setCategoryList] = useState<CategoryItemType[]>([]);
     const [modalVisible, setModalVisible] = useState(false);
@@ -118,7 +119,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             if (error) return;
             const params = { ...value, goodsCode: code, goodsCodes: selectedRowKeys };
             let [err, data, msg] = '';
-            if (selectedRowKeys instanceof Array && _.isEmpty(code) && !_.isEmpty(selectedRowKeys)) {
+            if (kucun === 1) {
                 /** 全选 */
                 [err, data, msg] = await setStockLists(params);
             } else {
@@ -246,7 +247,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             align: 'center',
             render: record => (
                 <>
-                    <Button type="link" onClick={() => { editList(record) }}>
+                    <Button type="link" onClick={() => { setKucun(2); editList(record) }}>
                         编辑
                 </Button>
                     {
@@ -411,7 +412,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
                             >
                                 当页全选
                             </Checkbox>
-                            <Button type='link' disabled={selectedRowKeys.length <= 0} className={Styles.batchSet} onClick={() => { setModalVisible(true) }}>
+                            <Button type='link' disabled={selectedRowKeys.length <= 0} className={Styles.batchSet} onClick={() => { setKucun(1); setModalVisible(true) }}>
                                 批量设置
                             </Button>
                         </span>
