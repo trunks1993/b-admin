@@ -129,11 +129,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
     // <div style={{ height: '100%', position: 'relative', paddingTop: '30px' }}>
     <div className={Styles.container}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <CstInput
-          name="brandId"
-          defaultValue={id}
-          style={{ display: 'none' }}
-        />
+        <CstInput name="brandId" defaultValue={id} style={{ display: 'none' }} />
         <CstInput
           label="品牌名"
           name="name"
@@ -213,6 +209,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
           label="关联分组"
           name="categoryCodes"
           treeData={treeData}
+          placeholder="选择所属分组"
         />
         <CstTextArea
           labelCol={{ span: 4 }}
@@ -220,9 +217,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
           label="使用须知"
           name="introduction"
           autoSize={{ minRows: 4, maxRows: 5 }}
-        ></CstTextArea>
+        />
       </MapForm>
-      <div className={Styles.btnBlock}></div>
+      <div className={Styles.btnBlock} />
       <div className={Styles.btn}>
         <Button loading={ConfirmLoading} type="primary" onClick={handleSubmit}>
           保存
