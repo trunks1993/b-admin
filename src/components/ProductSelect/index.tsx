@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useImperativeHandle } from 'react';
-import { Tree, Table, Pagination, Col, Row, Form, Button, Checkbox } from 'antd';
+import { Tree, Table, Pagination, Col, Row, Form, Button, Checkbox, message } from 'antd';
 import { queryList } from '@/pages/product/manager/services/group';
 import { ListItemType } from '@/pages/product/manager/models/group';
 import Styles from './index.css';
@@ -89,7 +89,7 @@ const Comp: React.FC<CompProps> = props => {
    * @param {type}
    */
   const dispatchInit = (callback?: () => void) => {
-    callback && callback();
+    // callback && callback();
     currPage === 1 ? initList() : setCurrPage(1);
   };
 
@@ -98,10 +98,14 @@ const Comp: React.FC<CompProps> = props => {
    * @param {type}
    */
   const initTreeData = async () => {
-    const [err, data, msg] = await queryList({});
-    if (!err) {
-      setTreeData(data.list);
-    }
+    try {
+      const [err, data, msg] = await queryList({});
+      if (!err) {
+        setTreeData(data.list);
+      } else {
+        message.error(msg);
+      }
+    } catch (error) {}
   };
 
   /**
@@ -206,7 +210,7 @@ const Comp: React.FC<CompProps> = props => {
     <div className={Styles.box}>
       <div className={Styles.tree}>
         <Tree
-          checkable
+          checkable={true}
           // onExpand={this.onExpand}
           // expandedKeys={this.state.expandedKeys}
           // autoExpandParent={this.state.autoExpandParent}
@@ -223,8 +227,8 @@ const Comp: React.FC<CompProps> = props => {
           <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
             <CstInput name="categoryCodes" style={{ display: 'none' }} />
             <Row>
-              <Col span={6}></Col>
-              <Col span={2}></Col>
+              <Col span={6} />
+              <Col span={2} />
               <Col span={6}>
                 <CstCheckbox
                   name="hasStock"

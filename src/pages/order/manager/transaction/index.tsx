@@ -125,7 +125,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       }
     },
     {
-      title: '充值金额(元)',
+      title: '交易金额(元)',
       align: 'center',
       render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },

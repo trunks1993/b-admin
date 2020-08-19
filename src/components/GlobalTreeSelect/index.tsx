@@ -7,6 +7,7 @@ interface GlobalTreeSelectProps {
   treeData: TreeDataItem2[];
   value: string[];
   onChange?: (value: string[]) => void;
+  placeholder: string;
 }
 
 class GlobalTreeSelect extends React.Component<GlobalTreeSelectProps> {
@@ -16,14 +17,15 @@ class GlobalTreeSelect extends React.Component<GlobalTreeSelectProps> {
   };
 
   render() {
-    const { treeData, value, onChange } = this.props;
+    const { treeData, value, onChange, placeholder } = this.props;
     const tProps = {
       treeData,
       value,
       onChange: this.handleChange,
       treeCheckable: true,
       showCheckedStrategy: SHOW_PARENT,
-      searchPlaceholder: '选择所属品牌',
+      // searchPlaceholder: '选择所属品牌',
+      searchPlaceholder: placeholder,
     };
     return <TreeSelect getPopupContainer={triggerNode => triggerNode.parentNode} {...tProps} />;
   }
