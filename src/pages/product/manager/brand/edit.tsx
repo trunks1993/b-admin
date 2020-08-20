@@ -133,6 +133,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         <CstInput
           label="品牌名"
           name="name"
+          placeholder="请输入品牌名称"
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 8 }}
           rules={[
@@ -214,6 +215,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         <CstTextArea
           labelCol={{ span: 4 }}
           wrapperCol={{ span: 15 }}
+          placeholder="请输入使用须知"
           label="使用须知"
           name="introduction"
           autoSize={{ minRows: 4, maxRows: 5 }}
