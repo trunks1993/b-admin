@@ -212,7 +212,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
         const isSuccess = await handleEdite(value);
         if (isSuccess) {
           // dispatchInit();
-          initList()
+          initList();
           setModalVisible(false);
         }
       } catch (error) {}
@@ -454,6 +454,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
             label="备注"
             placeholder="最多输入50个字"
             autoSize={{ minRows: 3, maxRows: 5 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>

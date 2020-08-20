@@ -242,19 +242,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             wrapperCol={{ span: 15 }}
             getFormValue={(key: string) => form?.getFieldValue(key)}
           />
-          {/* <CstEditor
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 15 }}
-            label="使用须知"
-            name="introduction"
-            data={tinymceData}
-          /> */}
           <CstTextArea
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
             name="introduction"
             autoSize={{ minRows: 4, maxRows: 5 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符'
+              },
+            ]}
           />
         </GlobalCard>
       </MapForm>

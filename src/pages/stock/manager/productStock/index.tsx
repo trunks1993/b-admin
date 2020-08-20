@@ -419,6 +419,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
             label="备注"
             placeholder="最多输入50个字"
             autoSize={{ minRows: 4, maxRows: 6 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>

@@ -85,12 +85,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   const getBrandInfo = async () => {
     const [err, data, msg] = await getInfo(id);
     if (!err) {
-      const { categoryCodes, resume, iconUrl, name } = data;
+      const { categoryCodes, resume, iconUrl, name, introduction } = data;
       form?.setFieldsValue({
         categoryCodes,
         resume,
         iconUrl,
         name,
+        introduction,
       });
     }
   };
@@ -219,6 +220,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
           label="使用须知"
           name="introduction"
           autoSize={{ minRows: 4, maxRows: 5 }}
+          rules={[
+            {
+              max: 50,
+              message: '不能超过50个字符'
+            },
+          ]}
         />
       </MapForm>
       <div className={Styles.btnBlock} />
