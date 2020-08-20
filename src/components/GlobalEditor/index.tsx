@@ -64,7 +64,7 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
   }
 
   return (
-    <ReactQuill theme="snow" className="ql-editor" value={value || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
+    <ReactQuill theme="snow" className="ql-editor" value={sessionStorage.getItem('editor') || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
   );
 };
 
