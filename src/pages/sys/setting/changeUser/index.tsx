@@ -42,11 +42,11 @@ const Comp: React.FC<CompProps> = ({ user }) => {
   const getUser = async () => {
     const [err, data, msg] = await getInfo(user.userId);
     if (!err) {
-      const { remark, headIcon, aliasName, roleName, userName } = data;
+      const { remark, headIcon, realname, roleName, userName } = data;
       form?.setFieldsValue({
         remark,
         headIcon,
-        aliasName,
+        realname,
         roleName,
         userName,
       });
@@ -115,7 +115,7 @@ const resetForm = () => {
           <CstInput
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
-            name="aliasName"
+            name="realname"
             label="姓名"
             placeholder="请输入姓名"
             rules={[
@@ -135,7 +135,7 @@ const resetForm = () => {
             wrapperCol={{ span: 8 }}
             name="userName"
             label="登录账号"
-            disabled
+            disabled={true}
             rules={[
               {
                 required: true,
@@ -147,7 +147,7 @@ const resetForm = () => {
             wrapperCol={{ span: 8 }}
             name="roleName"
             label="所属角色"
-            disabled
+            disabled={true}
             rules={[
               {
                 required: true,
