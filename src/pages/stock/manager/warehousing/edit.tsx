@@ -432,6 +432,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
             autoSize={{ minRows: 4, maxRows: 6 }}
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
         </GlobalCard>
         <GlobalCard title="商品明细" titleStyle={{ marginTop: '10px' }}>

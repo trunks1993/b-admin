@@ -68,17 +68,18 @@ const Comp: React.FC<CompProps> = ({ user }) => {
     });
   };
 
-/**
- * @name: 
- * @param {type} 
- */  
-const resetForm = () => {
-  form?.setFieldsValue({
-    headIcon: '',
-    aliasName: '',
-    remark: '',
-  });
-} 
+  /**
+   * @name:
+   * @param {type}
+   */
+
+  const resetForm = () => {
+    form?.setFieldsValue({
+      headIcon: '',
+      aliasName: '',
+      remark: '',
+    });
+  };
 
   return (
     <div className={Styles.container}>
@@ -161,6 +162,12 @@ const resetForm = () => {
             label="备注"
             placeholder="请输入备注信息"
             autoSize={{ minRows: 4, maxRows: 6 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
 
           <Form.Item wrapperCol={{ offset: 4, span: 8 }}>

@@ -481,6 +481,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 required: true,
                 message: '请填写备注',
               },
+              {
+                max: 50,
+                message: '长度不能超过50个字符',
+              },
             ]}
           />
         </MapForm>
