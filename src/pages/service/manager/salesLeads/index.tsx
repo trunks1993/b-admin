@@ -15,6 +15,7 @@ import { FormComponentProps } from 'antd/es/form';
 import { DEFAULT_PAGE_NUM, DEFAULT_PAGE_SIZE, KEFU_VISIT, SOURCE, WAY_RETURN_ALL, addKEFU_VISIT } from '@/const';
 import GlobalModal from '@/components/GlobalModal';
 import moment from 'moment';
+import { patternPhone } from '@/rules'
 
 import { addReturnVisitRecord, addReturnVisitRecordParamsType, deleteSoldClues, addSoldClues, addSoldCluesParamsType } from '../services/salesLeads';
 import { router } from 'umi';
@@ -462,7 +463,7 @@ const service: React.FC<ServiceProps> = ({ dispatch, list, total, loading, realn
                                 message: '手机号码不能为空',
                             },
                             {
-                                pattern: /^[0-9]*$/,
+                                pattern: patternPhone,
                                 message: '手机格式有误',
                             },
                         ]}
