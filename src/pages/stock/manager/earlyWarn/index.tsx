@@ -41,6 +41,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
     const [butType, setButType] = useState<boolean>(true);
     const [FormCode, setFormCode] = useState<EditeItemType>({});
     const [formCodeList, setFormCodeList] = useState<EditeItemType>({});
+    const [kucunType, setKuncunType] = useState(1);
 
     useEffect(() => {
         /** 页面初始化的时候调用一次getCategoryList 获取商品分组 */
@@ -118,7 +119,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             if (error) return;
             const params = { ...value, goodsCode: code, goodsCodes: selectedRowKeys };
             let [err, data, msg] = '';
-            if (selectedRowKeys instanceof Array && _.isEmpty(code) && !_.isEmpty(selectedRowKeys)) {
+            if (kucunType === 1) {
                 /** 全选 */
                 [err, data, msg] = await setStockLists(params);
             } else {
@@ -246,7 +247,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
             align: 'center',
             render: record => (
                 <>
-                    <Button type="link" onClick={() => { editList(record) }}>
+                    <Button type="link" onClick={() => { setKuncunType(2); editList(record) }}>
                         编辑
                 </Button>
                     {
@@ -411,7 +412,7 @@ const earlyWarn: React.FC<WarnProps> = ({ dispatch, list, total, loading }) => {
                             >
                                 当页全选
                             </Checkbox>
-                            <Button type='link' disabled={selectedRowKeys.length <= 0} className={Styles.batchSet} onClick={() => { setModalVisible(true) }}>
+                            <Button type='link' disabled={selectedRowKeys.length <= 0} className={Styles.batchSet} onClick={() => { setKuncunType(1); setModalVisible(true) }}>
                                 批量设置
                             </Button>
                         </span>
