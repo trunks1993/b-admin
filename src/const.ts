@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-08-06 17:09:39
+ * @LastEditTime: 2020-08-20 10:27:39
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -199,6 +199,7 @@ export const BIZ_TYPE_2 = 2; // 提现
 export const BIZ_TYPE_3 = 3; // 采购
 export const BIZ_TYPE_4 = 4; // 加款
 export const BIZ_TYPE_5 = 5; // 减款
+export const BIZ_TYPE_6 = 6; // 退款
 
 export const BizTypes = {
   [BIZ_TYPE_1]: '充值',
@@ -206,6 +207,7 @@ export const BizTypes = {
   [BIZ_TYPE_3]: '采购',
   [BIZ_TYPE_4]: '加款',
   [BIZ_TYPE_5]: '减款',
+  [BIZ_TYPE_6]: '退款',
 };
 
 // 库存
