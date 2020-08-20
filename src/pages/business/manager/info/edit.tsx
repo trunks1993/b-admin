@@ -551,7 +551,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, user, id }) => {
             rules={[
               {
                 max: 50,
-                message: '长度不能超过300个字符',
+                message: '长度不能超过50个字符',
               },
             ]}
           />
