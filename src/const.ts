@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-08-20 10:27:39
+ * @LastEditTime: 2020-08-20 14:37:10
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -300,10 +300,12 @@ export const addKEFU_VISIT = {
 // 线索来源
 export const PRIMARY_SOURCE_1 = 'PC端官网';
 export const PRIMARY_SOURCE_2 = '公众号';
+export const PRIMARY_SOURCE_3 = '移动端官网';
 
 export const SOURCE = {
   [PRIMARY_SOURCE_1]: [PRIMARY_SOURCE_1],
   [PRIMARY_SOURCE_2]: [PRIMARY_SOURCE_2],
+  [PRIMARY_SOURCE_3]: [PRIMARY_SOURCE_3],
 };
 
 /** 回访方式 */
