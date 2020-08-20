@@ -420,7 +420,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
                 message: '采购日期不能为空',
               },
             ]}
-            defaultValue={moment()}
+            defaultValue={moment().format('YYYY-MM-DD HH:mm:ss')}
             showTime={true}
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
