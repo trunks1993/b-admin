@@ -34,6 +34,7 @@ import {
 } from '@/const';
 import GlobalModal from '@/components/GlobalModal';
 import moment from 'moment';
+import { patternPhone } from '@/rules';
 
 import {
   addReturnVisitRecord,
@@ -460,10 +461,6 @@ const service: React.FC<ServiceProps> = ({ dispatch, list, total, loading, realn
                 required: true,
                 message: '回访内容不能为空',
               },
-              {
-                max: 50,
-                message: '不能超过50个字符',
-              },
             ]}
           />
         </MapForm>
@@ -515,7 +512,7 @@ const service: React.FC<ServiceProps> = ({ dispatch, list, total, loading, realn
                 message: '手机号码不能为空',
               },
               {
-                pattern: /^[0-9]*$/,
+                pattern: patternPhone,
                 message: '手机格式有误',
               },
             ]}
