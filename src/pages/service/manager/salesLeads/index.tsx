@@ -555,7 +555,7 @@ const service: React.FC<ServiceProps> = ({ dispatch, list, total, loading, realn
           </CstSelect>
         </MapForm>
       </GlobalModal>
-    </div >
+    </div>
   );
 };
 
