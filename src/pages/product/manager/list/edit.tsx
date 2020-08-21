@@ -83,6 +83,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
 
   useEffect(() => {
     handleSearch('');
+    if (_.isEmpty(id)) sessionStorage.setItem('editor', '')
   }, []);
 
   const getGoodsInfo = async () => {
