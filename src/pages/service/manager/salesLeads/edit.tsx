@@ -25,7 +25,7 @@ interface ServiceProps extends TableListData<ListItemType> {
   realname: string;
 }
 
-const Comp: React.FC<ServiceProps> = ({dispatch, detaillist, id, realname}) => {
+const Comp: React.FC<ServiceProps> = ({ dispatch, detaillist, id, realname }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [addFormList, setAddFormList] = React.useState<FormComponentProps['form'] | null>(null);
   useEffect(() => {
@@ -36,7 +36,7 @@ const Comp: React.FC<ServiceProps> = ({dispatch, detaillist, id, realname}) => {
    * @name: 列表加载
    */
   const initList = () => {
-    const params = {cluesCode: id };
+    const params = { cluesCode: id };
     dispatch({
       type: 'serviceInfo/fetchListDetail',
       queryParams: {
@@ -233,7 +233,7 @@ const Comp: React.FC<ServiceProps> = ({dispatch, detaillist, id, realname}) => {
     </div>
   );
 };
-export default connect(({serviceInfo, user, routing}: ConnectState) => ({
+export default connect(({ serviceInfo, user, routing }: ConnectState) => ({
   detaillist: serviceInfo.detaillist,
   id: routing.location.query.id,
   realname: user.user.realname,
