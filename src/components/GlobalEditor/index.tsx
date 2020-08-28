@@ -22,7 +22,7 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
         { list: "ordered" },
         { list: "bullet" },
       ],
-      ['bold', 'italic', 'underline'], // toggled buttons
+      ['bold'], // toggled buttons
       ['link', 'image'],
 
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
