@@ -49,7 +49,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const [err, data, msg] = await queryMerchantList({});
       if (!err) setMerchantList(data.list);
       else message.error(msg);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   /**
@@ -92,7 +92,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const handleInputChange = (value: number, key: string, code: number) => {
     const { facePrice } = goodsForm.find(item => item.goodsCode === code);
     if (key === 'rebate') {
-      const price = (value * TRANSTEMP * facePrice) / TRANSTEMP / 10;
+      const price = (value * 1000) * facePrice / 1000 / 10;
+      console.log(value, facePrice)
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
         ['decMoney-' + code]: (facePrice - price) / TRANSTEMP,
@@ -109,7 +110,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       const price = facePrice - value * TRANSTEMP;
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
-        ['rebate-' + code]: (price / facePrice) * 10,
+        ['rebate-' + code]: price * 10 / facePrice,
       });
     }
   };
@@ -129,7 +130,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         const newGoodsForm = _.filter(goodsForm, item => item.goodsCode !== goodsCode);
         setGoodsForm(newGoodsForm);
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
