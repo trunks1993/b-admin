@@ -211,7 +211,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
       try {
         const isSuccess = await handleEdite(value);
         if (isSuccess) {
-          dispatchInit();
+          // dispatchInit();
+          initList();
           setModalVisible(false);
         }
       } catch (error) {}
@@ -378,7 +379,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
@@ -453,6 +454,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading, roles }) =>
             label="备注"
             placeholder="最多输入50个字"
             autoSize={{ minRows: 3, maxRows: 5 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>

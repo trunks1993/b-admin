@@ -21,18 +21,11 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
       [
         { list: "ordered" },
         { list: "bullet" },
-        { indent: "-1" },
-        { indent: "+1" },
       ],
-      ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-      ['blockquote', 'code-block'],
+      ['bold'], // toggled buttons
       ['link', 'image'],
 
-      [{ direction: 'rtl' }], // text direction
-
-
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-      [{ font: [] }],
       [{ align: [] }],
 
       ['clean'], // remove formatting button
@@ -64,7 +57,7 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
   }
 
   return (
-    <ReactQuill theme="snow" className="ql-editor" value={value || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
+    <ReactQuill theme="snow" placeholder="请输入使用须知" className="ql-editor" value={sessionStorage.getItem('editor') || ''} modules={modules} style={{ lineHeight: 0 }} onChange={(e) => { handleChange(e) }} />
   );
 };
 

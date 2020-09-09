@@ -4,17 +4,19 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/transaction';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
+import { Table, Button, Pagination, message, Checkbox, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import GlobalModal from '@/components/GlobalModal';
-import { setToSuccess, setToFailed, reroute } from '../services/transaction';
+import { setToSuccess, setToFailed, reroute, getOuterWorkerList } from '../services/transaction';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
-  TransactionAbnormal,
+  OrderTypes,
   TransactionStatus,
   TRANSTEMP,
   TransactionTypes,
+  WarehousingStatus,
+  WarehousingTypes,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
@@ -53,6 +55,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [selectedRow, setSelectedRow] = useState<ListItemType[]>([]);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const [visible, setVisible] = useState<any>(false);
+  const [lists, setLists] = useState<any>([]);
 
   useEffect(() => {
     setSelectedRowKeys([]);
@@ -125,7 +130,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       }
     },
     {
-      title: '充值金额(元)',
+      title: '交易金额(元)',
       align: 'center',
       render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },
@@ -160,6 +165,31 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       dataIndex: 'supplierCode',
     },
+    {
+      title: '路由详情',
+      align: 'center',
+      fixed: 'right',
+      width: 100,
+      render: record => (
+        <Button type="link" onClick={() => checkOrder(record.orderId, record.createTime)}>路由详情</Button>
+      )
+    }
+  ];
+
+  /** 
+   * @name: 列表详情
+   */
+  const listColumns: any = [
+    { title: '供应商名称', align: 'center', dataIndex: 'supplier.name' },
+    { title: '供应商编号', align: 'center', dataIndex: 'supplierCode' },
+    { title: '工单号', align: 'center', dataIndex: 'code' },
+    { title: '外部订单号', align: 'center', dataIndex: 'orderId' },
+    { title: '状态', align: 'center', dataIndex: 'status', render: record => WarehousingStatus[record] },
+    { title: '创建时间', align: 'center', dataIndex: 'processStartTime', render: record => record && moment(record).format('YYYY-MM-DD HH:mm:ss') },
+    { title: '完成时间', align: 'center', dataIndex: 'completeTime', render: record => record && moment(record).format('YYYY-MM-DD HH:mm:ss') },
+    { title: '返回码 ', align: 'center', dataIndex: 'outerReturnCode' },
+    { title: '返回消息 ', align: 'center', dataIndex: 'outerReturnMessage' },
+    { title: '处理方式 ', align: 'center', dataIndex: 'processType', render: record => WarehousingTypes[record] },
   ];
 
   /**
@@ -173,6 +203,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       (selectedRowKeys.length > 0 || checked) && selectedRowKeys.length !== keys.length ? keys : [];
     setSelectedRowKeys(selections);
   };
+
+  const checkOrder = async (orderId: number, createTime: string) => {
+    try {
+      const [err, data, msg] = await getOuterWorkerList({ orderId, createTime: moment(createTime).format('YYYY-MM-DD HH:mm:ss') })
+      if (!err) { setLists(data); setVisible(true) }
+      else message.error(msg)
+    } catch (error) {
+
+    }
+  }
 
   const rowSelection = {
     selectedRowKeys,
@@ -298,17 +338,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               </Col>
             </Row>
 
-            {/* <Row>
-              <Col span={7}>
-                <CstInput
-                  labelCol={{ span: 8 }}
-                  wrapperCol={{ span: 16 }}
-                  name="telephone"
-                  label="交易时间"
-                  placeholder="请输入订单号"
-                />
-              </Col>
-            </Row> */}
             <Row>
               <Col span={7}>
                 <CstInput
@@ -328,7 +357,24 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入充值账号"
                 />
               </Col>
-              <Col span={4}>
+              <Col span={7} >
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="status"
+                  label="订单状态"
+                  placeholder="全部"
+                >
+                  {_.map(OrderTypes, (item, key) => (
+                    <Select.Option key={key} value={key}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={4} offset={2}>
                 <CstCheckbox
                   labelCol={{ span: 14 }}
                   wrapperCol={{ span: 10 }}
@@ -336,7 +382,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   label="异常订单"
                 />
               </Col>
-              <Col span={5} >
+              <Col span={7} >
                 <Form.Item>
                   <Button
                     type="primary"
@@ -413,6 +459,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       />
       <div className="global-pagination">
         <Pagination
+          className="components-table-demo-nested"
           current={currPage}
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
@@ -481,9 +528,23 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 required: true,
                 message: '请填写备注',
               },
+              {
+                max: 50,
+                message: '长度不能超过50个字符',
+              },
             ]}
           />
         </MapForm>
+      </GlobalModal>
+      <GlobalModal
+        modalVisible={visible}
+        title={<div style={{ textAlign: 'center', fontWeight: 'bold' }}>路由详情</div>}
+        confirmLoading={confirmLoading}
+        onOk={() => setVisible(false)}
+        onCancel={() => setVisible(false)}
+        width={1000}
+      >
+        <Table columns={listColumns} dataSource={lists} pagination={false} scroll={{ x: 1800 }} />
       </GlobalModal>
     </div>
   );

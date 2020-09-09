@@ -31,8 +31,7 @@ interface ErrMsgType {
 }
 
 const HELP_MSG_RESUME = '在商品详情页标题下面展示卖点信息，建议60字以内';
-const HELP_MSG_ICONURL =
-  '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片';
+const HELP_MSG_ICONURL = '建议尺寸：800*800像素，大小不超过1M的JPEG、PNG图片';
 const HELP_MSG_STOCK =
   '库存为 0 时，会放到『已售罄』的商品列表里，保存后买家看到的商品可售库存同步更新';
 
@@ -72,7 +71,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
 
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(id);
-    if (!err && data) {
+    if (!err) {
+      if (!data) return;
       const { brandCode, iconUrl, introduction, name, resume, productSubList } = data;
       form?.setFieldsValue({
         iconUrl,
@@ -136,11 +136,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
   return (
     <div style={{ background: '#f1f2f7', height: '100%', position: 'relative' }}>
       <MapForm className="global-form global-edit-form" onCreate={setForm}>
-        <CstInput
-          name="productId"
-          defaultValue={id}
-          style={{ display: 'none' }}
-        />
+        <CstInput name="productId" defaultValue={id} style={{ display: 'none' }} />
         <GlobalCard title="基本信息" bodyStyle={{ padding: '20px 0' }}>
           <CstInput
             label="产品名称"
@@ -161,7 +157,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
           />
           <CstTextArea
             label="描述"
-            placeholder="请输入商品描述"
+            placeholder="请输入产品描述"
             name="resume"
             autoSize={{ minRows: 4, maxRows: 5 }}
             labelCol={{ span: 4 }}
@@ -223,7 +219,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
                 message: '所属品牌不能为空',
               },
             ]}
-            showSearch
+            showSearch={true}
             showArrow={false}
             filterOption={false}
             onSearch={handleSearch}
@@ -247,23 +243,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             wrapperCol={{ span: 15 }}
             getFormValue={(key: string) => form?.getFieldValue(key)}
           />
-          {/* <CstEditor
-            labelCol={{ span: 4 }}
-            wrapperCol={{ span: 15 }}
-            label="使用须知"
-            name="introduction"
-            data={tinymceData}
-          /> */}
           <CstTextArea
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
             label="使用须知"
             name="introduction"
             autoSize={{ minRows: 4, maxRows: 5 }}
-          ></CstTextArea>
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符'
+              },
+            ]}
+          />
         </GlobalCard>
       </MapForm>
-      <div className={Styles.btnBlock}></div>
+      <div className={Styles.btnBlock} />
       <div className={Styles.btn}>
         <Button loading={confirmLoading} type="primary" onClick={handleSubmit}>
           保存

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import Styles from './index.css';
-import { Checkbox, Button, Upload, Icon, Row, Col, Modal } from 'antd';
+import { Checkbox, Button, Upload, Icon, Row, Col, Modal, message } from 'antd';
 import _ from 'lodash';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { removeSub } from '@/pages/product/manager/services/management';
 import { guid } from '@/utils';
 const { confirm } = Modal;
 
@@ -88,8 +89,8 @@ const InputItem = props => {
               style={{ width: '100%' }}
             />
           ) : (
-            uploadButton
-          )}
+              uploadButton
+            )}
         </Upload>
       ) : null}
     </span>
@@ -100,18 +101,20 @@ const RowItem = props => {
   const { item, onChange, value, onInputChange } = props;
   /**
    * @name: 删除
-   * @param {number} uuid
+   * @param {any} item
    */
-  const handleRemove = (uuid: string) => {
+  const handleRemove = (item: any) => {
     confirm({
       title: '提示',
       content: '是否删除',
       okText: '确定',
       cancelText: '取消',
-      onOk: () => {
-        onChange(value.filter(v => v.uuid !== item.uuid));
+      onOk: async () => {
+        const [err, data, msg] = await removeSub(item.id);
+        if (!err) onChange(value.filter(v => v.uuid !== item.uuid));
+        else message.error(msg);
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -137,7 +140,7 @@ const RowItem = props => {
         />
       </Col>
       <Col className={Styles.td} span={4}>
-        <Button type="link" onClick={() => handleRemove(item.uuid)}>
+        <Button type="link" onClick={() => handleRemove(item)}>
           删除
         </Button>
       </Col>
@@ -154,7 +157,7 @@ const ProductSubPanel = React.forwardRef<HTMLInputElement, ProductSubPanelProps>
     onChange(value ? [...value, newData] : [newData]);
   };
 
-  useEffect(() => {}, [value]);
+  useEffect(() => { }, [value]);
 
   /**
    * @name:

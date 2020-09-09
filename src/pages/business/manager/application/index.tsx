@@ -16,7 +16,6 @@ import { FILE_ERROR_TYPE, FILE_ERROR_SIZE } from '@/components/GlobalUpload';
 import { router } from 'umi';
 import { queryList as queryMerchantList } from '@/pages/business/manager/services/info';
 import { ListItemType as MerchantItemType } from '@/pages/business/manager/models/info';
-import LazyLoad from 'react-lazyload';
 
 const { confirm } = Modal;
 const { CstInput, CstTextArea, CstUpload, CstSelect } = MapForm;
@@ -246,7 +245,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
@@ -256,7 +255,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       <GlobalModal
         modalVisible={modalVisible}
         title={formData.id ? '编辑应用' : '新增应用'}
-        onCancel={() => setModalVisible(false)}
+        onCancel={() => {
+          setModalVisible(false);
+          setHelpMsg({ ...helpMsg, iconUrl: HELP_MSG_ICONURL });
+        }}
         onOk={handleSubmit}
         confirmLoading={confirmLoading}
       >
@@ -328,6 +330,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             label="一句话介绍"
             placeholder="最多输入50个字"
             autoSize={{ minRows: 4, maxRows: 6 }}
+            rules={[
+              {
+                max: 50,
+                message: '最多输入50个字',
+              },
+            ]}
           />
         </MapForm>
       </GlobalModal>
