@@ -35,6 +35,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const [goodsForm, setGoodsForm] = useState<PriceItemType[]>([]);
   const [merchantList, setMerchantList] = useState<MerchantItemType[]>([]);
 
+  const [btnLoading, setbtnLoading] = useState(false);
+
   useEffect(() => {
     getMerchantList();
   }, []);
@@ -59,8 +61,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
   const handleSubmit = () => {
     form?.validateFields(async (error, value: EditeItemType) => {
       if (!error) {
+        setbtnLoading(true);
         const paramObj = {};
         const codeMap = {};
+
         _.map(value, (item, key) => {
           if (!key.includes('-')) paramObj[key] = item;
           else {
@@ -81,6 +85,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
         } else {
           message.error(msg);
         }
+        setbtnLoading(false);
       }
     });
   };
@@ -309,7 +314,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             </span>
           </div> */}
           <div className={Styles.btn}>
-            <Button type="primary" onClick={handleSubmit}>
+            <Button type="primary" loading={btnLoading} onClick={handleSubmit}>
               确认
             </Button>
             <Button style={{ marginLeft: '20px' }} onClick={() => router.goBack()}>
