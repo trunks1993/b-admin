@@ -25,10 +25,12 @@ import { ListItemType as SuppliersItemType } from '../models/suppliers';
 
 import GlobalModal from '@/components/GlobalModal';
 import { EditeItemType, batchBuyGoods } from '../services/productStock';
+import { getAjax } from '@/utils/index';
+
 import moment from 'moment';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstSelect, CstCheckbox } = MapForm;
+const { CstInput, CstTextArea, CstSelect, CstRangePicker } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -143,6 +145,20 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   };
 
   /**
+   * 
+   * @name: 下载报表
+   */
+  const download = () => {
+    const data = filterForm?.getFieldsValue();
+    if (!data?.time) return message.error('请选择下载的时间段!')
+    getAjax({
+      ...data,
+      beginCreateTime: moment(data?.time[0]).format('YYYY-MM-DD 00:00:00'),
+      endCreateTime: moment(data?.time[1]).format('YYYY-MM-DD 23:59:59')
+    }, '/report/downloadPurchaseGoods')
+  }
+
+  /**
    * @name: 触发列表加载effect
    * @param {type}
    */
@@ -167,7 +183,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         else message.error('删除失败，请重试');
         dispatchInit();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -292,6 +308,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                 placeholder="请输入"
               />
             </Col>
+            <Col span={10}>
+              <CstRangePicker
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                name="time"
+                label="订单时间"
+                placeholder="请输入订单时间"
+              />
+            </Col>
             <Col span={8} push={1}>
               <Form.Item>
                 <Button type="primary" icon="search" onClick={() => dispatchInit()}>
@@ -303,6 +328,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                   style={{ marginLeft: '10px' }}
                 >
                   重置
+                </Button>
+                <Button
+                  icon="download"
+                  onClick={() => download()}
+                  style={{ marginLeft: '10px' }}
+                >
+                  下载
                 </Button>
               </Form.Item>
             </Col>
@@ -324,7 +356,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条

@@ -1,9 +1,10 @@
 /*
  * @Date: 2020-05-05 15:29:43
- * @LastEditTime: 2020-06-04 19:53:27
+ * @LastEditTime: 2020-09-26 14:59:50
  */
 import { parse } from 'querystring';
 import _ from 'lodash';
+import { getToken } from './cookie';
 
 export const getPageQuery = () => parse(window.location.href.split('?')[1]);
 
@@ -109,4 +110,13 @@ export const getFloat = (number: string | number, n?: number) => {
   num = Math.round(num * Math.pow(10, n)) / Math.pow(10, n); //四舍五入
   num = parseFloat(num).toFixed(n); //补足位数
   return num;
+};
+
+export const getAjax = function(params: any, url: string) {
+  var _str = `token=${getToken()}&`;
+  for (var o in params) {
+    if (params[o]) _str += o + '=' + params[o] + '&';
+  }
+  var _str = _str.substring(0, _str.length - 1);
+  window.open(`${process.env.BASE_API}${url}?${_str}`);
 };

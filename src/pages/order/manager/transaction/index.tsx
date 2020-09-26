@@ -27,7 +27,9 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
 
-const { CstInput, CstSelect, CstTextArea, CstCheckbox } = MapForm;
+import { getAjax } from '@/utils/index';
+
+const { CstInput, CstSelect, CstTextArea, CstCheckbox, CstRangePicker } = MapForm;
 const transaction_set_all = {
   1: '置成功',
   2: '置失败',
@@ -74,6 +76,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
+    const beginCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[0]).format('YYYY-MM-DD 00:00:00') : undefined
+    const endCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[1]).format('YYYY-MM-DD 23:59:59') : undefined
     const isAbnormal = data?.isAbnormals ? 'Y' : undefined
     dispatch({
       type: 'orderManagerTransaction/fetchList',
@@ -82,21 +86,37 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         pageSize,
         ...data,
         isAbnormal,
+        beginCreateTime,
+        endCreateTime,
       },
     });
   };
 
+  /**
+   * 
+   * @name: 下载报表
+   */
+  const download = async () => {
+    const data = filterForm?.getFieldsValue();
+    if (!data?.time) return message.error('请选择下载的时间段!')
+    getAjax({
+      ...data,
+      beginCreateTime: moment(data?.time[0]).format('YYYY-MM-DD 00:00:00'),
+      endCreateTime: moment(data?.time[1]).format('YYYY-MM-DD 23:59:59')
+    }, '/report/downloadTradeOrder')
+  }
 
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '商户信息',
       align: 'center',
+      width: 80,
       dataIndex: 'merchantId',
     },
     {
       title: '订单号/外部订单号',
       align: 'center',
-      width: 200,
+      width: 120,
       render: record => (
         <span>
           <div style={{ whiteSpace: 'nowrap' }}>{record.orderId}/</div>
@@ -107,23 +127,25 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易类型',
       align: 'center',
-      width: 100,
+      width: 50,
       render: record => TransactionTypes[record.bizType],
     },
     {
       title: '状态',
       align: 'center',
-      width: 100,
+      width: 70,
       render: record => TransactionStatus[record.status],
     },
     {
       title: '充值账号',
       align: 'center',
+      width: 100,
       dataIndex: 'rechargeAccount',
     },
     {
       title: '异常订单',
       align: 'center',
+      width: 50,
       render: (record) => {
         if (record.isAbnormal === 'Y') return <div>是</div>
         else return <div>否</div>
@@ -132,29 +154,33 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易金额(元)',
       align: 'center',
+      width: 80,
       render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },
     {
       title: '商品',
       align: 'center',
+      width: 100,
       // dataIndex: 'goodsName',
       render: record => `${record.goodsName}(${record.goodsCode})`
     },
     {
       title: '请求时间',
       align: 'center',
+      width: 100,
       render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '完成时间',
       align: 'center',
+      width: 100,
       render: record =>
         record.completeTime && moment(record.completeTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '耗时',
       align: 'center',
-      width: 100,
+      width: 50,
       render: record => {
         const time = moment(record.completeTime).valueOf() - moment(record.createTime).valueOf();
         return record.completeTime ? time / 1000 + 's' : '';
@@ -163,6 +189,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '供应商通道',
       align: 'center',
+      width: 80,
       dataIndex: 'supplierCode',
     },
     {
@@ -374,7 +401,25 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               </Col>
             </Row>
             <Row>
-              <Col span={4} offset={2}>
+              <Col span={7}>
+                <CstInput
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="goodsCode"
+                  label="商品编号"
+                  placeholder="请输入商品编号"
+                />
+              </Col>
+              <Col span={9}>
+                <CstRangePicker
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="time"
+                  label="订单时间"
+                  placeholder="请输入订单时间"
+                />
+              </Col>
+              <Col span={4} >
                 <CstCheckbox
                   labelCol={{ span: 14 }}
                   wrapperCol={{ span: 10 }}
@@ -382,7 +427,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   label="异常订单"
                 />
               </Col>
-              <Col span={7} >
+            </Row>
+            <Row>
+              <Col span={8} >
                 <Form.Item>
                   <Button
                     type="primary"
@@ -397,6 +444,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     onClick={() => filterForm?.resetFields()}
                   >
                     重置
+                  </Button>
+                  <Button
+                    icon="download"
+                    onClick={() => download()}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    下载
                   </Button>
                 </Form.Item>
               </Col>
@@ -455,7 +509,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         pagination={false}
         dataSource={list}
         rowKey={record => record.orderId.toString()}
-        scroll={{ x: 1800 }}
+        scroll={{ x: 1400 }}
       />
       <div className="global-pagination">
         <Pagination
