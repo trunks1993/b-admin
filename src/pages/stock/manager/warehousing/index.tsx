@@ -133,6 +133,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
+    const beginCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[0]).format('YYYY-MM-DD 00:00:00') : undefined
+    const endCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[1]).format('YYYY-MM-DD 23:59:59') : undefined
     dispatch({
       type: 'stockManagerWarehousing/fetchList',
       queryParams: {
@@ -140,6 +142,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         pageSize,
         ...data,
         status: 8,
+        beginCreateTime,
+        endCreateTime,
       },
     });
   };
