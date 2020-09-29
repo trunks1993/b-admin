@@ -30,8 +30,9 @@ import router from 'umi/router';
 import { deliver, cancel, queryListTrace } from '../services/purchase';
 import { getFloat } from '@/utils';
 import GlobalModal from '@/components/GlobalModal';
+import { getAjax } from '@/utils/index';
 
-const { CstInput, CstSelect } = MapForm;
+const { CstInput, CstSelect, CstRangePicker } = MapForm;
 const { confirm } = Modal;
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -75,15 +76,35 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
+    const beginCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[0]).format('YYYY-MM-DD 00:00:00') : undefined
+    const endCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[1]).format('YYYY-MM-DD 23:59:59') : undefined
     dispatch({
       type: 'orderManagerPurchase/fetchList',
       queryParams: {
         currPage,
         pageSize,
+        beginCreateTime,
+        endCreateTime,
         ...data,
       },
     });
   };
+
+  /**
+   * 
+   * @name: 下载报表
+   */
+  const download = () => {
+    try {
+      const data = filterForm?.getFieldsValue();
+      if (!data?.time) return message.error('请选择下载的时间段!')
+      getAjax({
+        ...data,
+        beginCreateTime: moment(data?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(data?.time[1]).format('YYYY-MM-DD 23:59:59')
+      }, '/report/downloadPurchaseOrder')
+    } catch (error) { }
+  }
 
   /**
    * @name: 列表加载
@@ -96,7 +117,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         itemCode: modalVisible,
       });
       if (!err) setTraceList(data.list);
-    } catch (error) {}
+    } catch (error) { }
   };
 
   /**
@@ -128,7 +149,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           dispatchInit();
         } else message.error(msg);
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -183,9 +204,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   <CstInput
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    name="rechargeAccount"
-                    label="充值账号"
-                    placeholder="请输入充值账号"
+                    name="merchantId"
+                    label="商户号"
+                    placeholder="请输入商户号"
                   />
                 </Col>
                 <Col span={7}>
@@ -217,7 +238,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               </Col>
             </Row> */}
               <Row>
-                <Col span={7}>
+                {/* <Col span={7}>
                   <CstInput
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
@@ -225,17 +246,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     label="商户号"
                     placeholder="请输入商户号"
                   />
-                </Col>
-                <Col span={7}>
-                  <CstInput
+                </Col>*/}
+                <Col span={10}>
+                  <CstRangePicker
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    name="customerOrderNo"
-                    label="外部订单号"
-                    placeholder="请输入外部订单号"
+                    name="time"
+                    label="订单时间"
+                    placeholder="请输入订单时间"
                   />
                 </Col>
-                <Col span={7} push={2}>
+                <Col span={8} push={2}>
                   <Form.Item>
                     <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                       筛选
@@ -246,6 +267,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                       onClick={() => filterForm?.resetFields()}
                     >
                       重置
+                    </Button>
+                    <Button
+                      icon="download"
+                      onClick={() => download()}
+                      style={{ marginLeft: '10px' }}
+                    >
+                      下载
                     </Button>
                   </Form.Item>
                 </Col>
@@ -288,8 +316,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                         {v.detailCount}
                       </Button>
                     ) : (
-                      v.detailCount
-                    )}
+                        v.detailCount
+                      )}
                   </Col>
                   {index === 0 ? (
                     <>
@@ -310,21 +338,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                             item.orderItemList.some(
                               item => item.productTypeCode !== PRODUCT_TYPE_4,
                             ))) && (
-                          <Button
-                            size="small"
-                            type="primary"
-                            onClick={() => showConfirm(item.status, item.orderId)}
-                          >
-                            {item.status === ORDER_STATUS_2 ? '立即发货' : '取消订单'}
-                          </Button>
-                        )}
+                            <Button
+                              size="small"
+                              type="primary"
+                              onClick={() => showConfirm(item.status, item.orderId)}
+                            >
+                              {item.status === ORDER_STATUS_2 ? '立即发货' : '取消订单'}
+                            </Button>
+                          )}
                       </Col>
                     </>
                   ) : (
-                    <>
-                      <Col span={15} />
-                    </>
-                  )}
+                      <>
+                        <Col span={15} />
+                      </>
+                    )}
                 </span>
               ))}
             </Row>

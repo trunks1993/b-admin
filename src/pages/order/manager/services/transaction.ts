@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-08-05 10:29:38
+ * @LastEditTime: 2020-09-03 09:59:27
  */
 
 import request from '@/utils/request';
@@ -13,6 +13,7 @@ export interface QueryParamsType extends BaseQueryType {
   status?: number;
   beginCreateTime?: string;
   endCreateTime?: string;
+  createTime?: string;
   merchantId?: number;
   customerOrderNo?: number;
 }
@@ -56,6 +57,17 @@ export async function setToFailed(data: QueryParamsType): Promise<any> {
  */
 export async function reroute(data: QueryParamsType): Promise<any> {
   return request('/merchant/order/reroute', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 查询工单
+ * @param {QueryParamsType} data
+ */
+export async function getOuterWorkerList(data: QueryParamsType): Promise<any> {
+  return request('/workorder/getOuterWorkerList', {
     method: 'POST',
     data,
   });

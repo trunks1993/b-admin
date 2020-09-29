@@ -278,6 +278,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
             autoSize={{ minRows: 4, maxRows: 5 }}
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 8 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符'
+              },
+            ]}
           />
         </GlobalCard>
       </MapForm>
@@ -313,6 +319,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
               {
                 required: true,
                 message: '请填写否决原因',
+              },
+              {
+                max: 50,
+                message: '不能超过50个字符'
               },
             ]}
             autoSize={{ minRows: 4, maxRows: 6 }}

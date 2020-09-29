@@ -333,7 +333,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
@@ -349,9 +349,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       >
         <MapForm className="global-form" layColWrapper={formItemLayout} onCreate={setForm}>
           <CstInput name="merchantId" style={{ display: 'none' }} />
-          <CstInput disabled name="merchantName" label="商户名称" />
-          <CstInput disabled name="accountNo" label="账户编号" />
-          <CstInput disabled name="amount_copy" label="账户余额(元)" />
+          <CstInput disabled={true} name="merchantName" label="商户名称" />
+          <CstInput disabled={true} name="accountNo" label="账户编号" />
+          <CstInput disabled={true} name="amount_copy" label="账户余额(元)" />
           <CstRadio
             label="调账类型"
             name="bizType"
@@ -400,6 +400,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               {
                 required: true,
                 message: '请输入备注信息',
+              },
+              {
+                max: 50,
+                message: '长度不能超过50个字符',
               },
             ]}
           />

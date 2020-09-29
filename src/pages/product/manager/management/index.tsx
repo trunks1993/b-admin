@@ -4,11 +4,13 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/group';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Icon } from 'antd';
+import { Table, Button, Pagination, Modal, message, Icon, Row, Col, Form } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM } from '@/const';
 import { remove } from '../services/management';
 import Styles from './index.css';
+import MapForm from '@/components/MapFormComponent';
+import { FormComponentProps } from 'antd/es/form';
 
 import { queryListSub, EditeItemSubType } from '../services/management';
 import ExpandForm from './components/ExpandForm';
@@ -18,6 +20,7 @@ import router from 'umi/router';
 import moment from 'moment';
 
 const { confirm } = Modal;
+const { CstInput } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -43,6 +46,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   // 表格展开
   const [expandedRows, setExpandedRows] = useState<ExpandedRowType[]>([]);
 
+  const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
+
   useEffect(() => {
     initList();
   }, [currPage]);
@@ -51,11 +56,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    * @name: 列表加载
    */
   const initList = () => {
+    const data = filterForm?.getFieldsValue();
     dispatch({
       type: 'productManagement/fetchList',
       queryParams: {
         currPage,
         pageSize,
+        ...data,
       },
     });
   };
@@ -85,7 +92,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         else message.error(msg);
         dispatchInit();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -164,18 +171,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
             {!hasLoaded && hasKey ? (
               <Icon type="loading" />
             ) : (
-              <Icon
-                style={{ transform: 'scale(0.8)' }}
-                type={hasKey ? 'up' : 'down'}
-                onClick={() => {
-                  if (!hasKey) {
-                    loadSubList(record.code);
-                  } else {
-                    setExpandedRows(expandedRows.filter(item => item.code !== code));
-                  }
-                }}
-              />
-            )}
+                <Icon
+                  style={{ transform: 'scale(0.8)' }}
+                  type={hasKey ? 'up' : 'down'}
+                  onClick={() => {
+                    if (!hasKey) {
+                      loadSubList(record.code);
+                    } else {
+                      setExpandedRows(expandedRows.filter(item => item.code !== code));
+                    }
+                  }}
+                />
+              )}
           </span>
         );
       },
@@ -232,6 +239,41 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           新增产品
         </Button>
       </div>
+      <div className={Styles.filter}>
+        <div className={Styles.filterBox}>
+          <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
+            <Row>
+              <Col span={7}>
+                <CstInput
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="name"
+                  label="产品名称"
+                  placeholder="请输入产品名称"
+                />
+              </Col>
+              <Col span={5} offset={2} >
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    icon="search"
+                    onClick={() => (currPage === 1 ? initList() : setCurrPage(1))}
+                  >
+                    筛选
+                  </Button>
+                  <Button
+                    icon="undo"
+                    style={{ marginLeft: '10px' }}
+                    onClick={() => filterForm?.resetFields()}
+                  >
+                    重置
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </MapForm>
+        </div>
+      </div>
       <Table
         className="global-table"
         loading={loading}
@@ -241,7 +283,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         rowKey={record => record.code.toString()}
         expandedRowRender={record => {
           const { list, addFormList } =
-          expandedRows.find(item => item.code === record.code.toString()) || {};
+            expandedRows.find(item => item.code === record.code.toString()) || {};
           return (
             <ExpandForm
               reload={loadSubList.bind(null, record.code)}
@@ -278,7 +320,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条

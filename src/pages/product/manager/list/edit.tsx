@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 
-import { Button, message, Select, Radio } from 'antd';
+import { Button, message, Select, Radio, Form } from 'antd';
 import { add, modify, EditeItemType, getInfo } from '../services/list';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
@@ -23,6 +23,7 @@ import {
 import { getFloat } from '@/utils';
 import GlobalCard from '@/components/GlobalCard';
 import { ConnectState } from '@/models/connect';
+import GlobalEditor from '@/components/GlobalEditor';
 
 const {
   CstInput,
@@ -82,6 +83,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
 
   useEffect(() => {
     handleSearch('');
+    if (_.isEmpty(id)) sessionStorage.setItem('editor', '')
   }, []);
 
   const getGoodsInfo = async () => {
@@ -117,10 +119,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
         stock,
         singleBuyLimit,
         undisplayStock,
-        usageIllustrations:usageIllustration,
         upTime,
         upType,
       });
+      sessionStorage.setItem('editor', usageIllustration)
     }
   };
 
@@ -461,12 +463,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
             name="usageIllustrations"
             autoSize={{ minRows: 4, maxRows: 5 }}
           ></CstTextArea> */}
-          <CstEditor
+          <Form.Item
             labelCol={{ span: 4 }}
             wrapperCol={{ span: 15 }}
-            name="usageIllustrations"
             label="使用须知"
-          />
+          >
+            <GlobalEditor />
+          </Form.Item>
         </GlobalCard>
       </MapForm>
       <div className={Styles.btnBlock} />

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-08-06 17:09:39
+ * @LastEditTime: 2020-09-03 16:08:12
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -199,6 +199,7 @@ export const BIZ_TYPE_2 = 2; // 提现
 export const BIZ_TYPE_3 = 3; // 采购
 export const BIZ_TYPE_4 = 4; // 加款
 export const BIZ_TYPE_5 = 5; // 减款
+export const BIZ_TYPE_6 = 6; // 退款
 
 export const BizTypes = {
   [BIZ_TYPE_1]: '充值',
@@ -206,6 +207,7 @@ export const BizTypes = {
   [BIZ_TYPE_3]: '采购',
   [BIZ_TYPE_4]: '加款',
   [BIZ_TYPE_5]: '减款',
+  [BIZ_TYPE_6]: '退款',
 };
 
 // 库存
@@ -239,6 +241,8 @@ export const WAREHOUSING_STATUS_7 = 7;
 export const WAREHOUSING_STATUS_8 = 8;
 export const WAREHOUSING_STATUS_9 = 9;
 export const WAREHOUSING_STATUS_10 = 10;
+export const WAREHOUSING_STATUS_11 = 11;
+export const WAREHOUSING_STATUS_22 = 22;
 
 export const WarehousingStatus = {
   [WAREHOUSING_STATUS_1]: '初始',
@@ -251,6 +255,8 @@ export const WarehousingStatus = {
   [WAREHOUSING_STATUS_8]: '成功',
   [WAREHOUSING_STATUS_9]: '失败',
   [WAREHOUSING_STATUS_10]: '渠道订单处理失败',
+  [WAREHOUSING_STATUS_11]: '处理超时',
+  [WAREHOUSING_STATUS_22]: '待重试',
 };
 
 // 流水
@@ -298,10 +304,12 @@ export const addKEFU_VISIT = {
 // 线索来源
 export const PRIMARY_SOURCE_1 = 'PC端官网';
 export const PRIMARY_SOURCE_2 = '公众号';
+export const PRIMARY_SOURCE_3 = '移动端官网';
 
 export const SOURCE = {
   [PRIMARY_SOURCE_1]: [PRIMARY_SOURCE_1],
   [PRIMARY_SOURCE_2]: [PRIMARY_SOURCE_2],
+  [PRIMARY_SOURCE_3]: [PRIMARY_SOURCE_3],
 };
 
 /** 回访方式 */
@@ -311,4 +319,22 @@ export const WAY_RETURN_2 = '在线客服';
 export const WAY_RETURN_ALL = {
   [WAY_RETURN_1]: [WAY_RETURN_1],
   [WAY_RETURN_2]: [WAY_RETURN_2],
+};
+
+export const ORDER_TYPE_1 = 1; //未完成
+export const ORDER_TYPE_2 = 2; //已完成
+
+export const OrderTypes = {
+  [ORDER_TYPE_1]: '未完成',
+  [ORDER_TYPE_2]: '已完成',
+};
+
+export const WAREHOUSING_TYPE_1 = 1;
+export const WAREHOUSING_TYPE_2 = 2;
+export const WAREHOUSING_TYPE_3 = 3;
+
+export const WarehousingTypes = {
+  [WAREHOUSING_TYPE_1]: '渠道回调',
+  [WAREHOUSING_TYPE_2]: '系统守护任务',
+  [WAREHOUSING_TYPE_3]: '人工处理',
 };

@@ -420,7 +420,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
                 message: '采购日期不能为空',
               },
             ]}
-            defaultValue={moment()}
+            defaultValue={moment().format('YYYY-MM-DD HH:mm:ss')}
             showTime={true}
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
@@ -432,6 +432,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, supplierList, match }) =
             autoSize={{ minRows: 4, maxRows: 6 }}
             labelCol={{ span: 3 }}
             wrapperCol={{ span: 8 }}
+            rules={[
+              {
+                max: 50,
+                message: '不能超过50个字符',
+              },
+            ]}
           />
         </GlobalCard>
         <GlobalCard title="商品明细" titleStyle={{ marginTop: '10px' }}>

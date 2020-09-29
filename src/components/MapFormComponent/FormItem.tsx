@@ -43,7 +43,7 @@ export interface FormItemProps extends GetFieldDecoratorOptions {
   [key: string]: unknown;
 }
 
-interface FormItemState {}
+interface FormItemState { }
 
 const FormItem = Form.Item;
 
@@ -127,6 +127,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
       )(<Radio.Group {...otherProps}>{children}</Radio.Group>),
       CstCheckbox: getFieldDecorator(name, options)(<GlobalCheckbox {...otherProps} />),
       CstDatePicker: getFieldDecorator(name, options)(<GlobalDatePicker {...otherProps} />),
+      CstRangePicker: getFieldDecorator(name, options)(<DatePicker.RangePicker {...otherProps} />),
       CstEditor: getFieldDecorator(name, options)(<GlobalEditor {...otherProps} />),
       CstTreeSelect: getFieldDecorator(name, options)(<GlobalTreeSelect {...otherProps} />),
       CstProductSubPanel: getFieldDecorator(name, options)(<ProductSubPanel {...otherProps} />),
@@ -135,7 +136,7 @@ class WrapFormItem extends Component<FormItemProps, FormItemState> {
         options,
       )(<Cascader getPopupContainer={triggerNode => triggerNode.parentNode} {...otherProps} />),
       CstInputNumber: getFieldDecorator(name, options)(<InputNumber {...otherProps} />),
-      CstSwitch: getFieldDecorator(name,options)(<Switch {...otherProps} />),
+      CstSwitch: getFieldDecorator(name, options)(<Switch {...otherProps} />),
     };
 
     if (wrapperCol && labelCol)

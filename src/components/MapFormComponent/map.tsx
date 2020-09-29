@@ -20,4 +20,5 @@ export default {
   CstCascader: {},
   CstInputNumber: {},
   CstSwitch: {},
+  CstRangePicker: {},
 };
