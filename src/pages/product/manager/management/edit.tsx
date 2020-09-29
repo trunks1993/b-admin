@@ -71,7 +71,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, id }) => {
 
   const getGoodsInfo = async () => {
     const [err, data, msg] = await getInfo(id);
-    if (!err && data) {
+    if (!err) {
+      if (!data) return;
       const { brandCode, iconUrl, introduction, name, resume, productSubList } = data;
       form?.setFieldsValue({
         iconUrl,

@@ -68,18 +68,17 @@ const Comp: React.FC<CompProps> = ({ user }) => {
     });
   };
 
-  /**
-   * @name:
-   * @param {type}
-   */
-
-  const resetForm = () => {
-    form?.setFieldsValue({
-      headIcon: '',
-      aliasName: '',
-      remark: '',
-    });
-  };
+/**
+ * @name: 
+ * @param {type} 
+ */  
+const resetForm = () => {
+  form?.setFieldsValue({
+    headIcon: '',
+    realname: '',
+    remark: '',
+  });
+} 
 
   return (
     <div className={Styles.container}>
