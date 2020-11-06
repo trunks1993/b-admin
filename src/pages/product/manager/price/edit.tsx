@@ -19,7 +19,7 @@ import { PriceItemType, EditeItemType, add } from '../services/price';
 import { getFloat } from '@/utils';
 import GlobalCard from '@/components/GlobalCard';
 
-const { CstInput, CstSelect, CstCheckbox, CstInputNumber } = MapForm;
+const { CstInput, CstSelect, CstCheckbox, CstInputNumber, CstDatePicker } = MapForm;
 
 const { confirm } = Modal;
 
@@ -98,7 +98,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
     const { facePrice } = goodsForm.find(item => item.goodsCode === code);
     if (key === 'rebate') {
       const price = (value * 1000) * facePrice / 1000 / 10;
-      console.log(value, facePrice)
       form?.setFieldsValue({
         ['price-' + code]: price / TRANSTEMP,
         ['decMoney-' + code]: (facePrice - price) / TRANSTEMP,
@@ -235,6 +234,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
       ),
     },
     {
+      title: '生效时间',
+      align: 'center',
+      render: record => (
+        <CstDatePicker
+          className="dynamic-inpui-2"
+          name={'effectiveTime-' + record.goodsCode}
+          showTime={true}
+          style={{ height: 40 }}
+        />
+      ),
+    },
+    {
       title: '操作',
       align: 'center',
       width: 200,
@@ -300,6 +311,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, loading, match }) => {
             pagination={false}
             dataSource={goodsForm}
             rowKey={record => record.goodsCode.toString()}
+            scroll={{ x: 1200 }}
           />
           {/* <div className="global-pagination">
             <Pagination

@@ -9,7 +9,7 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
-  TransactionStatus,
+  PurchaseOrderStatus,
   OrderStatus,
   ORDER_STATUS_1,
   ORDER_STATUS_2,
@@ -76,6 +76,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
+    console.log(data)
     const beginCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[0]).format('YYYY-MM-DD 00:00:00') : undefined
     const endCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[1]).format('YYYY-MM-DD 23:59:59') : undefined
     dispatch({
@@ -97,7 +98,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const download = () => {
     try {
       const data = filterForm?.getFieldsValue();
-      if (!data?.time) return message.error('请选择下载的时间段!')
+      if (_.isEmpty(data?.time)) return message.error('请选择下载的时间段!')
       getAjax({
         ...data,
         beginCreateTime: moment(data?.time[0]).format('YYYY-MM-DD 00:00:00'),
@@ -185,180 +186,159 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   return (
     <div className={Styles.container}>
-      <TabsPanel onChange={handleTabsChange}>
-        <div className={Styles.filter}>
-          <div className={Styles.filterBox}>
-            <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
-              <CstInput name="status" style={{ display: 'none' }} />
-              <Row>
-                <Col span={7}>
-                  <CstInput
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    name="orderId"
-                    label="订单号"
-                    placeholder="请输入订单号"
-                  />
-                </Col>
-                <Col span={7}>
-                  <CstInput
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    name="merchantId"
-                    label="商户号"
-                    placeholder="请输入商户号"
-                  />
-                </Col>
-                <Col span={7}>
-                  <CstSelect
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    name="status"
-                    label="订单状态"
-                    placeholder="请选择状态"
-                  >
-                    {_.map(TransactionStatus, (item, key) => (
-                      <Select.Option key={key} value={key}>
-                        {item}
-                      </Select.Option>
-                    ))}
-                  </CstSelect>
-                </Col>
-              </Row>
-
-              {/* <Row>
+      {/* <TabsPanel onChange={handleTabsChange}> */}
+      <div className={Styles.filter}>
+        <div className={Styles.filterBox}>
+          <MapForm className="filter-form" layout="horizontal" onCreate={setFilterForm}>
+            <CstInput name="status" style={{ display: 'none' }} />
+            <Row>
               <Col span={7}>
                 <CstInput
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
-                  name="telephone"
-                  label="交易时间"
+                  name="orderId"
+                  label="订单号"
                   placeholder="请输入订单号"
                 />
               </Col>
-            </Row> */}
-              <Row>
-                {/* <Col span={7}>
-                  <CstInput
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    name="merchantId"
-                    label="商户号"
-                    placeholder="请输入商户号"
-                  />
-                </Col>*/}
-                <Col span={10}>
-                  <CstRangePicker
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    name="time"
-                    label="订单时间"
-                    placeholder="请输入订单时间"
-                  />
-                </Col>
-                <Col span={8} push={2}>
-                  <Form.Item>
-                    <Button type="primary" icon="search" onClick={() => dispatchInit()}>
-                      筛选
-                    </Button>
-                    <Button
-                      icon="undo"
-                      style={{ marginLeft: '10px' }}
-                      onClick={() => filterForm?.resetFields()}
-                    >
-                      重置
-                    </Button>
-                    <Button
-                      icon="download"
-                      onClick={() => download()}
-                      style={{ marginLeft: '10px' }}
-                    >
-                      下载
-                    </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </MapForm>
-          </div>
-        </div>
-        <div className={Styles.table}>
-          <Row className={Styles.thead}>
-            <Col span={5}>商品名称</Col>
-            <Col span={2}>单价(元)</Col>
-            <Col span={2}>数量(件)</Col>
-            <Col span={3}>买家手机号</Col>
-            <Col span={5}>订购商户</Col>
-            <Col span={2}>实收金额(元)</Col>
-            <Col span={2}>订单状态</Col>
-            <Col span={3}>操作</Col>
-          </Row>
-          {_.map(list, item => (
-            <Row key={item.id}>
-              <Col span={24} className={Styles.title}>
-                <span>采购单号：{item.orderId}</span>
-                <span style={{ marginLeft: '30px' }}>
-                  下单时间: {moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}
-                </span>
+              <Col span={7}>
+                <CstInput
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="merchantId"
+                  label="商户号"
+                  placeholder="请输入商户号"
+                />
               </Col>
-              {_.map(item.orderItemList, (v, index) => (
-                <span key={index} className={Styles.item}>
-                  <Col span={5}>{v.productSubName}</Col>
-                  <Col span={2}>￥{getFloat(v.price / TRANSTEMP, 4)}</Col>
-                  <Col span={2}>
-                    {v.productTypeCode === PRODUCT_TYPE_4 ? (
-                      <Button
-                        type="link"
-                        onClick={() => {
-                          setModalVisible(v.code);
-                          setModalTitle(v.productSubName);
-                        }}
-                      >
-                        {v.detailCount}
-                      </Button>
-                    ) : (
-                        v.detailCount
-                      )}
-                  </Col>
-                  {index === 0 ? (
-                    <>
-                      <Col span={3}>{item.telephone}</Col>
-                      <Col span={5}>{item.merchantName}</Col>
-                      <Col span={2}>￥{getFloat(item.realTotalPay / TRANSTEMP, 4)}</Col>
-                      <Col span={2}>{OrderStatus[item.status]}</Col>
-                      <Col span={3} style={{ display: 'flex', flexDirection: 'column' }}>
-                        <Button
-                          size="small"
-                          style={{ marginBottom: '5px' }}
-                          onClick={() => router.push(`/order/manager/purchase/${item.orderId}`)}
-                        >
-                          查看详情
-                        </Button>
-                        {(item.status === ORDER_STATUS_1 ||
-                          (item.status === ORDER_STATUS_2 &&
-                            item.orderItemList.some(
-                              item => item.productTypeCode !== PRODUCT_TYPE_4,
-                            ))) && (
-                            <Button
-                              size="small"
-                              type="primary"
-                              onClick={() => showConfirm(item.status, item.orderId)}
-                            >
-                              {item.status === ORDER_STATUS_2 ? '立即发货' : '取消订单'}
-                            </Button>
-                          )}
-                      </Col>
-                    </>
-                  ) : (
-                      <>
-                        <Col span={15} />
-                      </>
-                    )}
-                </span>
-              ))}
+              <Col span={7}>
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="status"
+                  label="订单状态"
+                  placeholder="请选择状态"
+                >
+                  {_.map(PurchaseOrderStatus, (item, key) => (
+                    <Select.Option key={key} value={key}>
+                      {item}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
             </Row>
-          ))}
+            <Row>
+              <Col span={10}>
+                <CstRangePicker
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="time"
+                  label="订单时间"
+                  placeholder="请输入订单时间"
+                />
+              </Col>
+              <Col span={8} push={2}>
+                <Form.Item>
+                  <Button type="primary" icon="search" onClick={() => dispatchInit()}>
+                    筛选
+                    </Button>
+                  <Button
+                    icon="undo"
+                    style={{ marginLeft: '10px' }}
+                    onClick={() => filterForm?.resetFields()}
+                  >
+                    重置
+                  </Button>
+                  <Button
+                    icon="download"
+                    onClick={() => download()}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    下载
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          </MapForm>
         </div>
-      </TabsPanel>
+      </div>
+      <div className={Styles.table}>
+        <Row className={Styles.thead}>
+          <Col span={5}>商品名称</Col>
+          <Col span={2}>单价(元)</Col>
+          <Col span={2}>数量(件)</Col>
+          <Col span={3}>买家手机号</Col>
+          <Col span={5}>订购商户</Col>
+          <Col span={2}>实收金额(元)</Col>
+          <Col span={2}>订单状态</Col>
+          <Col span={3}>操作</Col>
+        </Row>
+        {_.map(list, item => (
+          <Row key={item.id}>
+            <Col span={24} className={Styles.title}>
+              <span>采购单号：{item.orderId}</span>
+              <span style={{ marginLeft: '30px' }}>
+                下单时间: {moment(item.createTime).format('YYYY-MM-DD HH:mm:ss')}
+              </span>
+            </Col>
+            {_.map(item.orderItemList, (v, index) => (
+              <span key={index} className={Styles.item}>
+                <Col span={5}>{v.productSubName}</Col>
+                <Col span={2}>￥{getFloat(v.price / TRANSTEMP, 4)}</Col>
+                <Col span={2}>
+                  {v.productTypeCode === PRODUCT_TYPE_4 ? (
+                    <Button
+                      type="link"
+                      onClick={() => {
+                        setModalVisible(v.code);
+                        setModalTitle(v.productSubName);
+                      }}
+                    >
+                      {v.detailCount}
+                    </Button>
+                  ) : (
+                      v.detailCount
+                    )}
+                </Col>
+                {index === 0 ? (
+                  <>
+                    <Col span={3}>{item.telephone}</Col>
+                    <Col span={5}>{item.merchantName}</Col>
+                    <Col span={2}>￥{getFloat(item.realTotalPay / TRANSTEMP, 4)}</Col>
+                    <Col span={2}>{OrderStatus[item.status]}</Col>
+                    <Col span={3} style={{ display: 'flex', flexDirection: 'column' }}>
+                      <Button
+                        size="small"
+                        style={{ marginBottom: '5px' }}
+                        onClick={() => router.push(`/order/manager/purchase/${item.orderId}`)}
+                      >
+                        查看详情
+                      </Button>
+                      {(item.status === ORDER_STATUS_1 ||
+                        (item.status === ORDER_STATUS_2 &&
+                          item.orderItemList.some(
+                            item => item.productTypeCode !== PRODUCT_TYPE_4,
+                          ))) && (
+                          <Button
+                            size="small"
+                            type="primary"
+                            onClick={() => showConfirm(item.status, item.orderId)}
+                          >
+                            {item.status === ORDER_STATUS_2 ? '立即发货' : '取消订单'}
+                          </Button>
+                        )}
+                    </Col>
+                  </>
+                ) : (
+                    <>
+                      <Col span={15} />
+                    </>
+                  )}
+              </span>
+            ))}
+          </Row>
+        ))}
+      </div>
+      {/* </TabsPanel> */}
       <div className="global-pagination">
         <Pagination
           current={currPage}

@@ -8,7 +8,7 @@ import { ListItemType } from '../models/warehousing';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WarehousingStatus, WorkTypes } from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WarehousingStatus, WorkTypes, WarehousingStatusPurchase } from '@/const';
 // import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -141,7 +141,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         currPage,
         pageSize,
         ...data,
-        status: 8,
+        status: data?.status ? data?.status : '8',
         beginCreateTime,
         endCreateTime,
       },
@@ -320,6 +320,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                 label="订单时间"
                 placeholder="请输入订单时间"
               />
+            </Col>
+            <Col span={8}>
+              <CstSelect
+                name="status"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="订单状态"
+                placeholder="全部"
+              >
+                {_.map(WarehousingStatusPurchase, (item, key) => (
+                  <Select.Option key={key} value={key}>
+                    {item}
+                  </Select.Option>
+                ))}
+              </CstSelect>
             </Col>
             <Col span={8} push={1}>
               <Form.Item>

@@ -1,0 +1,12 @@
+.btn {
+  padding: 10px;
+  text-align: right;
+}
+
+.channelGoodsCode {
+  width: 100px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  word-break: break-all;
+  white-space: nowrap;
+}

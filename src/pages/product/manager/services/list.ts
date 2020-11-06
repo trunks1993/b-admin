@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-06-05 19:27:24
+ * @LastEditTime: 2020-11-04 17:19:53
  */
 
 import request from '@/utils/request';
@@ -15,14 +15,14 @@ export interface QueryParamsType extends BaseQueryType {
   categoryCodes?: string[];
 }
 
-export interface EditeItemType extends ListItemType{
+export interface EditeItemType extends ListItemType {
   resume: string; // 描述
   purchaseNotes: string; // 购买须知
   usageIllustration: string; // 使用须知
   facePrice: number; // 官方价格
   stockType: 1 | 2; // 库存扣减方式
   goodsId?: number;
-  undisplayStock?: 'Y' | 'N' // 商品详情不显示剩余件数
+  undisplayStock?: 'Y' | 'N'; // 商品详情不显示剩余件数
   upType: 1 | 2 | 3; //
   upTime: string;
 }
@@ -99,5 +99,46 @@ export async function getInfo(goodsId: string): Promise<any> {
     data: {
       goodsId,
     },
+  });
+}
+/**
+ * @name: 获取供应商路由状态
+ * @param {string} goodsCode
+ */
+export async function getGoodsRule(goodsCode: string | number): Promise<any> {
+  return request('/supplier/getGoodsRule', {
+    method: 'POST',
+    data: {
+      goodsCode,
+    },
+  });
+}
+
+/**
+ * @name: 获取所有供应商
+ */
+export async function getSupplierList(): Promise<any> {
+  return request('/supplier/getSupplierLists', {
+    method: 'POST',
+  });
+}
+
+/**
+ * @name: 获取所有供应商
+ */
+export async function updateGoodsChannelRule(data: any): Promise<any> {
+  return request('/supplier/updateGoodsChannelRule', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 获取所有供应商
+ */
+export async function getGoodsChannelMappersByCode(data: any): Promise<any> {
+  return request('/supplier/getGoodsChannelMappersByCode', {
+    method: 'POST',
+    data,
   });
 }

@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-09-03 09:59:27
+ * @LastEditTime: 2020-10-10 15:57:25
  */
 
 import request from '@/utils/request';
@@ -68,6 +68,17 @@ export async function reroute(data: QueryParamsType): Promise<any> {
  */
 export async function getOuterWorkerList(data: QueryParamsType): Promise<any> {
   return request('/workorder/getOuterWorkerList', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 重置工单
+ * @param {Array} data
+ */
+export async function retry(data): Promise<any> {
+  return request('/workorder/retry', {
     method: 'POST',
     data,
   });

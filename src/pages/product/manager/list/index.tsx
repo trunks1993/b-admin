@@ -6,7 +6,7 @@ import { connect } from 'dva';
 import { ListItemType as CategoryItemType } from '../models/group';
 
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
+import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col, Radio } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
@@ -18,7 +18,7 @@ import {
   ProductStatusGU,
   TRANSTEMP,
 } from '@/const';
-import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
+import { remove, add, modify, EditeItemType, modifyStatus, getGoodsRule, getSupplierList, updateGoodsChannelRule, getGoodsChannelMappersByCode } from '../services/list';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
@@ -30,9 +30,11 @@ import { ListItemType } from '@/models/product';
 import LazyLoad from 'react-lazyload';
 import { getFloat } from '@/utils';
 import moment from 'moment';
+import GlobalModal from '@/components/GlobalModal';
+import { retry } from '@/pages/order/manager/services/transaction';
 
 const { confirm } = Modal;
-const { CstInput, CstTextArea, CstSelect, CstPassword } = MapForm;
+const { CstInput, CstSelect, CstRadio } = MapForm;
 
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -40,36 +42,11 @@ interface CompProps extends TableListData<ListItemType> {
   categoryList: CategoryItemType[];
 }
 
-const formItemLayout = {
-  labelCol: {
-    span: 4,
-  },
-  wrapperCol: {
-    span: 15,
-    push: 1,
-  },
-};
-
-const filterFormItemLayout = {
-  labelCol: {
-    span: 4,
-  },
-  wrapperCol: {
-    span: 10,
-  },
-};
-
-const handleEdite = async (fields: EditeItemType) => {
-  const api = fields.goodsId ? modify : add;
-  const [err, data, msg] = await api(fields);
-  if (!err) {
-    message.success('操作成功');
-    return true;
-  } else {
-    message.error(msg);
-    return false;
-  }
-};
+interface GoodsItem {
+  name?: string; // 供应商名字
+  supplierCode?: string; // 供应商code
+  rule?: string | number; // 选中状态
+}
 
 const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
@@ -77,9 +54,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
 
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
+  const [modalForm, setModalForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [formData, setFormData] = useState<EditeItemType>({});
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
+
+  const [detailVisible, setDetailVisible] = useState<boolean>(false);
+  const [detailItem, setDetailItem] = useState<any>({});
+
+  const [goodsVisible, setGoodsVisible] = useState(false);
+  const [goodsDetail, setGoodsDetail] = useState<GoodsItem>();//选中的路由规则
+  const [goodsList, setGoodsList] = useState({});// 供应商列表
+  const [goodsInfo, setGoodsInfo] = useState<string | number>('');//点击路由选中的item
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -91,6 +77,29 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
   useEffect(() => {
     getCategoryList();
   }, []);
+
+
+  useEffect(() => {
+    if (goodsVisible) getRouterStatus()
+  }, [goodsVisible])
+
+  useEffect(() => {
+    if (modalForm) modalForm?.setFieldsValue({ name: goodsInfo?.productSub?.name + '|' + goodsInfo?.code })
+  }, [modalForm])
+
+  useEffect(() => {
+    if (_.isEmpty(goodsDetail)) return;
+    //更新路由规则
+    if (goodsDetail?.rule) modalForm?.setFieldsValue({ rule: goodsDetail?.rule })
+    else modalForm?.setFieldsValue({ rule: 2 })
+
+    //当路由规则为指定供应商时获取供应商列表
+    if (goodsDetail?.rule === 2) getRuleList()
+
+    //选中供应商的code
+    if (goodsDetail?.supplierCode && modalForm) modalForm?.setFieldsValue({ supplierCode: goodsDetail?.supplierCode })
+
+  }, [goodsDetail])
 
   useEffect(() => {
     const {
@@ -128,6 +137,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     });
   };
 
+  const getDetailList = async (goodsCode: number) => {
+    try {
+      const [err, data, msg] = await getGoodsChannelMappersByCode({ goodsCode })
+      if (!err) { setDetailItem(data); setDetailVisible(true); }
+      else message.error(msg)
+    } catch (error) { }
+  }
+
   /**
    * @name: 触发列表加载effect
    * @param {type}
@@ -162,32 +179,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
         else message.error('删除失败，请重试');
         dispatchInit();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
-
-  /**
-   * @name: 打开弹窗设置回显字段
-   * @param {ListItemType} record
-   */
-  //   const handleModalVisible = async (record: ListItemType) => {
-  //     const [err, data, msg] = await getSysUserInfo(record.id);
-  //     setModalVisible(true);
-  //     setFormData(data);
-  //   };
 
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '商品名称',
       align: 'center',
-      width: 260,
+      width: 210,
       key: 'id',
       fixed: 'left',
       render: record => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
-            <div style={{ marginLeft: '5px' }}>{record.productSub.name}</div>
+            <div style={{ marginLeft: '5px' }}>{record?.productSub?.name}</div>
             <div style={{ marginLeft: '5px' }}>{record.code}</div>
           </span>
         </div>
@@ -232,10 +239,25 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
         <>
           <Button
             type="link"
+            onClick={() => { getDetailList(record?.code) }}
+          >
+            渠道详情
+          </Button>
+          |
+          <Button
+            type="link"
+            onClick={() => { setGoodsVisible(true); setGoodsInfo(record) }}
+          >
+            路由
+          </Button>
+          |
+          <Button
+            type="link"
             onClick={() => router.push(`/product/manager/list/edit?id=${record.id}`)}
           >
             编辑
           </Button>
+          |
           <Button type="link" onClick={() => showConfirm(record.id)}>
             删除
           </Button>
@@ -263,7 +285,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           message.error(msg);
         }
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -298,7 +320,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           message.error('操作失败');
         }
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -311,6 +333,51 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     dispatchInit(() => setSelectedRowKeys([]));
   };
 
+  /**
+   * @name: 获取供应商路由状态
+   * @param {string} goodsCode
+   */
+  const getRouterStatus = async () => {
+    try {
+      const [err, data, msg] = await getGoodsRule(goodsInfo?.code)
+      if (!err) {
+        if (!_.isEmpty(data)) setGoodsDetail(data)
+        else setGoodsDetail({ rule: 2 })
+      }
+      else message.error(msg)
+    } catch (error) { }
+  }
+
+  /**
+   * @name: 获取供应商列表
+   */
+  const getRuleList = async () => {
+    try {
+      if (!_.isEmpty(goodsList)) return;
+      const [err, data, msg] = await getSupplierList()
+      if (!err) setGoodsList(data)
+      else message.error(msg)
+    } catch (error) { }
+  }
+
+  /**
+   * @name: 商品路由提交
+   */
+  const handleRule = () => {
+    try {
+      modalForm?.validateFields(async (err, values) => {
+        if (!err) {
+          const { rule, supplierCode } = values;
+          const obj = { id: goodsDetail?.id, goodsCode: goodsInfo?.code, rule, supplierCode }
+          const [err, data, msg] = await updateGoodsChannelRule(obj)
+          if (!err) message.success('设置成功')
+          else message.error(msg)
+          setGoodsVisible(false)
+        }
+      });
+    } catch (error) { }
+  }
+
   const rowSelection = {
     selectedRowKeys,
     hideDefaultSelections: true,
@@ -319,6 +386,67 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     },
   };
 
+  const detailColumns: any = [
+    {
+      title: '供应商名称',
+      align: 'center',
+      key: 'supplierName',
+      dataIndex: 'supplierName',
+    },
+    {
+      title: '面值(元)',
+      align: 'center',
+      width: 100,
+      render: record => record?.facePrice / 10000,
+    },
+    {
+      title: '折扣',
+      align: 'center',
+      width: 100,
+      render: record => {
+        if (record?.price) return (record.price / record?.facePrice * 10)
+        return 10
+      },
+    },
+    {
+      title: '采购价(元)',
+      align: 'center',
+      width: 100,
+      render: record => {
+        if (record?.price) return (record.price / record?.facePrice * 10)
+        return (record?.facePrice / 10000)
+      },
+    },
+    {
+      title: '优先级别',
+      align: 'center',
+      dataIndex: 'priority',
+    },
+    {
+      title: '单次限制',
+      align: 'center',
+      dataIndex: 'singleBuyLimit',
+    },
+    {
+      title: '含税价',
+      align: 'center',
+      dataIndex: 'taxPrice',
+    },
+    {
+      title: '是否带票',
+      align: 'center',
+      render: record => {
+        if (!!record?.withTicket) return '是'
+        return '否'
+      }
+    },
+    {
+      title: '备注',
+      align: 'center',
+      dataIndex: 'remark',
+    },
+  ];
+  console.log(detailItem)
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
@@ -429,7 +557,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
               <Button
                 loading={confirmLoading}
                 disabled={selectedRowKeys.length === 0}
-                onClick={() => {}}
+                onClick={() => { }}
                 style={{ marginLeft: '10px' }}
               >
                 批量设置
@@ -460,6 +588,78 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           </div>
         </TabsPanel>
       </div>
+      <GlobalModal
+        title='商品路由'
+        modalVisible={goodsVisible}
+        onCancel={() => {
+          setGoodsVisible(false)
+        }}
+        onOk={() => {
+          handleRule();
+        }}
+      >
+        <MapForm className="filter-form" layout="horizontal" onCreate={setModalForm}>
+          <CstInput
+            name="name"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 10 }}
+            label="商品名称"
+            disabled={true}
+          />
+          <CstRadio
+            label="路由规则"
+            labelCol={{ span: 6 }}
+            wrapperCol={{ span: 10 }}
+            name="rule"
+            onChange={(e) => { setGoodsDetail({ ...goodsDetail, rule: e.target.value }) }}
+          >
+            <Radio value={2} className={Styles.radioStyle}>指定供应商</Radio>
+            {
+              goodsDetail?.rule == 2 ? (
+                <CstSelect
+                  label="供应商"
+                  name="supplierCode"
+                  placeholder='请选择供应商'
+                  labelCol={{ span: 6 }}
+                  wrapperCol={{ span: 16 }}
+                  style={{ width: 300 }}
+                  rules={[
+                    {
+                      required: true,
+                      message: '供应商不能为空',
+                    },
+                  ]}
+                >
+                  {_.map(goodsList, item => (
+                    <Select.Option key={item?.code} value={item?.code}>
+                      {item?.name}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              ) : ''
+            }
+            <Radio value={3} className={Styles.radioStyle}>价格优先</Radio>
+          </CstRadio>
+        </MapForm>
+      </GlobalModal>
+      <GlobalModal
+        modalVisible={detailVisible}
+        title='渠道详情'
+        onCancel={() => {
+          setDetailVisible(false)
+        }}
+        onOk={() => {
+          setDetailVisible(false)
+        }}
+      >
+        <Table
+          className="global-table"
+          columns={detailColumns}
+          dataSource={detailItem}
+          scroll={{ x: 1100 }}
+          pagination={false}
+        />
+      </GlobalModal>
     </div>
   );
 };

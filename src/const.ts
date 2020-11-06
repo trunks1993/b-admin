@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-09-03 16:08:12
+ * @LastEditTime: 2020-10-10 15:23:45
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -171,6 +171,12 @@ export const OrderStatus = {
   [ORDER_STATUS_5]: '已取消',
 };
 
+export const PurchaseOrderStatus = {
+  [ORDER_STATUS_1]: '待付款',
+  [ORDER_STATUS_2]: '待发货',
+  [ORDER_STATUS_4]: '已完成',
+};
+
 export const PAY_METHOD_1 = 1; // 余额
 export const PAY_METHOD_2 = 2; // 微信
 export const PAY_METHOD_3 = 3; // 支付宝
@@ -257,6 +263,12 @@ export const WarehousingStatus = {
   [WAREHOUSING_STATUS_10]: '渠道订单处理失败',
   [WAREHOUSING_STATUS_11]: '处理超时',
   [WAREHOUSING_STATUS_22]: '待重试',
+};
+
+export const WarehousingStatusPurchase = {
+  [WAREHOUSING_STATUS_8]: '成功',
+  [WAREHOUSING_STATUS_10]: '失败',
+  [WAREHOUSING_STATUS_11]: '超时',
 };
 
 // 流水

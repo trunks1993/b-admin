@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-08 14:08:25
+ * @LastEditTime: 2020-10-13 09:39:11
  */
 // 商品
 export const product = [
@@ -119,6 +119,12 @@ export const stock = [
   {
     path: '/stock/manager/suppliers',
     component: './stock/manager/suppliers',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/stock/manager/suppliers/edit',
+    component: './stock/manager/suppliers/edit',
+    from: '/stock/manager/suppliers',
     Routes: ['src/AuthRouter'],
   },
   {

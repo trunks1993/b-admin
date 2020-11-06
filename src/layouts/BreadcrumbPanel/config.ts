@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-06-06 17:39:55
- * @LastEditTime: 2020-06-17 16:53:06
+ * @LastEditTime: 2020-10-13 09:40:12
  */
 // export  blackUrl = []
 export const routes = [
@@ -39,6 +39,7 @@ export const routes = [
   { path: '/stock/manager', title: '库存管理' },
   { path: '/stock/manager/productStock', title: '商品库存' },
   { path: '/stock/manager/suppliers', title: '供应商管理' },
+  { path: '/stock/manager/suppliers/edit', title: '关联商品' },
   { path: '/stock/manager/stockWater', title: '库存流水' },
   { path: '/stock/manager/earlyWarn', title: '库存预警' },
   { path: '/stock/manager/warehousing', title: '商品采购' },

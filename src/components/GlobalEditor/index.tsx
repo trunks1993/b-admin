@@ -23,32 +23,33 @@ const GlobalEditor: ForwardRefRenderFunction<unknown, GlobalEditorProps> = props
         { list: "bullet" },
       ],
       ['bold'], // toggled buttons
-      ['link', 'image'],
+      ['link'],
+      // ['link', 'image'],
 
       [{ color: [] }, { background: [] }], // dropdown with defaults from theme
       [{ align: [] }],
 
       ['clean'], // remove formatting button
     ],
-    imageUploader: {
-      upload: async (file: any) => {
-        let param = new FormData();
-        param.append("file", file);
-        param.append("userName", 'yunjin_file_upload');
-        param.append("password", 'yunjin_upload_password');
-        param.append("domain", 'editor');
-        param.append("secret", 'Y');
-        let config = {
-          headers: { "Content-Type": "multipart/form-data" },
-        };
-        return await new Promise(pr => {
-          axios.post("/file/upload", param, config).then((res) => {
-            setTimeout(() => { pr(process.env.BASE_FILE_SERVER + res?.data?.result?.fileList[0]?.url) }, 1000)
-          });
-        })
+    // imageUploader: {
+    //   upload: async (file: any) => {
+    //     let param = new FormData();
+    //     param.append("file", file);
+    //     param.append("userName", 'yunjin_file_upload');
+    //     param.append("password", 'yunjin_upload_password');
+    //     param.append("domain", 'editor');
+    //     param.append("secret", 'Y');
+    //     let config = {
+    //       headers: { "Content-Type": "multipart/form-data" },
+    //     };
+    //     return await new Promise(pr => {
+    //       axios.post("/file/upload", param, config).then((res) => {
+    //         setTimeout(() => { pr(process.env.BASE_FILE_SERVER + res?.data?.result?.fileList[0]?.url) }, 1000)
+    //       });
+    //     })
 
-      },
-    },
+    //   },
+    // },
   };
 
   const handleChange = (e) => {

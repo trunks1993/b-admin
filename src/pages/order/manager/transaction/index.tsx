@@ -7,7 +7,7 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, message, Checkbox, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import GlobalModal from '@/components/GlobalModal';
-import { setToSuccess, setToFailed, reroute, getOuterWorkerList } from '../services/transaction';
+import { setToSuccess, setToFailed, reroute, getOuterWorkerList, retry } from '../services/transaction';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
@@ -16,6 +16,7 @@ import {
   TRANSTEMP,
   TransactionTypes,
   WarehousingStatus,
+  WAREHOUSING_STATUS_11,
   WarehousingTypes,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
@@ -217,7 +218,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     { title: '返回码 ', align: 'center', dataIndex: 'outerReturnCode' },
     { title: '返回消息 ', align: 'center', dataIndex: 'outerReturnMessage' },
     { title: '处理方式 ', align: 'center', dataIndex: 'processType', render: record => WarehousingTypes[record] },
+    { title: '操作 ', align: 'center', fixed: 'right', render: record => { if (record.status === WAREHOUSING_STATUS_11) { return <Button type='link' onClick={() => retryOrder(record.id)}>查单重试</Button> } return '--'; } },
   ];
+
+  const retryOrder = async (ids: number) => {
+    try {
+      const [err, data, msg] = await retry({ ids: [ids.toString()] })
+      setVisible(false)
+      if (!err) return message.success('操作成功')
+      else return message.error(msg)
+    } catch (error) { }
+  }
 
   /**
    * @name: checkbox onChange 事件
