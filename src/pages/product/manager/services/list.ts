@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-09 21:52:05
- * @LastEditTime: 2020-11-04 17:19:53
+ * @LastEditTime: 2020-11-06 17:10:41
  */
 
 import request from '@/utils/request';
@@ -117,9 +117,10 @@ export async function getGoodsRule(goodsCode: string | number): Promise<any> {
 /**
  * @name: 获取所有供应商
  */
-export async function getSupplierList(): Promise<any> {
+export async function getSupplierList(goodsCode: string | number): Promise<any> {
   return request('/supplier/getSupplierLists', {
     method: 'POST',
+    data: { goodsCode },
   });
 }
 

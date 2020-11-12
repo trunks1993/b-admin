@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
+import copy from 'copy-to-clipboard';
 import { ListItemType } from '../models/purchase';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
+import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row, Typography } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
@@ -27,7 +28,7 @@ import _ from 'lodash';
 import TabsPanel from './TabsPanel';
 import moment from 'moment';
 import router from 'umi/router';
-import { deliver, cancel, queryListTrace } from '../services/purchase';
+import { deliver, cancel, queryListTrace, downloadBigPurchaseOrder } from '../services/purchase';
 import { getFloat } from '@/utils';
 import GlobalModal from '@/components/GlobalModal';
 import { getAjax } from '@/utils/index';
@@ -71,6 +72,35 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     dispatchInit();
   };
 
+  /**
+   * 
+   * @name: 下载大报表
+   */
+  const superDownload = async () => {
+    const obj = filterForm?.getFieldsValue();
+    if (!obj?.time) return message.error('请选择下载的时间段!')
+    try {
+      const [err, data, msg] = await downloadBigPurchaseOrder({
+        ...obj,
+        beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
+      })
+
+      if (!err) {
+        const url = window.location.origin + '/file/' + data?.webPath
+        Modal.success({
+          title: '下载大数据报表链接',
+          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
+          okText: '复制',
+          maskClosable: false,
+          keyboard: false,
+          onOk() {
+            copy(url);
+          },
+        })
+      } else message.error(msg)
+    } catch (error) { }
+  }
   /**
    * @name: 列表加载
    */
@@ -236,7 +266,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入订单时间"
                 />
               </Col>
-              <Col span={8} push={2}>
+              <Col span={9} push={1}>
                 <Form.Item>
                   <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                     筛选
@@ -254,6 +284,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     style={{ marginLeft: '10px' }}
                   >
                     下载
+                  </Button>
+                  <Button
+                    icon='download'
+                    onClick={() => superDownload()}
+                    style={{ marginLeft: '10px' }}
+                  >
+                    大数据下载
                   </Button>
                 </Form.Item>
               </Col>

@@ -2,9 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
+import copy from 'copy-to-clipboard';
 
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Select, Form, Row, Col, message } from 'antd';
+import { Table, Button, Pagination, Select, Form, Row, Col, message, Typography, Modal } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WaterStatus } from '@/const';
 import Styles from './index.css';
@@ -18,7 +19,7 @@ import moment from 'moment';
 import { ListItemType } from '../models/stockWater';
 import { RouteComponentProps } from 'dva/router';
 
-import { downloadGoodsStockTrace } from '../services/stockWater'
+import { downloadBigGoodsStockTrace } from '../services/stockWater'
 import { getAjax } from '@/utils/index';
 
 const { CstInput, CstSelect, CstRangePicker } = MapForm;
@@ -75,6 +76,36 @@ const Comp: React.FC<CompProps> = props => {
       beginCreateTime: moment(data?.time[0]).format('YYYY-MM-DD 00:00:00'),
       endCreateTime: moment(data?.time[1]).format('YYYY-MM-DD 23:59:59')
     }, '/report/downloadGoodsStockTrace')
+  }
+
+  /**
+   * 
+   * @name: 下载大报表
+   */
+  const superDownload = async () => {
+    const obj = filterForm?.getFieldsValue();
+    if (!obj?.time) return message.error('请选择下载的时间段!')
+    try {
+      const [err, data, msg] = await downloadBigGoodsStockTrace({
+        ...obj,
+        beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
+      })
+
+      if (!err) {
+        const url = window.location.origin + '/file/' + data?.webPath
+        Modal.success({
+          title: '下载大数据报表链接',
+          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
+          okText: '复制',
+          maskClosable: false,
+          keyboard: false,
+          onOk() {
+            copy(url);
+          },
+        })
+      } else message.error(msg)
+    } catch (error) { }
   }
 
   /**
@@ -207,6 +238,13 @@ const Comp: React.FC<CompProps> = props => {
                   style={{ marginLeft: '10px' }}
                 >
                   下载
+                </Button>
+                <Button
+                  icon='download'
+                  onClick={() => superDownload()}
+                  style={{ marginLeft: '10px' }}
+                >
+                  大数据下载
                 </Button>
               </Form.Item>
             </Col>

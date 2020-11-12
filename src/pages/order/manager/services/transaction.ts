@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-10-10 15:57:25
+ * @LastEditTime: 2020-11-11 20:42:45
  */
 
 import request from '@/utils/request';
@@ -79,6 +79,25 @@ export async function getOuterWorkerList(data: QueryParamsType): Promise<any> {
  */
 export async function retry(data): Promise<any> {
   return request('/workorder/retry', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 重置工单
+ */
+export async function searchMerchantList(): Promise<any> {
+  return request('/merchant/searchMerchantList', {
+    method: 'POST',
+  });
+}
+
+/**
+ * @name: 重置工单
+ */
+export async function downloadBigTradeOrder(data: any): Promise<any> {
+  return request('/report/downloadBigTradeOrder', {
     method: 'POST',
     data,
   });

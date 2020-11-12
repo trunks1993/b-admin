@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 10:02:46
- * @LastEditTime: 2020-06-04 20:37:04
+ * @LastEditTime: 2020-11-11 21:27:46
  */
 
 import request from '@/utils/request';
@@ -82,6 +82,16 @@ export async function getInfo(orderId: number): Promise<any> {
  */
 export async function queryListTrace(data: QueryTraceParamsType): Promise<any> {
   return request('/merchant/order/searchOrderChargeTraceList', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name:
+ */
+export async function downloadBigPurchaseOrder(data: any): Promise<any> {
+  return request('/report/downloadBigPurchaseOrder', {
     method: 'POST',
     data,
   });
