@@ -15,6 +15,7 @@ import {
   PRICE_STATUS_2,
   TRANSTEMP,
 } from '@/const';
+import { searchMerchantList } from '@/pages/order/manager/services/transaction'
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -53,7 +54,7 @@ const handleEdite = async (fields: ModifyItemType) => {
     return false;
   }
 };
-
+let listRel = {};
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -66,10 +67,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState<ListItemType>({});
+  const [merchantInfo, setMerchantInfo] = useState<any>([]);
 
   useEffect(() => {
     setSelectedRowKeys([]);
     initList();
+    getMerchantInfo();
   }, [currPage]);
 
   useEffect(() => {
@@ -250,6 +253,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '商户号',
       align: 'center',
       dataIndex: 'merchantId',
+      render: record => listRel[record]
     },
     {
       title: '价格(元)',
@@ -344,6 +348,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
   };
 
+  /** 获取所有商户info */
+  const getMerchantInfo = async () => {
+    try {
+      const [err, data, msg] = await searchMerchantList();
+      if (_.isEmpty(listRel)) {
+        listRel = data.list.reduce((list = {}, v: any) => {
+          return { ...list, [v?.merchantId]: v?.merchantName };
+        });
+        listRel[data?.list[0]?.merchantId] = data?.list[0]?.merchantName
+      }
+
+      if (!err) setMerchantInfo(data.list);
+      else message.error(msg)
+    } catch (error) { console.log(error) }
+  }
+
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
@@ -395,13 +415,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 </CstSelect>
               </Col>
               <Col span={7}>
-                <CstInput
+                <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
                   name="merchantId"
                   label="商户号"
-                  placeholder="请输入商户号"
-                />
+                  placeholder="全部"
+                >
+                  {_.map(merchantInfo, (item, key) => (
+                    <Select.Option key={key} value={item?.merchantId}>
+                      {item?.merchantName}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
               </Col>
               <Col span={7} push={2}>
                 <Form.Item>

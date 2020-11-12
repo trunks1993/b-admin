@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-10-10 15:23:45
+ * @LastEditTime: 2020-11-09 14:45:24
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -334,11 +334,13 @@ export const WAY_RETURN_ALL = {
 };
 
 export const ORDER_TYPE_1 = 1; //未完成
-export const ORDER_TYPE_2 = 2; //已完成
+export const ORDER_TYPE_2 = 2; //成功
+export const ORDER_TYPE_3 = 3; //失败
 
 export const OrderTypes = {
   [ORDER_TYPE_1]: '未完成',
-  [ORDER_TYPE_2]: '已完成',
+  [ORDER_TYPE_2]: '成功',
+  [ORDER_TYPE_3]: '失败',
 };
 
 export const WAREHOUSING_TYPE_1 = 1;

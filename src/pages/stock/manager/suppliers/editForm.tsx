@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useImperativeHandle } from 'react';
-import { message, Select } from 'antd';
+import React, { useEffect, useImperativeHandle } from 'react';
+import { Select } from 'antd';
 import { FormComponentProps } from 'antd/es/form';
 import { getFloat } from '@/utils';
-import { setGoodsChannelList } from '../services/suppliers';
 import moment from 'moment';
 
 import MapForm from '@/components/MapFormComponent';
@@ -11,11 +10,12 @@ const { CstInput, CstSelect, CstDatePicker } = MapForm;
 
 interface CompProps extends RouteComponentProps<{ id: string }> {
   goodsItem: any,
-  myForwardedRef: any
+  myForwardedRef: any,
+  supplierCode: number,
 }
 
 const Comp: React.FC<CompProps> = props => {
-  const { myForwardedRef, goodsItem } = props;
+  const { myForwardedRef, goodsItem, supplierCode } = props;
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
   useEffect(() => {
@@ -25,14 +25,15 @@ const Comp: React.FC<CompProps> = props => {
   useImperativeHandle(myForwardedRef, () => ({
     getModalValue: (callBack: any) => {
       form?.validateFields(async (error, value) => {
-        if (error) return
+        if (error) return;
+        console.log(value)
         callBack({
           goodsChannelList: [{
             ...value,
             id: goodsItem?.id,
             goodsCode: goodsItem?.goodsCode,
-            supplierCode: props?.location?.query?.code,
-            effectiveTime: value?.effectiveTime ? moment(value?.effectiveTime).format('YYYY-MM-DD HH:MM:SS') : ""
+            supplierCode,
+            effectiveTime: value?.effectiveTime ? moment(value?.effectiveTime).format('YYYY-MM-DD HH:mm:ss') : ""
           }]
         })
 
@@ -42,16 +43,16 @@ const Comp: React.FC<CompProps> = props => {
   }));
 
   const showGoodsModal = () => {
-    const { facePrice, price = facePrice, withTicket, effectiveTime, channelGoodsCode, priority, singleBuyLimit, taxPrice, remark } = goodsItem
+    const { facePrice = '', price = facePrice, withTicket = '', effectiveTime = '', channelGoodsCode = '', priority = 1, singleBuyLimit = '1', taxPrice = '', remark = '' } = goodsItem
     form?.setFieldsValue({
       facePrice: facePrice / 10000,
       price: price / 10000,
       priority,
       channelGoodsCode,
       singleBuyLimit,
-      taxPrice,
+      taxPrice: taxPrice / 10000,
       remark,
-      withTicket,
+      withTicket: withTicket,
       effectiveTime,
       zhekou: price / facePrice * 10
     })
@@ -66,7 +67,7 @@ const Comp: React.FC<CompProps> = props => {
     const facePrice = form?.getFieldValue('facePrice')
     if (key === 'facePrice') form?.setFieldsValue({ 'price': getFloat(value * (zhekou / 10), 2) });
     if (key === 'zhekou') form?.setFieldsValue({ 'price': getFloat(facePrice * (value / 10), 2) });
-    if (key === 'price') form?.setFieldsValue({ 'zhekou': facePrice / value * 10 });
+    if (key === 'price') form?.setFieldsValue({ 'zhekou': getFloat(value / facePrice * 10, 2) });
   };
 
   return (
@@ -85,15 +86,40 @@ const Comp: React.FC<CompProps> = props => {
           ]}
         />
         <CstInput
-          label="面值(元)"
-          name="facePrice"
+          label="优先级别"
+          name="priority"
           labelCol={{ span: 8 }}
           wrapperCol={{ span: 12 }}
-          onBlur={e => handleInputChange(e.target.value, 'facePrice')}
           rules={[
             {
               required: true,
               message: '请输入',
+            },
+            {
+              validator: (rule, value, callback) => {
+                if (String(value).indexOf(".") + 1) {
+                  callback(new Error('请输入整数'));
+                } else callback()
+              },
+            },
+          ]}
+        />
+        <CstInput
+          label="单次限制"
+          name="singleBuyLimit"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 12 }}
+          rules={[
+            {
+              required: true,
+              message: '请输入',
+            },
+            {
+              validator: (rule, value, callback) => {
+                if (String(value).indexOf(".") + 1) {
+                  callback(new Error('请输入整数'));
+                } else callback()
+              },
             },
           ]}
         />
@@ -109,9 +135,22 @@ const Comp: React.FC<CompProps> = props => {
             },
           ]}
         >
-          <Select.Option key='1' value="1">带票</Select.Option>
-          <Select.Option key='0' value="0">不带票</Select.Option>
+          <Select.Option key='1' value={1}>带票</Select.Option>
+          <Select.Option key='0' value={0}>不带票</Select.Option>
         </CstSelect>
+        <CstInput
+          label="面值(元)"
+          name="facePrice"
+          labelCol={{ span: 8 }}
+          wrapperCol={{ span: 12 }}
+          onBlur={e => handleInputChange(e.target.value, 'facePrice')}
+          rules={[
+            {
+              required: true,
+              message: '请输入',
+            },
+          ]}
+        />
         <CstInput
           label="折扣"
           name="zhekou"
@@ -137,30 +176,6 @@ const Comp: React.FC<CompProps> = props => {
             },
           ]}
           onBlur={e => handleInputChange(e.target.value, 'price')}
-        />
-        <CstInput
-          label="优先级别"
-          name="priority"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 12 }}
-          rules={[
-            {
-              required: true,
-              message: '请输入',
-            },
-          ]}
-        />
-        <CstInput
-          label="单次限制"
-          name="singleBuyLimit"
-          labelCol={{ span: 8 }}
-          wrapperCol={{ span: 12 }}
-          rules={[
-            {
-              required: true,
-              message: '请输入',
-            },
-          ]}
         />
         <CstInput
           label="含税价"

@@ -8,7 +8,7 @@ import { SuppliersItemType, getGoodsChannelList, setGoodsChannelList, deleteGood
 import moment from 'moment';
 
 import GlobalCard from '@/components/GlobalCard';
-import { Table, Button, Pagination, Select, Col, Row, Icon, Modal, message } from 'antd';
+import { Table, Button, Pagination, Select, Col, Row, Icon, Modal, message, Switch } from 'antd';
 
 import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
@@ -74,17 +74,15 @@ const Comp: React.FC<CompProps> = (props) => {
   const showConfirm = (list: {}) => {
     Modal.confirm({
       title: '提示',
-      content: '是否删除',
+      content: '是否更改商品状态',
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        if (list?.id) {
-          const [err, data, msg] = await deleteGoodsChannelList({ id: list?.id });
-          if (!err) message.success('移除成功')
-          else message.error(msg)
-        }
-        // 移除表单
-        setGoodsForm({ ...goodsForm, list: _.filter(goodsForm?.list, item => item?.goodsCode != list?.goodsCode) });
+        console.log(list)
+        const obj = { id: list?.id, status: list?.status != 1 ? '1' : "2" }
+        const [err, data, msg] = await deleteGoodsChannelList(obj);
+        if (!err) { message.success('操作成功'); getList() }
+        else message.error(msg)
       },
       onCancel() { },
     });
@@ -123,8 +121,8 @@ const Comp: React.FC<CompProps> = (props) => {
       align: 'center',
       width: 100,
       render: record => {
-        if (record?.price) return (record.price / record?.facePrice * 10)
-        return 10
+        if (record?.price) return getFloat(record.price / record?.facePrice * 10, 2)
+        return ''
       },
     },
     {
@@ -132,8 +130,8 @@ const Comp: React.FC<CompProps> = (props) => {
       align: 'center',
       width: 100,
       render: record => {
-        if (record?.price) return (record.price / record?.facePrice * 10)
-        return (record?.facePrice / 10000)
+        if (record?.price) return record.price / 10000
+        return ''
       },
     },
     {
@@ -150,6 +148,7 @@ const Comp: React.FC<CompProps> = (props) => {
       title: '含税价',
       align: 'center',
       dataIndex: 'taxPrice',
+      render: record => record ? getFloat(record / TRANSTEMP, 2) : '',
     },
     {
       title: '是否带票',
@@ -185,10 +184,14 @@ const Comp: React.FC<CompProps> = (props) => {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <Button type="link" onClick={() => { setGoodsItem(record); setGoodsVisible(true) }}>
             编辑
-          </Button> |
-          <Button type="link" onClick={() => showConfirm(record)}>
-            移除
           </Button>
+          {
+            record?.status == 1 ? (
+              <Switch checked={true} checkedChildren="开" onClick={() => showConfirm(record)} />
+            ) : (
+                <Switch checked={false} unCheckedChildren="关" onClick={() => showConfirm(record)} />
+              )
+          }
         </div >
       ),
     },
@@ -277,12 +280,13 @@ const Comp: React.FC<CompProps> = (props) => {
           onCancel={() => setModalVisible(false)}
           onOk={() => {
             const newGoodsForm = ref.current.getSelectedGoods();
-            setModalVisible(false);
+            let index;
             _.map(newGoodsForm, item => {
-              const index = _.findIndex(goodsForm?.list, g => g.goodsCode === item.goodsCode);
-              if (index === -1) setGoodsItem(item);
+              index = _.findIndex(goodsForm?.list, g => g.goodsCode === item.goodsCode);
+              if (index === 1) message.error('不能重复配置商品')
+              else setGoodsItem(item);
             });
-            setGoodsVisible(true)
+            if (index !== 1) { setGoodsVisible(true); setModalVisible(false); }
           }}
           title="选择商品"
           width={1000}
@@ -292,18 +296,20 @@ const Comp: React.FC<CompProps> = (props) => {
         <GlobalModal
           modalVisible={goodsVisible}
           title="配置商品"
-          onCancel={() => setGoodsVisible(false)}
+          onCancel={() => { setGoodsVisible(false); setGoodsItem([]) }}
           onOk={() => {
             modalForm.current?.getModalValue(async (value: any) => {
               const [err, data, msg] = await setGoodsChannelList(value)
               if (!err) {
                 message.success('提交成功');
                 setGoodsVisible(false)
+                getList();
+                setGoodsItem([])
               } else message.error(msg)
             });
           }}
         >
-          <EditForm ref={modalForm} goodsItem={goodsItem} />
+          <EditForm ref={modalForm} goodsItem={goodsItem} supplierCode={props?.location?.query?.code} />
         </GlobalModal>
       </MapForm>
     </div >

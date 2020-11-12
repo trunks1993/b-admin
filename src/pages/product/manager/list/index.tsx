@@ -93,9 +93,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     if (goodsDetail?.rule) modalForm?.setFieldsValue({ rule: goodsDetail?.rule })
     else modalForm?.setFieldsValue({ rule: 2 })
 
-    //当路由规则为指定供应商时获取供应商列表
-    if (goodsDetail?.rule === 2) getRuleList()
-
     //选中供应商的code
     if (goodsDetail?.supplierCode && modalForm) modalForm?.setFieldsValue({ supplierCode: goodsDetail?.supplierCode })
 
@@ -246,7 +243,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
           |
           <Button
             type="link"
-            onClick={() => { setGoodsVisible(true); setGoodsInfo(record) }}
+            onClick={() => { setGoodsInfo(record); setGoodsVisible(true); }}
           >
             路由
           </Button>
@@ -341,8 +338,13 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     try {
       const [err, data, msg] = await getGoodsRule(goodsInfo?.code)
       if (!err) {
-        if (!_.isEmpty(data)) setGoodsDetail(data)
-        else setGoodsDetail({ rule: 2 })
+        if (!_.isEmpty(data)) {
+          setGoodsDetail(data)
+          if (data.rule === 2) getRuleList() //当路由规则为指定供应商时获取供应商列表
+        } else {
+          setGoodsDetail({ rule: 2 });
+          getRuleList()
+        }
       }
       else message.error(msg)
     } catch (error) { }
@@ -353,8 +355,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
    */
   const getRuleList = async () => {
     try {
-      if (!_.isEmpty(goodsList)) return;
-      const [err, data, msg] = await getSupplierList()
+      const [err, data, msg] = await getSupplierList(goodsInfo?.code)
       if (!err) setGoodsList(data)
       else message.error(msg)
     } catch (error) { }
@@ -413,7 +414,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       align: 'center',
       width: 100,
       render: record => {
-        if (record?.price) return (record.price / record?.facePrice * 10)
+        if (record?.price) return record.price / 10000
         return (record?.facePrice / 10000)
       },
     },
@@ -446,7 +447,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
       dataIndex: 'remark',
     },
   ];
-  console.log(detailItem)
+
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
@@ -571,7 +572,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
             columns={columns}
             pagination={false}
             dataSource={list}
-            scroll={{ x: 1500 }}
+            scroll={{ x: 2000 }}
             rowKey={record => record.id.toString()}
           />
           <div className="global-pagination">
@@ -611,7 +612,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
             labelCol={{ span: 6 }}
             wrapperCol={{ span: 10 }}
             name="rule"
-            onChange={(e) => { setGoodsDetail({ ...goodsDetail, rule: e.target.value }) }}
+            onChange={(e) => { setGoodsDetail({ ...goodsDetail, rule: e.target.value }); if (e.target.value == 2) getRuleList() }}
           >
             <Radio value={2} className={Styles.radioStyle}>指定供应商</Radio>
             {

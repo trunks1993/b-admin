@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:12
- * @LastEditTime: 2020-05-22 11:20:21
+ * @LastEditTime: 2020-11-11 21:40:50
  */
 
 import request from '@/utils/request';
@@ -30,6 +30,16 @@ export interface QueryParamsType extends BaseQueryType {
  */
 export async function queryList(data: QueryParamsType): Promise<any> {
   return request('/goods/stock/searchGoodsStockTraceList', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name:
+ */
+export async function downloadBigGoodsStockTrace(data: any): Promise<any> {
+  return request('/report/downloadBigGoodsStockTrace', {
     method: 'POST',
     data,
   });
