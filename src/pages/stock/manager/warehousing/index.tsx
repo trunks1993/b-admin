@@ -23,6 +23,7 @@ import { ListItemType as CategoryItemType } from '@/pages/product/manager/models
 import { ListItemType as BrandItemType } from '@/pages/product/manager/models/brand';
 
 import { ListItemType as SuppliersItemType } from '../models/suppliers';
+import BigDataModal from '@/components/BigDataModal'
 
 import GlobalModal from '@/components/GlobalModal';
 import { EditeItemType, batchBuyGoods } from '../services/productStock';
@@ -82,6 +83,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
   useEffect(() => {
     initList();
   }, [currPage]);
@@ -104,6 +107,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
     });
   }, [form]);
 
+  useEffect(() => {
+    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
+  }, [webPath])
+
   /**
    * @name: 获取供应商
    */
@@ -123,9 +130,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   };
 
   /**
-  * 
-  * @name: 下载大报表
-  */
+   * 
+   * @name: 下载大报表
+   */
   const superDownload = async () => {
     const obj = filterForm?.getFieldsValue();
     if (!obj?.time) return message.error('请选择下载的时间段!')
@@ -135,20 +142,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-
-      if (!err) {
-        const url = window.location.origin + '/file/' + data?.webPath
-        Modal.success({
-          title: '下载大数据报表链接',
-          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
-          okText: '复制',
-          maskClosable: false,
-          keyboard: false,
-          onOk() {
-            copy(url);
-          },
-        })
-      } else message.error(msg)
+      if (!err) setWebPath(data?.webPath)
+      else message.error(msg)
     } catch (error) { }
   }
 
@@ -421,6 +416,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

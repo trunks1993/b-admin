@@ -18,6 +18,7 @@ import { ListItemType as SuppliersItemType } from '../models/suppliers';
 import moment from 'moment';
 import { ListItemType } from '../models/stockWater';
 import { RouteComponentProps } from 'dva/router';
+import BigDataModal from '@/components/BigDataModal'
 
 import { downloadBigGoodsStockTrace } from '../services/stockWater'
 import { getAjax } from '@/utils/index';
@@ -38,11 +39,18 @@ const Comp: React.FC<CompProps> = props => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
 
   useEffect(() => {
     initList();
   }, [currPage]);
+
+  useEffect(() => {
+    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
+  }, [webPath])
 
   /**
    * @name: 列表加载
@@ -91,20 +99,8 @@ const Comp: React.FC<CompProps> = props => {
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-
-      if (!err) {
-        const url = window.location.origin + '/file/' + data?.webPath
-        Modal.success({
-          title: '下载大数据报表链接',
-          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
-          okText: '复制',
-          maskClosable: false,
-          keyboard: false,
-          onOk() {
-            copy(url);
-          },
-        })
-      } else message.error(msg)
+      if (!err) setWebPath(data?.webPath)
+      else message.error(msg)
     } catch (error) { }
   }
 
@@ -220,7 +216,7 @@ const Comp: React.FC<CompProps> = props => {
                 placeholder="请输入订单时间"
               />
             </Col>
-            <Col span={8} push={1}>
+            <Col span={9} push={1}>
               <Form.Item>
                 <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                   筛选
@@ -272,6 +268,12 @@ const Comp: React.FC<CompProps> = props => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

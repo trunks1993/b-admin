@@ -32,6 +32,7 @@ import { deliver, cancel, queryListTrace, downloadBigPurchaseOrder } from '../se
 import { getFloat } from '@/utils';
 import GlobalModal from '@/components/GlobalModal';
 import { getAjax } from '@/utils/index';
+import BigDataModal from '@/components/BigDataModal'
 
 const { CstInput, CstSelect, CstRangePicker } = MapForm;
 const { confirm } = Modal;
@@ -45,6 +46,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [modalVisible, setModalVisible] = useState<string | number>('');
   const [modalTitle, setModalTitle] = useState('');
+
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
 
   const [traceList, setTraceList] = useState([]);
 
@@ -60,6 +64,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     if (modalVisible) initTraceList();
     else setTraceList([]);
   }, [modalVisible]);
+
+  useEffect(() => {
+    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
+  }, [webPath])
 
   /**
    * @name:
@@ -85,28 +93,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-
-      if (!err) {
-        const url = window.location.origin + '/file/' + data?.webPath
-        Modal.success({
-          title: '下载大数据报表链接',
-          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
-          okText: '复制',
-          maskClosable: false,
-          keyboard: false,
-          onOk() {
-            copy(url);
-          },
-        })
-      } else message.error(msg)
+      if (!err) setWebPath(data?.webPath)
+      else message.error(msg)
     } catch (error) { }
   }
+
   /**
    * @name: 列表加载
    */
   const initList = () => {
     const data = filterForm?.getFieldsValue();
-    console.log(data)
     const beginCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[0]).format('YYYY-MM-DD 00:00:00') : undefined
     const endCreateTime = !_.isEmpty(data?.time) ? moment(data?.time[1]).format('YYYY-MM-DD 23:59:59') : undefined
     dispatch({
@@ -442,6 +438,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           rowKey={record => record.id.toString()}
         />
       </GlobalModal>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

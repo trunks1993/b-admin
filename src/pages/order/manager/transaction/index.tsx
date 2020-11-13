@@ -29,6 +29,7 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
+import BigDataModal from '@/components/BigDataModal'
 
 import { getAjax } from '@/utils/index';
 
@@ -51,6 +52,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+  const [webPath, setWebPath] = useState('');
   const [transactionType, setTransactionType] = useState(1);
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
@@ -72,6 +75,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     getMerchantInfo();
     getSuppliersList();
   }, [currPage]);
+
+  useEffect(() => {
+    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
+  }, [webPath])
 
   useEffect(() => {
     if (_.isEmpty(form)) return;
@@ -134,20 +141,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-
-      if (!err) {
-        const url = window.location.origin + '/file/' + data?.webPath
-        Modal.success({
-          title: '下载大数据报表链接',
-          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
-          okText: '复制',
-          maskClosable: false,
-          keyboard: false,
-          onOk() {
-            copy(url);
-          },
-        })
-      } else message.error(msg)
+      if (!err) setWebPath(data?.webPath)
+      else message.error(msg)
     } catch (error) { }
   }
 
@@ -690,6 +685,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       >
         <Table columns={listColumns} dataSource={lists} pagination={false} scroll={{ x: 1800 }} />
       </GlobalModal>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

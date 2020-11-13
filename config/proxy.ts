@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-11 09:27:53
- * @LastEditTime: 2020-11-11 21:41:16
+ * @LastEditTime: 2020-11-13 18:01:18
  */
 /**
  * 在生产环境 代理是无法生效的，所以这里没有生产环境的配置
@@ -26,9 +26,9 @@ export default {
   },
   test: {
     '/baseApi': {
-      // target: 'http://101.132.39.136:9002',
+      target: 'http://101.132.39.136:9002',
       // target: 'http://192.168.28.18:9002',//朱琳琳
-      target: 'http://192.168.31.68:9002',//孙志伟
+      // target: 'http://192.168.31.68:9002',//孙志伟
       changeOrigin: true,
       pathRewrite: { '^/baseApi': '' },
     },

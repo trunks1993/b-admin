@@ -7,6 +7,7 @@ import { TableListData } from '@/pages/data';
 import copy from 'copy-to-clipboard';
 import { Table, Button, Pagination, Modal, message, Typography, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
+import BigDataModal from '@/components/BigDataModal'
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
@@ -39,6 +40,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
 
@@ -48,6 +52,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     setSelectedRowKeys([]);
     initList();
   }, [currPage]);
+
+  useEffect(() => {
+    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
+  }, [webPath])
 
   /**
    * @name: 列表加载
@@ -69,9 +77,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   /**
-     * 
-     * @name: 下载大报表
-     */
+   * 
+   * @name: 下载大报表
+   */
   const superDownload = async () => {
     const obj = filterForm?.getFieldsValue();
     if (!obj?.time) return message.error('请选择下载的时间段!')
@@ -81,20 +89,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-
-      if (!err) {
-        const url = window.location.origin + '/file/' + data?.webPath
-        Modal.success({
-          title: '下载大数据报表链接',
-          content: <Typography.Paragraph copyable={true}>{url}</Typography.Paragraph>,
-          okText: '复制',
-          maskClosable: false,
-          keyboard: false,
-          onOk() {
-            copy(url);
-          },
-        })
-      } else message.error(msg)
+      if (!err) setWebPath(data?.webPath)
+      else message.error(msg)
     } catch (error) { }
   }
 
@@ -302,6 +298,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };
