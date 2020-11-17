@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { ConnectState } from '@/models/connect';
 import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
-import copy from 'copy-to-clipboard';
 import { ListItemType } from '../models/purchase';
 import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row, Typography } from 'antd';
@@ -49,6 +48,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   const [webPath, setWebPath] = useState('');
   const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+  const [bigDataLoading, setBigDataLoading] = useState(false);
 
   const [traceList, setTraceList] = useState([]);
 
@@ -64,10 +64,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     if (modalVisible) initTraceList();
     else setTraceList([]);
   }, [modalVisible]);
-
-  useEffect(() => {
-    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
-  }, [webPath])
 
   /**
    * @name:
@@ -88,13 +84,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     const obj = filterForm?.getFieldsValue();
     if (!obj?.time) return message.error('请选择下载的时间段!')
     try {
+      setBigDataLoading(true);
       const [err, data, msg] = await downloadBigPurchaseOrder({
         ...obj,
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-      if (!err) setWebPath(data?.webPath)
-      else message.error(msg)
+      setBigDataLoading(false);
+      if (!err) {
+        setWebPath(data?.webPath);
+        if (!_.isEmpty(data?.webPath)) setBigDataModalVisible(true)
+        else message.error('邦哥的问题,找他!')
+      } else message.error(msg)
     } catch (error) { }
   }
 
@@ -285,6 +286,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     icon='download'
                     onClick={() => superDownload()}
                     style={{ marginLeft: '10px' }}
+                    loading={bigDataLoading}
                   >
                     大数据下载
                   </Button>

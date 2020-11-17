@@ -184,7 +184,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     {
       title: '商品名称',
       align: 'center',
-      width: 210,
+      width: 150,
       key: 'id',
       fixed: 'left',
       render: record => (
@@ -200,38 +200,43 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
     {
       title: '价格（元）',
       align: 'center',
+      width: 100,
       // dataIndex: 'price',
       render: record => getFloat(record.price / TRANSTEMP, 4),
     },
     {
       title: '商品类型',
+      width: 100,
       align: 'center',
       render: record => ProductTypes[record.productTypeCode],
     },
     {
       title: '库存',
+      width: 100,
       align: 'center',
       dataIndex: 'stock',
     },
     {
       title: '销量',
+      width: 100,
       dataIndex: 'soldNum',
       align: 'center',
     },
     {
       title: '创建时间',
       align: 'center',
+      width: 120,
       render: record => moment(record.createTime).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '商品状态',
+      width: 100,
       align: 'center',
       render: record => ProductStatusGU[record.status],
     },
     {
       title: '操作',
       align: 'center',
-      fixed: 'right',
       render: record => (
         <>
           <Button
@@ -572,7 +577,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, categoryList, total, loadin
             columns={columns}
             pagination={false}
             dataSource={list}
-            scroll={{ x: 2000 }}
             rowKey={record => record.id.toString()}
           />
           <div className="global-pagination">

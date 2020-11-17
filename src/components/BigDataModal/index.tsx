@@ -18,13 +18,14 @@ const BigDataModal: React.FC<BigDataModalProps> = (props) => {
   const [prompt, setprompt] = useState('下载中')
 
   let timer: any;
-
+  
   useEffect(() => {
-    if (_.isEmpty(webPath)) return;
-    timer = setInterval(() => {
-      getExcelStatus();
-    }, 3000)
-  }, [webPath])
+    if (visible && !_.isEmpty(webPath)) {
+      timer = setInterval(() => {
+        getExcelStatus();
+      }, 3000)
+    }
+  }, [visible])
 
   useEffect(() => {
     if (current == 2 && !visible) window.open(window.location.origin + '/file/' + webPath)
@@ -61,11 +62,11 @@ const BigDataModal: React.FC<BigDataModalProps> = (props) => {
         onOk={() => {
           modalWillUnMount();
           window.open(window.location.origin + '/file/' + webPath)
-          okFunc();
+          okFunc && okFunc();
         }}
         onCancel={() => {
           modalWillUnMount();
-          cancelFunc()
+          cancelFunc && cancelFunc()
         }}
         okText='下载'
         cancelText='离线下载'
@@ -75,7 +76,7 @@ const BigDataModal: React.FC<BigDataModalProps> = (props) => {
         <div>
           <Steps current={current}>
             <Steps.Step title="准备生成" icon={<Icon type="snippets" />} />
-            <Steps.Step title={prompt} icon={<Icon type="loading" />} />
+            <Steps.Step title={prompt} icon={<Icon type={confirmLoading ? 'loading' : 'check'} />} />
             <Steps.Step title="生成成功" icon={<Icon type="smile-o" />} />
           </Steps>
         </div>

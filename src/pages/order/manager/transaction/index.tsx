@@ -7,7 +7,6 @@ import { TableListData } from '@/pages/data';
 import { Table, Button, Pagination, message, Checkbox, Select, Form, Col, Row, Modal, Typography } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import GlobalModal from '@/components/GlobalModal';
-import copy from 'copy-to-clipboard';
 import { setToSuccess, setToFailed, reroute, getOuterWorkerList, retry, searchMerchantList, downloadBigTradeOrder } from '../services/transaction';
 import { getSupplierList } from '@/pages/product/manager/services/list'
 import {
@@ -54,6 +53,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
   const [webPath, setWebPath] = useState('');
+  const [bigDataLoading, setBigDataLoading] = useState(false);
   const [transactionType, setTransactionType] = useState(1);
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
@@ -75,10 +75,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     getMerchantInfo();
     getSuppliersList();
   }, [currPage]);
-
-  useEffect(() => {
-    if (!_.isEmpty(webPath)) setBigDataModalVisible(true)
-  }, [webPath])
 
   useEffect(() => {
     if (_.isEmpty(form)) return;
@@ -136,13 +132,18 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     const obj = filterForm?.getFieldsValue();
     if (!obj?.time) return message.error('请选择下载的时间段!')
     try {
+      setBigDataLoading(true);
       const [err, data, msg] = await downloadBigTradeOrder({
         ...obj,
         beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
         endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
       })
-      if (!err) setWebPath(data?.webPath)
-      else message.error(msg)
+      setBigDataLoading(false);
+      if (!err) {
+        setWebPath(data?.webPath);
+        if (!_.isEmpty(data?.webPath)) setBigDataModalVisible(true)
+        else message.error('邦哥的问题,找他!')
+      } else message.error(msg)
     } catch (error) { }
   }
 
@@ -167,7 +168,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易类型',
       align: 'center',
-      width: 50,
+      width: 70,
       render: record => TransactionTypes[record.bizType],
     },
     {
@@ -185,7 +186,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '异常订单',
       align: 'center',
-      width: 50,
+      width: 70,
       render: (record) => {
         if (record.isAbnormal === 'Y') return <div>是</div>
         else return <div>否</div>
@@ -194,7 +195,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易金额(元)',
       align: 'center',
-      width: 80,
+      width: 90,
       render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },
     {
@@ -380,7 +381,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       else message.error(msg)
     } catch (error) { }
   }
-
+  console.log(bigDataModalVisible)
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>交易订单</div>
@@ -534,6 +535,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     icon='download'
                     onClick={() => superDownload()}
                     style={{ marginLeft: '10px' }}
+                    loading={bigDataLoading}
                   >
                     大数据下载
                   </Button>
