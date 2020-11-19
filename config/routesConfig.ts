@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-06-08 14:08:25
+ * @LastEditTime: 2020-11-17 15:20:59
  */
 // 商品
 export const product = [
@@ -122,6 +122,12 @@ export const stock = [
     Routes: ['src/AuthRouter'],
   },
   {
+    path: '/stock/manager/suppliers/edit',
+    component: './stock/manager/suppliers/edit',
+    from: '/stock/manager/suppliers',
+    Routes: ['src/AuthRouter'],
+  },
+  {
     path: '/stock/manager/warehousing',
     component: './stock/manager/warehousing',
     Routes: ['src/AuthRouter'],
@@ -191,3 +197,26 @@ export const service = [
     Routes: ['src/AuthRouter'],
   },
 ];
+//营销
+export const market = [
+  {
+    path: '/market/manager/offline',
+    component: './market/manager/offline',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/market/manager/list',
+    component: './market/manager/list',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/market/manager/pay',
+    component: './market/manager/pay',
+    Routes: ['src/AuthRouter'],
+  },
+  {
+    path: '/market/manager/order',
+    component: './market/manager/order',
+    Routes: ['src/AuthRouter'],
+  }
+]

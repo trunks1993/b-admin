@@ -108,7 +108,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
       } else {
         message.error(msg);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   /**
@@ -219,38 +219,38 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
               />
             </>
           ) : (
-            <>
-              <CstInput
-                disabled={true}
-                label="认证手机号"
-                name="telephone"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
-              />
-              <CstInput
-                disabled={true}
-                label="企业名称"
-                placeholder="请输入商品名称"
-                name="businessName"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
-              />
-              <CstInput
-                disabled={true}
-                label="统一社会信用代码"
-                name="creditCode"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
-              />
-              <CstUpload
-                disabled={true}
-                label="营业执照照片"
-                name="identityPhoto"
-                labelCol={{ span: 4 }}
-                wrapperCol={{ span: 8 }}
-              />
-            </>
-          )}
+              <>
+                <CstInput
+                  disabled={true}
+                  label="认证手机号"
+                  name="telephone"
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 8 }}
+                />
+                <CstInput
+                  disabled={true}
+                  label="企业名称"
+                  placeholder="请输入商品名称"
+                  name="businessName"
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 8 }}
+                />
+                <CstInput
+                  disabled={true}
+                  label="统一社会信用代码"
+                  name="creditCode"
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 8 }}
+                />
+                <CstUpload
+                  disabled={true}
+                  label="营业执照照片"
+                  name="identityPhoto"
+                  labelCol={{ span: 4 }}
+                  wrapperCol={{ span: 8 }}
+                />
+              </>
+            )}
         </GlobalCard>
         <GlobalCard
           title="其它信息"
@@ -333,6 +333,6 @@ const Comp: React.FC<CompProps> = ({ dispatch, id }) => {
   );
 };
 
-export default connect(({ routing }:ConnectState) => ({
+export default connect(({ routing }: ConnectState) => ({
   id: routing.location.query.id,
 }))(Comp);

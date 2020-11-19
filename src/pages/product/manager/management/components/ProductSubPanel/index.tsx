@@ -110,9 +110,10 @@ const RowItem = props => {
       okText: '确定',
       cancelText: '取消',
       onOk: async () => {
-        const [err, data, msg] = await removeSub(item.id);
-        if (!err) onChange(value.filter(v => v.uuid !== item.uuid));
-        else message.error(msg);
+        message.success(item)
+        // const [err, data, msg] = await removeSub(item.id);
+        // if (!err) onChange(value.filter(v => v.uuid !== item.uuid));
+        // else message.error(msg);
       },
       onCancel() { },
     });

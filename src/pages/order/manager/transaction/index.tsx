@@ -4,10 +4,11 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/transaction';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, message, Checkbox, Select, Form, Col, Row } from 'antd';
+import { Table, Button, Pagination, message, Checkbox, Select, Form, Col, Row, Modal, Typography } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
 import GlobalModal from '@/components/GlobalModal';
-import { setToSuccess, setToFailed, reroute, getOuterWorkerList } from '../services/transaction';
+import { setToSuccess, setToFailed, reroute, getOuterWorkerList, retry, searchMerchantList, downloadBigTradeOrder } from '../services/transaction';
+import { getSupplierList } from '@/pages/product/manager/services/list'
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
@@ -16,6 +17,7 @@ import {
   TRANSTEMP,
   TransactionTypes,
   WarehousingStatus,
+  WAREHOUSING_STATUS_11,
   WarehousingTypes,
 } from '@/const';
 // import { getInfo, remove } from '../services/transaction';
@@ -26,6 +28,7 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import moment from 'moment';
 import { getFloat } from '@/utils';
+import BigDataModal from '@/components/BigDataModal'
 
 import { getAjax } from '@/utils/index';
 
@@ -48,6 +51,9 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+  const [webPath, setWebPath] = useState('');
+  const [bigDataLoading, setBigDataLoading] = useState(false);
   const [transactionType, setTransactionType] = useState(1);
   const [form, setForm] = React.useState<FormComponentProps['form'] | null>(null);
 
@@ -55,8 +61,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
   const [selectedRow, setSelectedRow] = useState<ListItemType[]>([]);
+  const [merchantInfo, setMerchantInfo] = useState<any>([]);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [goodsList, setGoodsList] = useState({});// 供应商列表
 
   const [visible, setVisible] = useState<any>(false);
   const [lists, setLists] = useState<any>([]);
@@ -64,6 +72,8 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   useEffect(() => {
     setSelectedRowKeys([]);
     initList();
+    getMerchantInfo();
+    getSuppliersList();
   }, [currPage]);
 
   useEffect(() => {
@@ -92,6 +102,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     });
   };
 
+  const getSuppliersList = async () => {
+    try {
+      const [err, data, msg] = await getSupplierList();
+      if (!err) setGoodsList(data)
+      else message.error(msg)
+    } catch (error) { }
+  }
+
   /**
    * 
    * @name: 下载报表
@@ -106,12 +124,35 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     }, '/report/downloadTradeOrder')
   }
 
+  /**
+   * 
+   * @name: 下载大报表
+   */
+  const superDownload = async () => {
+    const obj = filterForm?.getFieldsValue();
+    if (!obj?.time) return message.error('请选择下载的时间段!')
+    try {
+      setBigDataLoading(true);
+      const [err, data, msg] = await downloadBigTradeOrder({
+        ...obj,
+        beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
+      })
+      setBigDataLoading(false);
+      if (!err) {
+        setWebPath(data?.webPath);
+        if (!_.isEmpty(data?.webPath)) setBigDataModalVisible(true)
+        else message.error('邦哥的问题,找他!')
+      } else message.error(msg)
+    } catch (error) { }
+  }
+
   const columns: ColumnProps<ListItemType>[] = [
     {
       title: '商户信息',
       align: 'center',
       width: 80,
-      dataIndex: 'merchantId',
+      dataIndex: 'merchantName',
     },
     {
       title: '订单号/外部订单号',
@@ -127,7 +168,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易类型',
       align: 'center',
-      width: 50,
+      width: 70,
       render: record => TransactionTypes[record.bizType],
     },
     {
@@ -145,7 +186,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '异常订单',
       align: 'center',
-      width: 50,
+      width: 70,
       render: (record) => {
         if (record.isAbnormal === 'Y') return <div>是</div>
         else return <div>否</div>
@@ -154,7 +195,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '交易金额(元)',
       align: 'center',
-      width: 80,
+      width: 90,
       render: record => getFloat(record.totalPay / TRANSTEMP, 4),
     },
     {
@@ -190,7 +231,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '供应商通道',
       align: 'center',
       width: 80,
-      dataIndex: 'supplierCode',
+      dataIndex: 'supplierName',
     },
     {
       title: '路由详情',
@@ -217,7 +258,17 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     { title: '返回码 ', align: 'center', dataIndex: 'outerReturnCode' },
     { title: '返回消息 ', align: 'center', dataIndex: 'outerReturnMessage' },
     { title: '处理方式 ', align: 'center', dataIndex: 'processType', render: record => WarehousingTypes[record] },
+    { title: '操作 ', align: 'center', fixed: 'right', render: record => { if (record.status === WAREHOUSING_STATUS_11) { return <Button type='link' onClick={() => retryOrder(record.id)}>查单重试</Button> } return '--'; } },
   ];
+
+  const retryOrder = async (ids: number) => {
+    try {
+      const [err, data, msg] = await retry({ ids: [ids.toString()] })
+      setVisible(false)
+      if (!err) return message.success('操作成功')
+      else return message.error(msg)
+    } catch (error) { }
+  }
 
   /**
    * @name: checkbox onChange 事件
@@ -254,12 +305,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
      * @name: 修改订单状态
      */
   const toTransactionType = (type: number) => {
-    if (selectedRowKeys.length !== 1) return message.error('只能选择一条数据进行操作!')
+    // if (selectedRowKeys.length !== 1) return message.error('只能选择一条数据进行操作!')
     if (selectedRow[0]?.status === 4 || selectedRow[0]?.status === 5) return message.error('订单已完成,无法修改!')
     if (selectedRow[0]?.isAbnormal !== 'Y') return message.error('订单没有异常!')
     setTransactionType(type);
     if (type === 3) {
-      console.log(selectedRow)
       const obj = { ids: [selectedRow[0]?.id.toString()] };
       Map[type](obj);
       initList();
@@ -323,6 +373,15 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     }
   }
 
+  /** 获取所有商户info */
+  const getMerchantInfo = async () => {
+    try {
+      const [err, data, msg] = await searchMerchantList();
+      if (!err) setMerchantInfo(data.list);
+      else message.error(msg)
+    } catch (error) { }
+  }
+  console.log(bigDataModalVisible)
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>交易订单</div>
@@ -364,16 +423,21 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 </CstSelect>
               </Col>
             </Row>
-
             <Row>
               <Col span={7}>
-                <CstInput
+                <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
                   name="merchantId"
                   label="商户号"
-                  placeholder="请输入商户号"
-                />
+                  placeholder="全部"
+                >
+                  {_.map(merchantInfo, (item, key) => (
+                    <Select.Option key={key} value={item?.merchantId}>
+                      {item?.merchantName}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
               </Col>
               <Col span={7}>
                 <CstInput
@@ -429,7 +493,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               </Col>
             </Row>
             <Row>
-              <Col span={8} >
+              <Col span={7} >
+                <CstSelect
+                  labelCol={{ span: 8 }}
+                  wrapperCol={{ span: 16 }}
+                  name="supplierCode"
+                  label="供应商"
+                  placeholder="全部"
+                >
+                  {_.map(goodsList, (item, key) => (
+                    <Select.Option key={key} value={item?.code}>
+                      {item?.name}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
+              </Col>
+              <Col span={9} push={1}>
                 <Form.Item>
                   <Button
                     type="primary"
@@ -451,6 +530,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     style={{ marginLeft: '10px' }}
                   >
                     下载
+                  </Button>
+                  <Button
+                    icon='download'
+                    onClick={() => superDownload()}
+                    style={{ marginLeft: '10px' }}
+                    loading={bigDataLoading}
+                  >
+                    大数据下载
                   </Button>
                 </Form.Item>
               </Col>
@@ -600,6 +687,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       >
         <Table columns={listColumns} dataSource={lists} pagination={false} scroll={{ x: 1800 }} />
       </GlobalModal>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

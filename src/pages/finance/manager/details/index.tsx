@@ -4,8 +4,10 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/pos';
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Col, Row } from 'antd';
+import copy from 'copy-to-clipboard';
+import { Table, Button, Pagination, Modal, message, Typography, Select, Form, Col, Row } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
+import BigDataModal from '@/components/BigDataModal'
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
@@ -22,6 +24,7 @@ import MapForm from '@/components/MapFormComponent';
 import { FormComponentProps } from 'antd/es/form';
 import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { downloadBigFinancialDetails } from '../services/details'
 import moment from 'moment';
 import { getFloat } from '@/utils';
 import { getAjax } from '@/utils/index';
@@ -36,6 +39,10 @@ interface CompProps extends TableListData<ListItemType> {
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+  const [bigDataLoading, setBigDataLoading] = useState(false);
 
   const [filterForm, setFilterForm] = React.useState<FormComponentProps['form'] | null>(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[] | number[]>([]);
@@ -65,6 +72,29 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       },
     });
   };
+
+  /**
+   * 
+   * @name: 下载大报表
+   */
+  const superDownload = async () => {
+    const obj = filterForm?.getFieldsValue();
+    if (!obj?.time) return message.error('请选择下载的时间段!')
+    try {
+      setBigDataLoading(true);
+      const [err, data, msg] = await downloadBigFinancialDetails({
+        ...obj,
+        beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
+      })
+      setBigDataLoading(false);
+      if (!err) {
+        setWebPath(data?.webPath);
+        if (!_.isEmpty(data?.webPath)) setBigDataModalVisible(true)
+        else message.error('邦哥的问题,找他!')
+      } else message.error(msg)
+    } catch (error) { }
+  }
 
   /**
    * 
@@ -213,7 +243,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                   placeholder="请输入订单时间"
                 />
               </Col>
-              <Col span={8} push={2}>
+              <Col span={9} push={1}>
                 <Form.Item>
                   <Button
                     type="primary"
@@ -235,6 +265,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                     style={{ marginLeft: '10px' }}
                   >
                     下载
+                  </Button>
+                  <Button
+                    icon='download'
+                    onClick={() => superDownload()}
+                    style={{ marginLeft: '10px' }}
+                    loading={bigDataLoading}
+                  >
+                    大数据下载
                   </Button>
                 </Form.Item>
               </Col>
@@ -263,6 +301,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

@@ -4,7 +4,8 @@
   background: #f1f2f7;
 }
 .main {
-  width: 1200px;
+  width: 100%;
+  min-width: 1200px;
   margin: auto;
   height: calc(100% - 60px);
   padding-top: 10px;
@@ -14,7 +15,7 @@
 
 .left {
   margin-left: 10px;
-  width: 980px;
+  width: 82.5%;
 }
 
 .wrapper {

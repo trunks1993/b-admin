@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-06 20:21:36
- * @LastEditTime: 2020-06-08 10:57:45
+ * @LastEditTime: 2020-11-17 15:49:14
  */ 
 export default {
   '/menu': require('@/assets/images/global/menu-icon-menu.png'),
@@ -11,4 +11,5 @@ export default {
   '/stock': require('@/assets/images/global/menu-icon-stock.png'),
   '/finance': require('@/assets/images/global/menu-icon-finance.png'),
   '/service': require('@/assets/images/global/menu-icon-service.png'),
+  '/market': require('@/assets/images/global/menu-icon-market.png'),
 };

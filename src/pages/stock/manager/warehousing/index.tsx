@@ -4,11 +4,12 @@ import { Dispatch, AnyAction } from 'redux';
 import { connect } from 'dva';
 import { ListItemType } from '../models/warehousing';
 // import { ListItemType as CategoryItemType } from '../models/group';
+import copy from 'copy-to-clipboard';
 
 import { TableListData } from '@/pages/data';
-import { Table, Button, Pagination, Modal, message, Checkbox, Select, Form, Row, Col } from 'antd';
+import { Table, Button, Pagination, Modal, message, Typography, Select, Form, Row, Col } from 'antd';
 import { ColumnProps } from 'antd/lib/table/interface';
-import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WarehousingStatus, WorkTypes } from '@/const';
+import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE_NUM, WarehousingStatus, WorkTypes, WarehousingStatusPurchase } from '@/const';
 // import { remove, add, modify, EditeItemType, modifyStatus } from '../services/list';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -22,9 +23,11 @@ import { ListItemType as CategoryItemType } from '@/pages/product/manager/models
 import { ListItemType as BrandItemType } from '@/pages/product/manager/models/brand';
 
 import { ListItemType as SuppliersItemType } from '../models/suppliers';
+import BigDataModal from '@/components/BigDataModal'
 
 import GlobalModal from '@/components/GlobalModal';
 import { EditeItemType, batchBuyGoods } from '../services/productStock';
+import { downloadBigPurchaseGoods, } from '../services/warehousing';
 import { getAjax } from '@/utils/index';
 
 import moment from 'moment';
@@ -80,6 +83,10 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
 
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  const [webPath, setWebPath] = useState('');
+  const [bigDataModalVisible, setBigDataModalVisible] = useState(false);
+  const [bigDataLoading, setBigDataLoading] = useState(false);
+
   useEffect(() => {
     initList();
   }, [currPage]);
@@ -121,6 +128,30 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
   };
 
   /**
+   * 
+   * @name: 下载大报表
+   */
+  const superDownload = async () => {
+    const obj = filterForm?.getFieldsValue();
+    if (!obj?.time) return message.error('请选择下载的时间段!')
+    try {
+      setBigDataLoading(true);
+      const [err, data, msg] = await downloadBigPurchaseGoods({
+        ...obj,
+        beginCreateTime: moment(obj?.time[0]).format('YYYY-MM-DD 00:00:00'),
+        endCreateTime: moment(obj?.time[1]).format('YYYY-MM-DD 23:59:59')
+      })
+      setBigDataLoading(false);
+      if (!err) {
+        setWebPath(data?.webPath);
+        if (!_.isEmpty(data?.webPath)) setBigDataModalVisible(true)
+        else message.error('邦哥的问题,找他!')
+      } else message.error(msg)
+    } catch (error) { }
+  }
+
+
+  /**
    * @name: 获取商品分组
    */
   const getBrand = async () => {
@@ -141,7 +172,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
         currPage,
         pageSize,
         ...data,
-        status: 8,
+        status: data?.status ? data?.status : '8',
         beginCreateTime,
         endCreateTime,
       },
@@ -321,7 +352,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                 placeholder="请输入订单时间"
               />
             </Col>
-            <Col span={8} push={1}>
+            <Col span={8}>
+              <CstSelect
+                name="status"
+                labelCol={{ span: 8 }}
+                wrapperCol={{ span: 16 }}
+                label="订单状态"
+                placeholder="全部"
+              >
+                {_.map(WarehousingStatusPurchase, (item, key) => (
+                  <Select.Option key={key} value={key}>
+                    {item}
+                  </Select.Option>
+                ))}
+              </CstSelect>
+            </Col>
+            <Col span={9} push={1}>
               <Form.Item>
                 <Button type="primary" icon="search" onClick={() => dispatchInit()}>
                   筛选
@@ -339,6 +385,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
                   style={{ marginLeft: '10px' }}
                 >
                   下载
+                </Button>
+                <Button
+                  icon='download'
+                  onClick={() => superDownload()}
+                  style={{ marginLeft: '10px' }}
+                  loading={bigDataLoading}
+                >
+                  大数据下载
                 </Button>
               </Form.Item>
             </Col>
@@ -366,6 +420,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, supplierList, total, loadin
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
         </span>
       </div>
+      <BigDataModal
+        visible={bigDataModalVisible}
+        okFunc={() => setBigDataModalVisible(false)}
+        cancelFunc={() => setBigDataModalVisible(false)}
+        webPath={webPath}
+      />
     </div>
   );
 };

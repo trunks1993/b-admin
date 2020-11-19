@@ -1,12 +1,10 @@
 import React, { useState, useEffect, useImperativeHandle } from 'react';
-import { Tree, Table, Pagination, Col, Row, Form, Button, Checkbox, message } from 'antd';
+import { Tree, Table, Pagination, Col, Row, message } from 'antd';
 import { queryList } from '@/pages/product/manager/services/group';
 import { ListItemType } from '@/pages/product/manager/models/group';
 import Styles from './index.css';
 import {
   DEFAULT_PAGE_NUM,
-  DEFAULT_PAGE_SIZE,
-  StockStatus,
   TRANSTEMP,
   ProductStatusGU,
   ProductTypes,
@@ -19,10 +17,9 @@ import { ConnectState } from '@/models/connect';
 import { FormComponentProps } from 'antd/es/form';
 
 import MapForm from '@/components/MapFormComponent';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import _ from 'lodash';
 import { getFloat } from '@/utils';
-const { CstInput, CstCheckbox, CstSelect, CstPassword } = MapForm;
+const { CstInput, CstCheckbox, } = MapForm;
 
 const { TreeNode } = Tree;
 
@@ -63,6 +60,7 @@ const Comp: React.FC<CompProps> = props => {
           productTypeCode,
           facePrice,
           shortName,
+          name: productSubName,
         };
       });
     },
@@ -105,7 +103,7 @@ const Comp: React.FC<CompProps> = props => {
       } else {
         message.error(msg);
       }
-    } catch (error) {}
+    } catch (error) { }
   };
 
   /**
@@ -144,18 +142,6 @@ const Comp: React.FC<CompProps> = props => {
     timeout = setTimeout(() => dispatchInit(() => setSelectedRowKeys([])), 500);
   };
 
-  // /**
-  //  * @name: checkbox onChange 事件
-  //  * @param {CheckboxChangeEvent} e
-  //  */
-  // const handleSelectAll = (e: CheckboxChangeEvent) => {
-  //   const checked = e.target.checked;
-  //   const keys = _.map(list, item => item.id.toString());
-  //   const selections =
-  //     (selectedRowKeys.length > 0 || checked) && selectedRowKeys.length !== keys.length ? keys : [];
-  //   setSelectedRowKeys(selections);
-  // };
-
   const rowSelection = {
     selectedRowKeys,
     hideDefaultSelections: true,
@@ -170,10 +156,6 @@ const Comp: React.FC<CompProps> = props => {
       align: 'center',
       key: 'id',
       render: record => (
-        // <div style={{ display: 'flex', alignItems: 'center' }}>
-        //   <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
-        //   <span>{record.productSub.name}</span>
-        // </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
           <img width="30" height="30" src={process.env.BASE_FILE_SERVER + record.iconUrl} />
           <span style={{ textAlign: 'left' }}>
@@ -211,13 +193,7 @@ const Comp: React.FC<CompProps> = props => {
       <div className={Styles.tree}>
         <Tree
           checkable={true}
-          // onExpand={this.onExpand}
-          // expandedKeys={this.state.expandedKeys}
-          // autoExpandParent={this.state.autoExpandParent}
           onCheck={handleCheck}
-          // checkedKeys={this.state.checkedKeys}
-          // onSelect={handleSelect}
-          // selectedKeys={selectedKeys}
         >
           {renderTreeNodes(treeData)}
         </Tree>
@@ -240,8 +216,6 @@ const Comp: React.FC<CompProps> = props => {
               <Col span={10}>
                 <CstInput
                   name="name"
-                  // labelCol={{ span: 8 }}
-                  // wrapperCol={{ span: 16 }}
                   onChange={fetch}
                   placeholder="输入搜索关键词"
                 />
@@ -258,26 +232,13 @@ const Comp: React.FC<CompProps> = props => {
           dataSource={list}
           rowKey={record => JSON.stringify(record)}
         />
-        {/* <div style={{ paddingLeft: '22px', marginTop: '10px' }}>
-          <Checkbox
-            // indeterminate={list.length !== selectedRowKeys.length && selectedRowKeys.length > 0}
-            onChange={handleSelectAll}
-            checked={selectedRowKeys.length > 0}
-          >
-            当页全选
-          </Checkbox>
-        </div> */}
         <div className="global-pagination">
           <Pagination
             current={currPage}
             onChange={(currPage: number) => setCurrPage(currPage)}
             defaultPageSize={5}
             total={total}
-            // showQuickJumper
           />
-          {/* <span className="global-pagination-data">
-            共 {total} 条 ,每页 {pageSize} 条
-          </span> */}
         </div>
       </div>
     </div>

@@ -15,6 +15,7 @@ import {
   PRICE_STATUS_2,
   TRANSTEMP,
 } from '@/const';
+import { searchMerchantList } from '@/pages/order/manager/services/transaction'
 // import { getInfo, remove } from '../services/transaction';
 import Styles from './index.css';
 import MapForm from '@/components/MapFormComponent';
@@ -36,7 +37,7 @@ import { router } from 'umi';
 import GlobalModal from '@/components/GlobalModal';
 import { getFloat } from '@/utils';
 
-const { CstInput, CstSelect, CstOther, CstInputNumber } = MapForm;
+const { CstInput, CstSelect, CstOther, CstInputNumber, CstDatePicker } = MapForm;
 const { confirm } = Modal;
 interface CompProps extends TableListData<ListItemType> {
   dispatch: Dispatch<AnyAction>;
@@ -53,7 +54,7 @@ const handleEdite = async (fields: ModifyItemType) => {
     return false;
   }
 };
-
+let listRel = {};
 const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE_NUM);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -66,10 +67,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [formData, setFormData] = useState<ListItemType>({});
+  const [merchantInfo, setMerchantInfo] = useState<any>([]);
 
   useEffect(() => {
     setSelectedRowKeys([]);
     initList();
+    getMerchantInfo();
   }, [currPage]);
 
   useEffect(() => {
@@ -83,6 +86,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       rebate,
       decMoney,
       price,
+      effectiveTime,
     } = formData;
     if (modalVisible && id) {
       form?.setFieldsValue({
@@ -91,10 +95,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         goodsCode,
         shortName,
         goodsName,
-        facePrice: getFloat(facePrice / TRANSTEMP, 4),
+        facePrice: getFloat(facePrice / TRANSTEMP, 2),
         rebate,
         decMoney: decMoney / TRANSTEMP,
         price: price / TRANSTEMP,
+        effectiveTime,
       });
     }
   }, [formData]);
@@ -151,7 +156,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         else message.error('删除失败，请重试');
         dispatchInit(() => setSelectedRowKeys([]));
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -174,7 +179,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           message.error(msg);
         }
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -196,7 +201,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
   };
 
   const handleModalVisible = async (record: ListItemType) => {
-    const [err, data, msg] = await getInfo(record.id);
+    const [err, data, msg] = await getInfo(record?.id);
     setModalVisible(true);
     setFormData(data);
   };
@@ -248,11 +253,12 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       title: '商户号',
       align: 'center',
       dataIndex: 'merchantId',
+      render: record => listRel[record]
     },
     {
       title: '价格(元)',
       align: 'center',
-      render: record => getFloat(record.price / TRANSTEMP, 4),
+      render: record => getFloat(record.price / TRANSTEMP, 2),
     },
     {
       title: '商品类型',
@@ -262,7 +268,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     {
       title: '面值/规格',
       align: 'center',
-      render: record => getFloat(record.facePrice / TRANSTEMP, 4) + '/' + record.shortName,
+      render: record => getFloat(record.facePrice / TRANSTEMP, 2) + '/' + record.shortName,
+    },
+    {
+      title: '生效价格(元)',
+      align: 'center',
+      render: record => record?.newPrice ? getFloat(record?.newPrice / TRANSTEMP, 2) : '',
+    },
+    {
+      title: '生效时间',
+      align: 'center',
+      dataIndex: 'effectiveTime',
+      render: record =>
+        record && moment(record).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: '状态',
@@ -330,6 +348,22 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
     },
   };
 
+  /** 获取所有商户info */
+  const getMerchantInfo = async () => {
+    try {
+      const [err, data, msg] = await searchMerchantList();
+      if (_.isEmpty(listRel)) {
+        listRel = data.list.reduce((list = {}, v: any) => {
+          return { ...list, [v?.merchantId]: v?.merchantName };
+        });
+        listRel[data?.list[0]?.merchantId] = data?.list[0]?.merchantName
+      }
+
+      if (!err) setMerchantInfo(data.list);
+      else message.error(msg)
+    } catch (error) { console.log(error) }
+  }
+
   return (
     <div className={Styles.container}>
       <div className={Styles.toolbar}>
@@ -381,13 +415,19 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
                 </CstSelect>
               </Col>
               <Col span={7}>
-                <CstInput
+                <CstSelect
                   labelCol={{ span: 8 }}
                   wrapperCol={{ span: 16 }}
                   name="merchantId"
                   label="商户号"
-                  placeholder="请输入商户号"
-                />
+                  placeholder="全部"
+                >
+                  {_.map(merchantInfo, (item, key) => (
+                    <Select.Option key={key} value={item?.merchantId}>
+                      {item?.merchantName}
+                    </Select.Option>
+                  ))}
+                </CstSelect>
               </Col>
               <Col span={7} push={2}>
                 <Form.Item>
@@ -470,7 +510,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={pageSize}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {pageSize} 条
@@ -488,16 +528,16 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           <CstInput name="facePrice" style={{ display: 'none' }} />
           <CstInput name="shortName" style={{ display: 'none' }} />
           <CstInput name="goodsCode" style={{ display: 'none' }} />
-          <CstInput name="merchantId" label="商户号" disabled />
-          <CstInput name="goodsName" label="商品名称" disabled />
+          <CstInput name="merchantId" label="商户号" disabled={true} />
+          <CstInput name="goodsName" label="商品名称" disabled={true} />
           <CstOther name="shortNameAndfacePrice" label="面值/规格">
             <input
               className={Styles.input}
               value={getFloat(formData.facePrice / TRANSTEMP, 4) + '元'}
-              disabled
+              disabled={true}
             />
             <span style={{ margin: '0 5px' }}>/</span>
-            <input className={Styles.input} value={formData.shortName} disabled />
+            <input className={Styles.input} value={formData.shortName} disabled={true} />
           </CstOther>
           <CstInputNumber
             name="rebate"
@@ -539,6 +579,11 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
               },
             ]}
             onChange={e => handleInputChange(e, 'price')}
+          />
+          <CstDatePicker
+            label="生效时间"
+            name="effectiveTime"
+            showTime={true}
           />
         </MapForm>
       </GlobalModal>

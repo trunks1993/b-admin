@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:12
- * @LastEditTime: 2020-05-21 10:25:38
+ * @LastEditTime: 2020-11-05 10:31:48
  */
 
 import request from '@/utils/request';
@@ -19,6 +19,20 @@ export interface EditeItemType {
   mainContactName?: string;
   minorTelephone?: string;
   minorContactName?: string;
+}
+
+export interface SuppliersItemType {
+  name?: string;
+  goodsCode?: number;
+  productTypeCode?: number;
+  channelGoodsCode?: number;
+  facePrice?: number;
+  price?: number;
+  priority?: number;
+  singleBuyLimit?: number;
+  taxPrice?: number;
+  remark?: string;
+  withTicket?: number;
 }
 
 /**
@@ -98,6 +112,51 @@ export interface ModifyAmountParamsType {
  */
 export async function batchModifyAmount(data: ModifyAmountParamsType): Promise<any> {
   return request('/supplier/batchModifyAmount', {
+    method: 'POST',
+    data,
+  });
+}
+
+export interface GetGoodsChannelList {
+  supplierCode?: number;
+  pageSize: number;
+  currPage: number;
+  withTicket?: number;
+  goods?: string;
+}
+
+export interface SetGoodsChannelList {
+  goodsChannelList: object;
+}
+
+/**
+ * @name: 获取关联商品列表
+ * @param {GetGoodsChannelList} data
+ */
+export async function getGoodsChannelList(data: GetGoodsChannelList): Promise<any> {
+  return request('/goods/getGoodsChannelList', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 设置关联商品列表
+ * @param {any} data
+ */
+export async function setGoodsChannelList(data: SetGoodsChannelList): Promise<any> {
+  return request('/goods/updateGoodsChannelList', {
+    method: 'POST',
+    data,
+  });
+}
+
+/**
+ * @name: 删除关联商品列表
+ * @param {} data
+ */
+export async function deleteGoodsChannelList(data: { id: number }): Promise<any> {
+  return request('/goods/deleteGoodsChannel', {
     method: 'POST',
     data,
   });

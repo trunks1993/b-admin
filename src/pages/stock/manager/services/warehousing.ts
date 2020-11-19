@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-19 23:41:12
- * @LastEditTime: 2020-05-23 15:49:12
+ * @LastEditTime: 2020-11-11 21:38:44
  */
 
 import request from '@/utils/request';
@@ -78,5 +78,14 @@ export async function getInfo(status: number, code: string): Promise<any> {
       status,
       code,
     },
+  });
+}
+/**
+ * @name:
+ */
+export async function downloadBigPurchaseGoods(data: any): Promise<any> {
+  return request('/report/downloadBigPurchaseGoods', {
+    method: 'POST',
+    data,
   });
 }

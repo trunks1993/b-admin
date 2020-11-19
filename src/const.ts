@@ -1,6 +1,6 @@
 /*
  * @Date: 2020-05-04 23:02:07
- * @LastEditTime: 2020-09-03 16:08:12
+ * @LastEditTime: 2020-11-09 14:45:24
  */
 
 export const DEFAULT_PAGE_NUM = 1; // 默认页码
@@ -171,6 +171,12 @@ export const OrderStatus = {
   [ORDER_STATUS_5]: '已取消',
 };
 
+export const PurchaseOrderStatus = {
+  [ORDER_STATUS_1]: '待付款',
+  [ORDER_STATUS_2]: '待发货',
+  [ORDER_STATUS_4]: '已完成',
+};
+
 export const PAY_METHOD_1 = 1; // 余额
 export const PAY_METHOD_2 = 2; // 微信
 export const PAY_METHOD_3 = 3; // 支付宝
@@ -259,6 +265,12 @@ export const WarehousingStatus = {
   [WAREHOUSING_STATUS_22]: '待重试',
 };
 
+export const WarehousingStatusPurchase = {
+  [WAREHOUSING_STATUS_8]: '成功',
+  [WAREHOUSING_STATUS_10]: '失败',
+  [WAREHOUSING_STATUS_11]: '超时',
+};
+
 // 流水
 export const WATER_STATUS_1 = 1;
 export const WATER_STATUS_2 = 2;
@@ -322,11 +334,13 @@ export const WAY_RETURN_ALL = {
 };
 
 export const ORDER_TYPE_1 = 1; //未完成
-export const ORDER_TYPE_2 = 2; //已完成
+export const ORDER_TYPE_2 = 2; //成功
+export const ORDER_TYPE_3 = 3; //失败
 
 export const OrderTypes = {
   [ORDER_TYPE_1]: '未完成',
-  [ORDER_TYPE_2]: '已完成',
+  [ORDER_TYPE_2]: '成功',
+  [ORDER_TYPE_3]: '失败',
 };
 
 export const WAREHOUSING_TYPE_1 = 1;

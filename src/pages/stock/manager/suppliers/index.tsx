@@ -9,9 +9,6 @@ import { ColumnProps } from 'antd/lib/table/interface';
 import {
   DEFAULT_PAGE_SIZE,
   DEFAULT_PAGE_NUM,
-  IdentifyTypes,
-  IDENTIFY_TYPE_1,
-  IdentifyStatus,
   SupplierStatus,
   TRANSTEMP,
   SUPPLIER_STATUS_1,
@@ -32,6 +29,7 @@ import _ from 'lodash';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import GlobalModal from '@/components/GlobalModal';
 import { getFloat } from '@/utils';
+import { router } from 'umi';
 
 const { confirm } = Modal;
 const { CstInput, CstSelect } = MapForm;
@@ -134,7 +132,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         else message.error('删除失败，请重试');
         initList();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -158,7 +156,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
         } else message.error('操作失败，请重试');
         initList();
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
@@ -267,6 +265,14 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
       align: 'center',
       render: record => (
         <>
+          <Button
+            type="link"
+            onClick={() =>
+              router.push(`/stock/manager/suppliers/edit?code=${record?.code}&name=${record?.name}&status=${record?.status}`)
+            }
+          >
+            关联商品
+          </Button>
           <Button type="link" onClick={() => handleModalVisible(record)}>
             编辑
           </Button>
@@ -413,7 +419,7 @@ const Comp: React.FC<CompProps> = ({ dispatch, list, total, loading }) => {
           onChange={(currPage: number) => setCurrPage(currPage)}
           defaultPageSize={DEFAULT_PAGE_SIZE}
           total={total}
-          showQuickJumper
+          showQuickJumper={true}
         />
         <span className="global-pagination-data">
           共 {total} 条 ,每页 {DEFAULT_PAGE_SIZE} 条
